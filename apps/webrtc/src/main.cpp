@@ -1,5 +1,11 @@
+#include <iostream>
+
 #include "webrtc.h"
 #include "mongoose.h"
+
+namespace {
+    std::string root_dir("../www/mgws/");
+};
 
 // Mongoose event handler function, gets called by the mg_mgr_poll()
 static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
@@ -14,15 +20,21 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
         }
         else {
             struct mg_http_serve_opts opts { 0 };
-            opts.root_dir = "../www/mgws";
+            opts.root_dir = root_dir.c_str();
             mg_http_serve_dir(c, hm, &opts);
         }
     }
 }
 
-
 int main(int argc, char* argv[])
 {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " root_dir" << std::endl;
+        return -1;
+    }
+
+    root_dir = argv[1];
+
 	struct mg_mgr mgr;
 
 	mg_mgr_init(&mgr);

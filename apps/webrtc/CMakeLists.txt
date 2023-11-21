@@ -28,5 +28,5 @@ target_include_directories(${APP} PUBLIC ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRE
 
 if(MSVC)
 	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/certs)
-	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "localhost.crt localhost.key 0.0.0.0 4447")
+	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "${PROJECT_SOURCE_DIR}/www")
 endif()
