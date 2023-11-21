@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
     mg_mgr_init(&mgr);
 
     mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);
-    mg_http_listen(&mgr, "http://0.0.0.0:8443", fn, (void*)1);
+    mg_http_listen(&mgr, "https://0.0.0.0:8443", fn, (void*)1);
 	
     while(true)
         mg_mgr_poll(&mgr, 1000);
