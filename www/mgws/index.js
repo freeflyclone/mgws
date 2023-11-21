@@ -63,7 +63,7 @@ var configuration = {
 			credential: "peerjsp",
 		},
         */
-        { urls: "turn:hq.e-man.tv:19303", username: "turnuser", credential: "turn456"},
+        { urls: "turn:hq.e-man.tv:19302", username: "turnuser", credential: "turn456"},
         //{ urls: "turn:hq.local:19303", username: "turnuser", credential: "turn456"},
 	],
 	sdpSemantics: "unified-plan",
