@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,3 +15,42 @@
     </script>
 </body>
 </html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Layout Tests</title>
+    <link rel="stylesheet" href="flex.css">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+	<div class="wrapper">
+		<div class="ui_header">
+			<div class="ui_header_left">
+				<h1>Left Side Long Text</h1>
+			</div>
+			<div class="ui_header_center">
+				<h1>Center</h1>
+			</div>
+			<div class="ui_header_right">
+				<h1>Right Side Longer Text</h1>
+			</div>
+		</div>
+		<div class="ui_workspace" style="visibility: visible">
+			<div class="ui_header_left" style="flex:2">
+				<h1>Left Side Bar</h1>
+			</div>
+			<div class="ui_workspace_center">
+				<video id="local_video" autoPlay="true" playsInline="true"></video>
+			</div>
+			<div class="ui_header_right">
+				<h1>Right Side Bar</h1>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="index.js"></script>
+</body>
+</html> 

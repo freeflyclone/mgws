@@ -1,53 +1,63 @@
-export const randomToken = Math.random().toString(36).slice(2);
-export const id = "EvanOne";
-export const key = "peerjs";
-export var port = 4447;
-export var websock;
-export const pingInterval = 5000;
+function IsMobile() {
+    const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
 
-
-export function main() {
-    if (window.location.host.split(".").slice(-1) == 'local')
-        port += 1;
-
-    var requestParams = new URLSearchParams({ token: randomToken, id: id, key: key,}).toString();
-
-    //WebSockInit("wss:" + window.location.host + ":" + port);
+    return isMobile;
 }
 
-function WebSockInit(url) {
-    try {
-        websock = new WebSocket(url);
-
-        websock.onopen = (event) => {
-            console.log("onopen: ", event);
-            ScheduleHeartbeat();
-        };
-        websock.onmessage = (event) => {
-            console.log("onmessage: ", event);
-        };
-        websock.onerror = (event) => {
-            console.log("onerror: ", event);
-        };
-        websock.onclose = (event) => {
-            console.log("onclose: ", event);
-        };
+function InitIsMobile() {
+    if (!IsMobile()) {
+        return false;
     }
-    catch (err) {
-        console.log("failed: ", err);
-    }
-}
-
-function ScheduleHeartbeat() {
-    setTimeout(() => {
-        SendHeartbeat();
-    }, pingInterval);
-}
-
-function SendHeartbeat() {
-    console.log("SendHeartbeat");
-
-    websock.send(JSON.stringify({type: "HEARTBEAT"}));
     
-    ScheduleHeartbeat();
+    var wasMobile = localStorage.getItem("isMobile");
+
+    if (wasMobile != null) {
+        return wasMobile;
+    }
+
+    if (confirm("Choose the mobile UI?") == true) {
+        if (confirm("Woud you like to save your choice?") == false) {
+            alert("Mobile UI only for this session.");
+        } else {
+            alert("You will not be prompted on subsequent sessions.");
+            localStorage.setItem("isMobile", "true");
+        }
+        return true;
+    }
+    
+    if (confirm("Woud you like to save your choice?") == false) {
+        alert("Desktop UI only for this session.");
+    } else {
+        alert("You will not be prompted on subsequent sessions.");
+        localStorage.setItem("isMobile", "false");
+    }
+    return false;
+}
+
+function ToggleTheme(value) { 
+    var sheets = document.getElementsByTagName('link'); 
+    sheets[0].href = value; 
+} 
+
+window.onload=main;
+
+var local_video = document.getElementById("local_video");
+var localStream;
+var userMediaConstraints = {
+    audio: true,
+    video: true
+};
+
+async function main() {
+    // Get the local webcam & mic and start them
+    localStream = await navigator.mediaDevices.getUserMedia(userMediaConstraints);
+    local_video.srcObject = localStream;
+    local_video.play();
+
+    ShowSupportedConstraints();
+}
+
+function ShowSupportedConstraints() {
+    var supportedBrowserConstraints = navigator.mediaDevices.getSupportedConstraints();
+    console.log(supportedBrowserConstraints);
 }
