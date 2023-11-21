@@ -14,7 +14,9 @@ namespace {
 // Mongoose event handler function, gets called by the mg_mgr_poll()
 static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
     if (ev == MG_EV_ACCEPT && fn_data != NULL) {
-        struct mg_tls_opts opts { 0 };
+        struct mg_tls_opts opts;
+        
+        memset(&opts, 0, sizeof(opts));
 
         opts.cert = mg_str(cert.c_str());
         opts.key = mg_str(key.c_str());
@@ -32,7 +34,8 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
                 MG_ESC("body"), mg_print_esc, hm->body.len, hm->body.ptr);
         }
         else {
-            struct mg_http_serve_opts opts { 0 };
+            struct mg_http_serve_opts opts;
+            memset(&opts, 0, sizeof(opts));
             opts.root_dir = root_dir.c_str();
             mg_http_serve_dir(c, hm, &opts);
         }
