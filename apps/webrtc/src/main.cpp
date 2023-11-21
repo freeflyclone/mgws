@@ -1,14 +1,27 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "webrtc.h"
 #include "mongoose.h"
 
 namespace {
     std::string root_dir("../www/mgws/");
+    std::string cert;
+    std::string key;
 };
 
 // Mongoose event handler function, gets called by the mg_mgr_poll()
 static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
+    if (ev == MG_EV_ACCEPT && fn_data != NULL) {
+        struct mg_tls_opts opts { 0 };
+
+        opts.cert = mg_str(cert.c_str());
+        opts.key = mg_str(key.c_str());
+
+        mg_tls_init(c, &opts);
+    }
+
     if (ev == MG_EV_HTTP_MSG) {
         struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
@@ -35,16 +48,30 @@ int main(int argc, char* argv[])
 
     root_dir = argv[1];
 
-	struct mg_mgr mgr;
+    std::stringstream buffer;
+        
+    std::ifstream cert_ifs("localhost.crt");
+    buffer << cert_ifs.rdbuf();
+    cert = buffer.str();
 
-	mg_mgr_init(&mgr);
+    buffer = std::stringstream();
+    std::ifstream key_ifs("localhost.key");
+    buffer << key_ifs.rdbuf();
+    key = buffer.str();
+
+    struct mg_mgr mgr;
 
     mg_log_set(MG_LL_DEBUG);
 
+    mg_mgr_init(&mgr);
+
     mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);
+    mg_http_listen(&mgr, "http://0.0.0.0:8443", fn, (void*)1);
 	
     while(true)
         mg_mgr_poll(&mgr, 1000);
+
+    mg_mgr_free(&mgr);
 
 	return 0;
 }

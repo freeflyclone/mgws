@@ -23,8 +23,9 @@ endif()
 
 add_executable(${APP} ${HEADER_FILES} ${SOURCE_FILES} ${WWW_FILES})
 
+target_compile_definitions(${APP} PUBLIC MG_TLS=MG_TLS_OPENSSL)
 target_include_directories(${APP} PUBLIC ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-#target_link_libraries(${APP} PRIVATE mgws)
+target_link_libraries(${APP} PUBLIC OpenSSL::SSL)
 
 if(MSVC)
 	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/certs)
