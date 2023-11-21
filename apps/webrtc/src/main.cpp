@@ -7,6 +7,8 @@
 
 namespace {
     std::string root_dir("../www/mgws/");
+    std::string cert_pem_file("localhost.crt");
+    std::string key_pem_file("localhost.key");
     std::string cert;
     std::string key;
 };
@@ -45,23 +47,29 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
 int main(int argc, char* argv[])
 {
     if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " root_dir" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " root_dir [cert_file_pem key_file_pem]" << std::endl;
         return -1;
     }
 
     root_dir = argv[1];
 
+    if (argc > 2) {
+        cert_pem_file = argv[2];
+        key_pem_file = argv[3];
+    }
+
     std::stringstream buffer;
         
-    std::ifstream cert_ifs("localhost.crt");
+    std::ifstream cert_ifs(cert_pem_file);
     buffer << cert_ifs.rdbuf();
     cert = buffer.str();
 
     buffer = std::stringstream();
-    std::ifstream key_ifs("localhost.key");
+    std::ifstream key_ifs(key_pem_file);
     buffer << key_ifs.rdbuf();
     key = buffer.str();
 
+    std::cout << "MGWS: serving from " << root_dir << ", cert: " << cert_pem_file << ", key: " << key_pem_file << std::endl;
     struct mg_mgr mgr;
 
     mg_log_set(MG_LL_DEBUG);

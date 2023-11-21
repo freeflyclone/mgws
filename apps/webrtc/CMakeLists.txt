@@ -19,6 +19,9 @@ set(WWW_FILES
 
 if(MSVC)
 	source_group(TREE ${PROJECT_SOURCE_DIR} FILES ${WWW_FILES})
+	set(DEBUG_ARGS
+		"${PROJECT_SOURCE_DIR}/www ${PROJECT_SOURCE_DIR}/certs/localhost.crt ${PROJECT_SOURCE_DIR}/certs/localhost.key"
+	)
 endif()
 
 add_executable(${APP} ${HEADER_FILES} ${SOURCE_FILES} ${WWW_FILES})
@@ -29,5 +32,5 @@ target_link_libraries(${APP} PUBLIC OpenSSL::SSL)
 
 if(MSVC)
 	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/certs)
-	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS "${PROJECT_SOURCE_DIR}/www")
+	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_COMMAND_ARGUMENTS ${DEBUG_ARGS})
 endif()
