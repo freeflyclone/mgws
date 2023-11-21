@@ -39,7 +39,8 @@ function ToggleTheme(value) {
     sheets[0].href = value; 
 } 
 
-window.onload=main;
+window.onload = main;
+window.onunload = closing;
 
 var local_video = document.getElementById("local_video");
 var localStream;
@@ -47,17 +48,52 @@ var userMediaConstraints = {
     audio: true,
     video: true
 };
+var ws;
+
+function ShowSupportedConstraints() {
+    var supportedBrowserConstraints = navigator.mediaDevices.getSupportedConstraints();
+    //console.log(supportedBrowserConstraints);
+}
 
 async function main() {
+    console.log("location: ", window.location);
     // Get the local webcam & mic and start them
     localStream = await navigator.mediaDevices.getUserMedia(userMediaConstraints);
     local_video.srcObject = localStream;
     local_video.play();
 
     ShowSupportedConstraints();
+
+    var wsUrl = "wss://" + window.location.host + "/websock";
+
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = (event) => {
+        console.log("ws.onopen: ", ws.url);
+
+        ws.send("this is a test");
+    };
+    ws.onmessage = (event) => {
+        var msg = event.data;
+        console.log("ws.onmessage: ", msg);
+    };
+    ws.onclose = (event) => {
+        console.log("ws.onclose: ", event);
+    }
+    ws.onerror = (event) => {
+        console.log("ws.onerror: ", event);
+    }
 }
 
-function ShowSupportedConstraints() {
-    var supportedBrowserConstraints = navigator.mediaDevices.getSupportedConstraints();
-    console.log(supportedBrowserConstraints);
+async function closing() {
+    if (localStream !== null) {
+        var tracks = localStream.getVideoTracks();
+        tracks.forEach(track => {
+            console.log("closing: ", track);
+            track.stop();
+        });
+    }
+    ws.close();
+    return null;
 }
+

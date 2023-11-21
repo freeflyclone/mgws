@@ -25,12 +25,14 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
 
         mg_tls_init(c, &opts);
     }
-
-    if (ev == MG_EV_HTTP_MSG) {
+    else if (ev == MG_EV_HTTP_MSG) {
         struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
+        if (mg_http_match_uri(hm, "/websock")) {
+            mg_ws_upgrade(c, hm, NULL);
+        }
         // If the requested URI is "/api/hi", send a simple JSON response back
-        if (mg_http_match_uri(hm, "/api/hi")) {
+        else if (mg_http_match_uri(hm, "/api/hi")) {
             mg_http_reply(c, 200, "", "{%m:%m,%m:%m}\n",  // See mg_snprintf doc
                 MG_ESC("uri"), mg_print_esc, hm->uri.len, hm->uri.ptr,
                 MG_ESC("body"), mg_print_esc, hm->body.len, hm->body.ptr);
@@ -41,6 +43,10 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
             opts.root_dir = root_dir.c_str();
             mg_http_serve_dir(c, hm, &opts);
         }
+    }
+    else if (ev == MG_EV_WS_MSG) {
+        struct mg_ws_message* wm = (struct mg_ws_message*)ev_data;
+        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
     }
 }
 
