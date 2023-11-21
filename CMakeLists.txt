@@ -5,12 +5,11 @@ cmake_minimum_required(VERSION 3.15...3.25)
 project(
   mgws
   VERSION 0.1
-  DESCRIPTION "A Mongoose C++ HTTP/Websocket Server for multiplayer games and WebRTC"
+  DESCRIPTION "A Mongoose HTTP/Websocket server for multiplayer games & WebRTC"
   LANGUAGES CXX)
 
 # Compiler & Build flags
 if(MSVC)
-  set (Boost_USE_STATIC_RUNTIME OFF)
   add_definitions(-D_WIN32_WINNT=0x0601)
   add_definitions(-D_SCL_SECURE_NO_WARNINGS=1)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
@@ -41,11 +40,6 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 link_directories(${OPENSSL_LIBRARIES})
 
 find_package(Threads)
-
-#add_subdirectory(3rdParty/OpenSteer)
-
-# The compiled library code is here
-add_subdirectory(src)
 
 # The executable code is here
 add_subdirectory(apps)

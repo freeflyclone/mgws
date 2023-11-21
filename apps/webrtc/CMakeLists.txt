@@ -4,6 +4,7 @@ set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
+	${PROJECT_SOURCE_DIR}/src/mongoose.cpp
 	${SRCS}/main.cpp
 )
 
@@ -23,7 +24,7 @@ endif()
 add_executable(${APP} ${HEADER_FILES} ${SOURCE_FILES} ${WWW_FILES})
 
 target_include_directories(${APP} PUBLIC ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-target_link_libraries(${APP} PRIVATE mgws)
+#target_link_libraries(${APP} PRIVATE mgws)
 
 if(MSVC)
 	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/certs)

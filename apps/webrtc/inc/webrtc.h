@@ -1,7 +1,9 @@
 #ifndef WEBRTC_H
 #define WEBRTC_H
 
-namespace wrtc {
+#include <string>
+#include <vector>
+namespace webrtc {
 	namespace localId {
 		struct Event {
 			std::string type;
@@ -9,9 +11,6 @@ namespace wrtc {
 			std::string userName;
 			std::string localId;
 		};
-
-		void to_json(json& j, const Event& e);
-		void from_json(const json& j, Event& e);
 	}
 
 	namespace sessionsChanged {
@@ -43,6 +42,5 @@ namespace wrtc {
 		};
 	}
 }
-
 
 #endif
