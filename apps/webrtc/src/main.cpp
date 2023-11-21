@@ -27,6 +27,8 @@ int main(int argc, char* argv[])
 
 	mg_mgr_init(&mgr);
 
+    mg_log_set(MG_LL_DEBUG);
+
     mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);
 	
     while(true)

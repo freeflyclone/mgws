@@ -12,7 +12,7 @@ export function main() {
 
     var requestParams = new URLSearchParams({ token: randomToken, id: id, key: key,}).toString();
 
-    WebSockInit("wss:" + window.location.host + ":" + port + "/peerjs?" + requestParams);
+    //WebSockInit("wss:" + window.location.host + ":" + port);
 }
 
 function WebSockInit(url) {
