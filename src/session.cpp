@@ -6,7 +6,6 @@ namespace {
 	SessionsList g_sessions;
 }
 
-
 Session::Session(Connection& c)
 	: m_connection(c),
 	m_id(nextId++)
@@ -18,6 +17,12 @@ Session::Session(Connection& c)
 Session::~Session() 
 {
 	std::clog << "~Session(" << m_id << ")" << std::endl;
+}
+
+void Session::OnMessage(Message* msg) {
+	std::string message(msg->data.ptr, msg->data.len);
+
+	std::clog << message << std::endl;
 }
 
 SessionPtr NewSession(Connection& c) {

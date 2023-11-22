@@ -19,51 +19,55 @@ namespace {
 };
 
 // Mongoose event handler function, gets called by the mg_mgr_poll()
-static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
-    // if main() says this is TLS connection...
-    if (ev == MG_EV_ACCEPT && fn_data != NULL) {
-        struct mg_tls_opts opts;
-        
-        memset(&opts, 0, sizeof(opts));
+static void RequestHandler(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
+    struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
-        opts.cert = mg_str(cert.c_str());
-        opts.key = mg_str(key.c_str());
+    switch (ev) {
+        case MG_EV_ACCEPT:
+            if (!fn_data)
+                break;
 
-        mg_tls_init(c, &opts);
-    }
-    else if (ev == MG_EV_HTTP_MSG) {
-        struct mg_http_message* hm = (struct mg_http_message*)ev_data;
+            struct mg_tls_opts opts;
 
-        // If requested URI is for websocket...
-        if (mg_http_match_uri(hm, "/websock")) {
-
-            // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
-            mg_ws_upgrade(c, hm, NULL);
-            NewSession(*c);
-        }
-        // If the requested URI is "/api/hi", send a simple JSON response back
-        else if (mg_http_match_uri(hm, "/api/hi")) {
-            mg_http_reply(c, 200, "", "{%m:%m,%m:%m}\n",  // See mg_snprintf doc
-                MG_ESC("uri"), mg_print_esc, hm->uri.len, hm->uri.ptr,
-                MG_ESC("body"), mg_print_esc, hm->body.len, hm->body.ptr);
-        }
-        else {
-            struct mg_http_serve_opts opts;
             memset(&opts, 0, sizeof(opts));
-            opts.root_dir = root_dir.c_str();
-            mg_http_serve_dir(c, hm, &opts);
-        }
-    }
-    else if (ev == MG_EV_WS_MSG) {
-        struct mg_ws_message* wm = (struct mg_ws_message*)ev_data;
-        mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
-    }
-    else if (ev == MG_EV_CLOSE) {
-        if (c->fn_data == (void*)1)
-            return;
 
-        Session* session = (Session*)(c->fn_data);
-        DeleteSession(session);
+            opts.cert = mg_str(cert.c_str());
+            opts.key = mg_str(key.c_str());
+
+            mg_tls_init(c, &opts);
+            break;
+
+        case MG_EV_HTTP_MSG:
+            // If requested URI is for websocket...
+            if (mg_http_match_uri(hm, "/websock")) {
+
+                // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
+                mg_ws_upgrade(c, hm, NULL);
+                NewSession(*c);
+            }
+            else {
+                struct mg_http_serve_opts opts;
+                memset(&opts, 0, sizeof(opts));
+                opts.root_dir = root_dir.c_str();
+                mg_http_serve_dir(c, hm, &opts);
+            }
+            break;
+
+        case MG_EV_WS_MSG:
+            // fail safe
+            if (c->fn_data == (void*)1)
+                return;
+
+            ((Session*)(c->fn_data))->OnMessage((Message*)ev_data);
+            break;
+
+        case MG_EV_CLOSE:
+            if (c->fn_data == (void*)1)
+                return;
+
+            Session* session = (Session*)(c->fn_data);
+            DeleteSession(session);
+            break;
     }
 }
 
@@ -99,10 +103,10 @@ int main(int argc, char* argv[])
 
     mg_mgr_init(&mgr);
 
-    mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);
+    mg_http_listen(&mgr, "http://0.0.0.0:8000", RequestHandler, NULL);
 
     // 3rd arg tells 'fn' this is TLS connection
-    mg_http_listen(&mgr, "https://0.0.0.0:8443", fn, (void*)1);
+    mg_http_listen(&mgr, "https://0.0.0.0:8443", RequestHandler, (void*)1);
 	
     while(true)
         mg_mgr_poll(&mgr, 1000);
