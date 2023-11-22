@@ -1,3 +1,5 @@
+var outputTextarea = document.getElementById('output');
+
 function IsMobile() {
     const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
 
@@ -77,7 +79,7 @@ function ShowSupportedConstraints() {
 }
 
 export function print(what) {
-    console.log(what);
+    outputTextarea.value += what + "\r\n";
 }
 
 

@@ -1,3 +1,7 @@
+textarea {
+    height: 600px;
+    width: 100%;
+}
 .wrapper, html, body {
     height: 10vh;
     background: darkslategray;
@@ -74,7 +78,12 @@
 
 #local_video {
     background-color: black;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+    width: 160px;
+    height: 120px;
+}
+
+#remote_video {
+    background-color: black;
+    width: 160px;
+    height: 120px;
+}
