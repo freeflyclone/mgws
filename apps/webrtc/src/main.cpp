@@ -3,7 +3,10 @@
 #include <sstream>
 
 #include "webrtc.h"
-#include "mongoose.h"
+
+extern "C" {
+    #include "mongoose.h"
+}
 
 namespace {
     std::string root_dir("../www/mgws/");
@@ -15,6 +18,7 @@ namespace {
 
 // Mongoose event handler function, gets called by the mg_mgr_poll()
 static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
+    // if main() says this is TLS connection...
     if (ev == MG_EV_ACCEPT && fn_data != NULL) {
         struct mg_tls_opts opts;
         
@@ -28,7 +32,10 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
     else if (ev == MG_EV_HTTP_MSG) {
         struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
+        // If requested URI is for websocket...
         if (mg_http_match_uri(hm, "/websock")) {
+
+            // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
             mg_ws_upgrade(c, hm, NULL);
         }
         // If the requested URI is "/api/hi", send a simple JSON response back
@@ -83,6 +90,8 @@ int main(int argc, char* argv[])
     mg_mgr_init(&mgr);
 
     mg_http_listen(&mgr, "http://0.0.0.0:8000", fn, NULL);
+
+    // 3rd arg tells 'fn' this is TLS connection
     mg_http_listen(&mgr, "https://0.0.0.0:8443", fn, (void*)1);
 	
     while(true)

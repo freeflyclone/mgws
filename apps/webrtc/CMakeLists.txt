@@ -15,6 +15,8 @@ set(HEADER_FILES
 set(WWW_FILES
 	${PROJECT_SOURCE_DIR}/www/mgws/index.html
 	${PROJECT_SOURCE_DIR}/www/mgws/index.js
+	${PROJECT_SOURCE_DIR}/www/mgws/flex.css
+	${PROJECT_SOURCE_DIR}/www/mgws/flex_mobile.css
 )
 
 if(MSVC)
