@@ -11,6 +11,8 @@ set(SOURCE_FILES
 
 set(HEADER_FILES
 	${PROJECT_SOURCE_DIR}/inc/mongoose.h
+	${PROJECT_SOURCE_DIR}/inc/nlohmann/json.hpp
+	${PROJECT_SOURCE_DIR}/inc/mgws.h
 	${PROJECT_SOURCE_DIR}/inc/session.h
 	${INCS}/webrtc.h
 )

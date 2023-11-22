@@ -1,6 +1,8 @@
 #include <iostream>
 
+#include "mgws.h"
 #include "session.h"
+
 namespace {
 	SessionID_t nextId{ 0 };
 	SessionsList g_sessions;
@@ -10,19 +12,22 @@ Session::Session(Connection& c)
 	: m_connection(c),
 	m_id(nextId++)
 {
-	std::clog << "Session(" << m_id << ")" << std::endl;
+	TRACE("Session(" << m_id << ")");
+
 	m_connection.fn_data = this;
 }
 
 Session::~Session() 
 {
-	std::clog << "~Session(" << m_id << ")" << std::endl;
+	TRACE("~Session(" << m_id << ")");
 }
 
 void Session::OnMessage(Message* msg) {
 	std::string message(msg->data.ptr, msg->data.len);
 
-	std::clog << message << std::endl;
+	json j = json::parse(message);
+
+	TRACE(__FUNCTION__ << ", type: " << j["type"]);
 }
 
 SessionPtr NewSession(Connection& c) {
@@ -47,7 +52,7 @@ void DeleteSession(Session* session) {
 
 	auto id = it->second->getId();
 
-	std::cout << "Deleting id: " << id << std::endl;
+	TRACE("Deleting id: " << id);
 
 	g_sessions.erase(id);
 }

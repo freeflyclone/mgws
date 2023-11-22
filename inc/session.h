@@ -8,6 +8,9 @@
 #include <map>
 #include <algorithm>
 #include <memory>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 extern "C" {
 #include "mongoose.h"
