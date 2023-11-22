@@ -5,10 +5,13 @@ set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/mongoose.cpp
+	${PROJECT_SOURCE_DIR}/src/session.cpp
 	${SRCS}/main.cpp
 )
 
 set(HEADER_FILES
+	${PROJECT_SOURCE_DIR}/inc/mongoose.h
+	${PROJECT_SOURCE_DIR}/inc/session.h
 	${INCS}/webrtc.h
 )
 

@@ -8,6 +8,8 @@ extern "C" {
     #include "mongoose.h"
 }
 
+#include "session.h"
+
 namespace {
     std::string root_dir("../www/mgws/");
     std::string cert_pem_file("localhost.crt");
@@ -37,6 +39,7 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
 
             // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
             mg_ws_upgrade(c, hm, NULL);
+            NewSession(*c);
         }
         // If the requested URI is "/api/hi", send a simple JSON response back
         else if (mg_http_match_uri(hm, "/api/hi")) {
@@ -54,6 +57,13 @@ static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
     else if (ev == MG_EV_WS_MSG) {
         struct mg_ws_message* wm = (struct mg_ws_message*)ev_data;
         mg_ws_send(c, wm->data.ptr, wm->data.len, WEBSOCKET_OP_TEXT);
+    }
+    else if (ev == MG_EV_CLOSE) {
+        if (c->fn_data == (void*)1)
+            return;
+
+        Session* session = (Session*)(c->fn_data);
+        DeleteSession(session);
     }
 }
 
@@ -85,7 +95,7 @@ int main(int argc, char* argv[])
     std::cout << "MGWS: serving from " << root_dir << ", cert: " << cert_pem_file << ", key: " << key_pem_file << std::endl;
     struct mg_mgr mgr;
 
-    mg_log_set(MG_LL_DEBUG);
+    //mg_log_set(MG_LL_DEBUG);
 
     mg_mgr_init(&mgr);
 
