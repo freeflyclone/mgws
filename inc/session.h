@@ -1,7 +1,7 @@
 #ifndef SESSION_H
 #define SESSION_H
 /**
-* Session is a Websocket session created when mg_ws_upgrade() is called
+* Session is a Websocket session, created when mg_ws_upgrade() is called
 * in response to a "/websock" URI request is received by Mongoose.
 */
 
@@ -26,6 +26,7 @@ public:
 	~Session();
 
 	SessionID_t getId() { return m_id; };
+	void Send(const json&);
 	void OnMessage(Message*);
 
 private:

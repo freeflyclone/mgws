@@ -9,12 +9,18 @@ namespace {
 }
 
 Session::Session(Connection& c)
-	: m_connection(c),
-	m_id(nextId++)
+	: m_id(nextId++),
+	m_connection(c)
 {
 	TRACE("Session(" << m_id << ")");
 
 	m_connection.fn_data = this;
+
+	json sessionId;
+	sessionId["type"] = "SessionID";
+	sessionId["id"] = m_id;
+
+	Send(sessionId);
 }
 
 Session::~Session() 
@@ -28,6 +34,14 @@ void Session::OnMessage(Message* msg) {
 	json j = json::parse(message);
 
 	TRACE(__FUNCTION__ << ", type: " << j["type"]);
+}
+
+void Session::Send(const json& msg) {
+	std::string msg_str(msg.dump());
+
+	TRACE(__FUNCTION__ << "(), " << msg_str);
+
+	mg_ws_send((struct mg_connection*)&m_connection, msg_str.c_str(), msg_str.length(), WEBSOCKET_OP_TEXT);
 }
 
 SessionPtr NewSession(Connection& c) {
