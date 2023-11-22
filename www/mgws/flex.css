@@ -76,6 +76,9 @@ textarea {
     margin: 0px 2px 0px 2px;
 }
 
+.ui_span {
+    font: 14px arial;
+}
 #local_video {
     background-color: black;
     width: 160px;
@@ -86,4 +89,43 @@ textarea {
     background-color: black;
     width: 160px;
     height: 120px;
+}
+#remotes-list {
+    border-radius: 11pt;
+    background: rgba(16, 16, 127, 1);
+    position: relative;
+    width: auto;
+    height: 110px;
+    margin: 8px 0px 0px 0px;
+    border: 2px solid #fff;
+    font: 14px arial;
+}
+  
+#remotes-list td.left {
+    padding:0pt 3pt 0pt 0pt;
+    text-align:right;
+    width: 50%;
+}
+
+#remotes-list td.right {
+    padding: 0pt 0pt 0pt 3pt;
+    text-align: left;
+    width: 50%;
+}
+
+#remotes-list tr.highlightable:hover {
+    background-color: white;
+    color: rgba(16, 16, 127, 1);
+}
+
+#remotes-table-wrapper {
+    overflow: auto;
+    height: 110px;
+    margin: 0px 8px 0px 8px;
+    width: auto;
+}
+  
+#remotes-table {
+    background: rgba(16, 127, 127, 0.0);
+    margin: 4px auto;
 }

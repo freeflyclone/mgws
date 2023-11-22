@@ -1,4 +1,8 @@
+const appVersion = "0.1";
+
 var outputTextarea = document.getElementById('output');
+var createOfferButton = document.getElementById("createOffer");
+var callRemoteButton = document.getElementById("callRemote");
 
 function IsMobile() {
     const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
@@ -84,6 +88,7 @@ export function print(what) {
 
 
 async function closing() {
+    print("closing");
     if (localStream !== null) {
         var tracks = localStream.getVideoTracks();
         tracks.forEach(track => {
@@ -103,7 +108,12 @@ function MakeWebSocket() {
     ws.onopen = (event) => {
         console.log("ws.onopen: ", ws.url);
 
-        ws.send("this is a test");
+        var regSession = {
+            type: "RegisterSession",
+            appVersion: appVersion,
+        };
+      
+        ws.send(JSON.stringify(regSession));
     };
     ws.onmessage = (event) => {
         var msg = event.data;
@@ -167,8 +177,6 @@ function MakePeerConnection() {
     });
 }
 
-document.getElementById("createOffer").addEventListener('click', createOffer);
-document.getElementById("callRemote").addEventListener('click', callRemote);
 
 export async function createOffer() {
     console.log("createOffer()");
@@ -260,7 +268,10 @@ function HandleSignalingStateChangeEvent(event) {
 }
 
 async function main() {
-    console.log("location: ", window.location);
+    createOfferButton.addEventListener('click', createOffer);
+    callRemoteButton.addEventListener('click', callRemote);
+
+    print("location: " + window.location);
     // Get the local webcam & mic and start them
     localStream = await navigator.mediaDevices.getUserMedia(userMediaConstraints);
     local_video.srcObject = localStream;
