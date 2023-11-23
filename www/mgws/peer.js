@@ -207,10 +207,20 @@ export function HandleSessionsChanged(sessionsList) {
     });
 }
 
+function HandleCallRemote(callRemote) {
+    print("CallRemote: " + callRemote.remoteId + "\r\nCallRemote: " + callRemote.session.sdp);
+}
 export function PeerMessageHandler(msg) {
     switch(msg.type) {
         case "SessionsChanged":
             HandleSessionsChanged(msg);
+            break;
+
+        case "CallRemote":
+            HandleCallRemote(msg);
+            break;
+
+        case "LocalIdChanged":
             break;
 
         default:

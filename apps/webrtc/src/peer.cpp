@@ -199,9 +199,9 @@ void Peer::OnCallRemote(json& j)
 		return;
 	}
 	auto id = std::stod(remoteId.substr(n + 3));
-	auto session = g_sessions.GetSessionById(id).get();
+	auto session = g_sessions.GetSessionById(id);
 
-	session->Send(callRemote.session);
+	session->Send(j);
 
 	TRACE(__FUNCTION__ << ": " << callRemote.userName << ", remote ID: " << callRemote.remoteId);
 	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
