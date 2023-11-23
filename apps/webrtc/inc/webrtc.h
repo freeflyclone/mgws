@@ -3,6 +3,11 @@
 
 #include <string>
 #include <vector>
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 namespace webrtc {
 	namespace localId {
 		struct Event {
@@ -23,6 +28,12 @@ namespace webrtc {
 			std::string type{};
 			std::vector<Session> sessions;
 		};
+
+		void to_json(json& j, const Session& s);
+		void from_json(const json& j, Session& s);
+
+		void to_json(json& j, const Message& m);
+		void from_json(const json& j, Message& m);
 	}
 
 	namespace sessionDescription {

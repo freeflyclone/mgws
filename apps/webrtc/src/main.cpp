@@ -8,7 +8,7 @@ extern "C" {
     #include "mongoose.h"
 }
 
-#include "session.h"
+#include "sessionmgr.h"
 
 namespace {
     std::string root_dir("../www/mgws/");
@@ -43,7 +43,7 @@ static void RequestHandler(struct mg_connection* c, int ev, void* ev_data, void*
 
                 // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
                 mg_ws_upgrade(c, hm, NULL);
-                NewSession(*c);
+                g_sessions.NewSession(*c);
             }
             else {
                 struct mg_http_serve_opts opts;
@@ -66,7 +66,7 @@ static void RequestHandler(struct mg_connection* c, int ev, void* ev_data, void*
                 return;
 
             Session* session = (Session*)(c->fn_data);
-            DeleteSession(session);
+            g_sessions.DeleteSession(session);
             break;
     }
 }

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <nlohmann/json.hpp>
+#include "peer.h"
 
 using json = nlohmann::json;
 
@@ -22,7 +23,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(Connection& c);
+	explicit Session(uint32_t it, Connection& c);
 	~Session();
 
 	SessionID_t getId() { return m_id; };
@@ -32,12 +33,7 @@ public:
 private:
 	SessionID_t m_id;
 	Connection& m_connection;
+	Peer m_peer;
 };
-
-typedef std::shared_ptr<Session> SessionPtr;
-typedef std::map<SessionID_t, SessionPtr> SessionsList;
-
-SessionPtr NewSession(Connection&);
-void DeleteSession(Session*);
 
 #endif // SESSION_H
