@@ -60,6 +60,18 @@ namespace webrtc {
 		void to_json(json& j, const Call& cr);
 		void from_json(const json& j, Call& cr);
 	}
+	namespace answer {
+		struct Answer {
+			std::string type;
+			uint32_t sessionId;
+			std::string answeringUserName;
+			std::string targetId;
+			std::string answeringId;
+			sessionDescription::SessionDescription session;
+		};
+		void to_json(json& j, const Answer& cr);
+		void from_json(const json& j, Answer& cr);
+	}
 }
 
 #endif

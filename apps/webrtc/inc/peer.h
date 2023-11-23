@@ -20,6 +20,7 @@ public:
 	void OnLocalIdEvent(json&);
 	void OnOffer(json&);
 	void OnCall(json&);
+	void OnAnswer(json&);
 
 private:
 	Session* m_session;

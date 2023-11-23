@@ -32,8 +32,7 @@ export function MakePeerConnection() {
     print("RTCPeerConnection succeeded!");
     console.log(pc);
     pc.addEventListener("addstream", (event) => {
-        print("addstream");
-        console.log(event);
+        HandleAddStream(event);
     });
     pc.addEventListener("connectionstatechange", (event) => {
         print('connectionstatechange: ' + pc.connectionState);
@@ -66,8 +65,30 @@ export function MakePeerConnection() {
         HandleSignalingStateChangeEvent(event);
     });
     pc.addEventListener("track", (event) => {
-        console.log(event);
+        HandleTrackEvent(event);
     });
+}
+
+export function PeerMessageHandler(msg) {
+    switch(msg.type) {
+        case "SessionsChanged":
+            HandleSessionsChanged(msg);
+            break;
+
+        case "Call":
+            HandleCall(msg);
+            break;
+
+        case "Answer":
+            HandleAnswer(msg);
+            break;
+
+        case "LocalIdChanged":
+            break;
+
+        default:
+            print("msg.type: " + msg.type);
+    }
 }
 
 export async function createOffer() {
@@ -124,6 +145,25 @@ export function call() {
     ws.send(JSON.stringify(msg));
 }
 
+export async function answer() {
+    print('Answering call from')
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    var msg = {
+        type: "Answer",
+        sessionId: ws.sessionID,
+        answeringUserName: document.getElementById("user_name_input").value,
+        targetId: document.getElementById("remote_id_input").value,
+        answeringId: document.getElementById("local_id_input").value,
+        session: pc.localDescription
+    };
+
+    console.log("answer(): ", answer);
+
+    ws.send(JSON.stringify(msg));
+}
+
 function HandleIceGatheringStateChange(connection) {
     console.log("HandleIceGatheringStateChange(): ", connection.iceGatheringState);
     print("IceGatheringState: " + connection.iceGatheringState);
@@ -159,6 +199,16 @@ function HandleSignalingStateChangeEvent(event) {
     console.log("HandleSignalingStateChangeEvent(): " + string);
 }
 
+function HandleAddStream(event) {
+    print("AddStream: " + event.stream.id);
+    console.log("HandleAddStream(): ", event);
+}
+
+function HandleTrackEvent(event) {
+    var track = event.receiver.track;
+    print("TrackEvent: " + track.id + ", kind: " + track.kind);
+    console.log("HandleTrackEvent(): ", event);
+}
 function OnTableRowOnClick (event) {
     var target = event.target;
     var remoteId = null;
@@ -210,22 +260,8 @@ export function HandleSessionsChanged(sessionsList) {
 function HandleCall(call) {
     console.log("HandleCall: ", call);
     print("Call: from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
-}
 
-export function PeerMessageHandler(msg) {
-    switch(msg.type) {
-        case "SessionsChanged":
-            HandleSessionsChanged(msg);
-            break;
+    document.getElementById("remote_id_input").value = call.callingId;
 
-        case "Call":
-            HandleCall(msg);
-            break;
-
-        case "LocalIdChanged":
-            break;
-
-        default:
-            print("msg.type: " + msg.type);
-    }
+    pc.setRemoteDescription(new RTCSessionDescription(call.session));
 }

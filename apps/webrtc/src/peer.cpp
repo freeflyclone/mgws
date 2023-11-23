@@ -135,6 +135,24 @@ namespace webrtc {
 			}
 		}
 	}
+	namespace answer {
+		void to_json(json& j, const Answer& answer) {
+		}
+
+		void from_json(const json& j, Answer& answer) {
+			try {
+				j.at("type").get_to(answer.type);
+				j.at("sessionId").get_to(answer.sessionId);
+				j.at("answeringUserName").get_to(answer.answeringUserName);
+				j.at("targetId").get_to(answer.targetId);
+				j.at("answeringId").get_to(answer.answeringId);
+				j.at("session").get_to(answer.session);
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+	}
 }
 
 
@@ -148,6 +166,7 @@ Peer::Peer(Session* sess)
 	m_pmd["LocalIdEvent"] = std::bind(&Peer::OnLocalIdEvent, this, _1);
 	m_pmd["offer"] = std::bind(&Peer::OnOffer, this, _1);
 	m_pmd["Call"] = std::bind(&Peer::OnCall, this, _1);
+	m_pmd["Answer"] = std::bind(&Peer::OnAnswer, this, _1);
 }
 
 void Peer::HandleMessage(json& j)
@@ -205,5 +224,24 @@ void Peer::OnCall(json& j)
 	session->Send(j);
 
 	TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
+	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+}
+
+void Peer::OnAnswer(json& j)
+{
+	auto answer = j.template get<webrtc::answer::Answer>();
+	auto targetId = answer.targetId;
+
+	std::string::size_type n;
+	if ((n = targetId.find("_00")) == -1) {
+		TRACE("Didn't find '_00'");
+		return;
+	}
+	auto id = std::stod(targetId.substr(n + 3));
+	auto session = g_sessions.GetSessionById(id);
+
+	session->Send(j);
+
+	TRACE(__FUNCTION__ << ": " << answer.answeringUserName << ", target ID: " << answer.targetId);
 	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 }
