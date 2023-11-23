@@ -32,9 +32,11 @@ void SessionManager::DeleteSession(Session* session) {
 	TRACE("Deleting id: " << id);
 
 	m_sessions.erase(id);
+
+	UpdateSessionsList();
 }
 
-void SessionManager::UpdateSessions(const uint32_t id, const std::string& userName, const std::string& localId) {
+void SessionManager::UpdateSession(const uint32_t id, const std::string& userName, const std::string& localId) {
 	auto sessPair = m_sessions.find(id);
 	if (sessPair == m_sessions.end()) {
 		TRACE("Oops: didn't find g_sessions[" << id << "]");
@@ -52,4 +54,17 @@ void SessionManager::Iterate(SessionCallback_fn fn) {
 	for (auto p : m_sessions) {
 		fn(p.second.get());
 	}
+}
+
+void SessionManager::UpdateSessionsList() {
+	webrtc::sessionsChanged::Message msg;
+	msg.type = "SessionsChanged";
+
+	g_sessions.Iterate([&](Session* session) {
+		msg.sessions.push_back({ session->getId(), session->UserName(), session->LocalId() });
+	});
+
+	g_sessions.Iterate([&](Session* session) {
+		session->Send(msg);
+	});
 }

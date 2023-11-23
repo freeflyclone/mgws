@@ -16,8 +16,10 @@ public:
 
 	SessionPtr NewSession(Connection&);
 	void DeleteSession(Session*);
-	void UpdateSessions(const uint32_t sessionId, const std::string&, const std::string& );
+	void UpdateSession(const uint32_t sessionId, const std::string&, const std::string& );
 	void Iterate(SessionCallback_fn fn);
+
+	void UpdateSessionsList();
 
 private:
 	SessionsList m_sessions;

@@ -129,18 +129,9 @@ void Peer::OnLocalIdEvent(json& j)
 		return;
 	}
 
-	g_sessions.UpdateSessions(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
+	g_sessions.UpdateSession(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
 
 	m_session->Send({ {"type", "LocalIdChanged"} });
 
-	webrtc::sessionsChanged::Message msg;
-	msg.type = "SessionsChanged";
-
-	g_sessions.Iterate([&] (Session* session) {
-		msg.sessions.push_back({ session->getId(), session->UserName(), session->LocalId() });
-	});
-
-	g_sessions.Iterate([&](Session* session) {
-		session->Send(msg);
-	});
+	g_sessions.UpdateSessionsList();
 }
