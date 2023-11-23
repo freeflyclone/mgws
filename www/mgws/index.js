@@ -1,5 +1,6 @@
 import { MakeWebSocket } from "./websock.js";
 import { MakePeerConnection, createOffer, callRemote } from "./peer.js";
+import { InitLocalStream, GetStoredUserName } from "./local.js";
 
 export const appVersion = "0.1";
 
@@ -51,13 +52,6 @@ function ToggleTheme(value) {
 window.onload = main;
 window.onunload = closing;
 
-var local_video = document.getElementById("local_video");
-export var localStream;
-var userMediaConstraints = {
-    audio: true,
-    video: true
-};
-
 function ShowSupportedConstraints() {
     var supportedBrowserConstraints = navigator.mediaDevices.getSupportedConstraints();
     //console.log(supportedBrowserConstraints);
@@ -66,7 +60,6 @@ function ShowSupportedConstraints() {
 export function print(what) {
     outputTextarea.value += what + "\r\n";
 }
-
 
 async function closing() {
     print("closing");
@@ -86,13 +79,11 @@ async function main() {
     callRemoteButton.addEventListener('click', callRemote);
 
     print("location: " + window.location);
-    // Get the local webcam & mic and start them
-    localStream = await navigator.mediaDevices.getUserMedia(userMediaConstraints);
-    local_video.srcObject = localStream;
-    local_video.play();
 
     ShowSupportedConstraints();
 
+    InitLocalStream();
+    GetStoredUserName();
     MakeWebSocket();
     MakePeerConnection();
 }

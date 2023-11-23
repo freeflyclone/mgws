@@ -1,5 +1,6 @@
-import { print, localStream } from "./index.js";
+import { print } from "./index.js";
 import { ws } from "./websock.js";
+import { localStream } from "./local.js";
 
 var iceCandidates = [];
 var configuration = {
@@ -121,7 +122,7 @@ export function callRemote() {
 
     print('Sending "offer" via CallRemote to ' + msg.remoteId + '...');
 
-    ws.Send(JSON.stringify(msg));
+    ws.send(JSON.stringify(msg));
 }
 
 function HandleIceGatheringStateChange(connection) {
@@ -159,3 +160,6 @@ function HandleSignalingStateChangeEvent(event) {
     console.log("HandleSignalingStateChangeEvent(): " + string);
 }
 
+export function PeerMessageHandler(msg) {
+    print("msg.type: " + msg.type);
+}

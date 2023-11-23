@@ -1,4 +1,6 @@
 import { appVersion, print } from "./index.js";
+import { UpdateLocalId } from "./local.js";
+import { PeerMessageHandler } from "./peer.js";
 
 export var ws;
 
@@ -28,15 +30,17 @@ function OnOpen(event) {
 
 function OnMessage(event) {
     var msg = JSON.parse(event.data);
+    print("OnMessage() type: " + msg.type);
 
     switch(msg.type) {
         case "SessionID":
             ws.sessionID = msg.id;
+            UpdateLocalId();
             print("Got SessionID: " + msg.id)
             break;
 
         default:
-            print("OnMessage() type: " + msg.type);
+            PeerMessageHandler(msg);
             break;
     }
 
