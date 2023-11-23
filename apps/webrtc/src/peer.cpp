@@ -1,4 +1,5 @@
 #include <map>
+#include <string>
 
 #include "mgws.h"
 #include "peer.h"
@@ -94,13 +95,58 @@ namespace webrtc {
 			}
 		}
 	}
+	namespace sessionDescription {
+		void to_json(json& j, const SessionDescription& sd) {
+			try {
+				j = json{
+					{"type", sd.type},
+					{"sdp", sd.sdp}
+				};
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+		void from_json(const json& j, SessionDescription& sd) {
+			try {
+				j.at("type").get_to(sd.type);
+				j.at("sdp").get_to(sd.sdp);
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+	}
+	namespace callRemote {
+		void to_json(json& j, const CallRemote& cr) {
+		}
+
+		void from_json(const json& j, CallRemote& cr) {
+			try {
+				j.at("type").get_to(cr.type);
+				j.at("sessionId").get_to(cr.sessionId);
+				j.at("remoteId").get_to(cr.remoteId);
+				j.at("userName").get_to(cr.userName);
+				j.at("session").get_to(cr.session);
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+	}
 }
-Peer::Peer(Session* sess) 
+
+
+Peer::Peer(Session* sess)
   : 
 	m_session(sess)
 {
-	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, std::placeholders::_1);
-	m_pmd["LocalIdEvent"] = std::bind(&Peer::OnLocalIdEvent, this, std::placeholders::_1);
+	using namespace std::placeholders;
+
+	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);
+	m_pmd["LocalIdEvent"] = std::bind(&Peer::OnLocalIdEvent, this, _1);
+	m_pmd["offer"] = std::bind(&Peer::OnOffer, this, _1);
+	m_pmd["CallRemote"] = std::bind(&Peer::OnCallRemote, this, _1);
 }
 
 void Peer::HandleMessage(json& j)
@@ -134,4 +180,29 @@ void Peer::OnLocalIdEvent(json& j)
 	m_session->Send({ {"type", "LocalIdChanged"} });
 
 	g_sessions.UpdateSessionsList();
+}
+
+void Peer::OnOffer(json& j)
+{
+	TRACE(__FUNCTION__ << ": " << j["type"]);
+
+	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+}
+
+void Peer::OnCallRemote(json& j) 
+{
+	auto callRemote = j.template get<webrtc::callRemote::CallRemote>();
+	auto remoteId = callRemote.remoteId;
+	std::string::size_type n;
+	if ((n = remoteId.find("_00")) == -1) {
+		TRACE("Didn't find '_00'");
+		return;
+	}
+	auto id = std::stod(remoteId.substr(n + 3));
+	auto session = g_sessions.GetSessionById(id).get();
+
+	session->Send(callRemote.session);
+
+	TRACE(__FUNCTION__ << ": " << callRemote.userName << ", remote ID: " << callRemote.remoteId);
+	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 }

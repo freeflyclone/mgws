@@ -2,7 +2,7 @@ import { ws } from "./websock.js";
 
 export var localStream = null;
 
-var user_name_input = document.getElementById("user_name_input");
+export var user_name_input = document.getElementById("user_name_input");
 export var local_id_input = document.getElementById("local_id_input");
 var local_video = document.getElementById("local_video");
 

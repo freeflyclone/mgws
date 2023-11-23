@@ -50,6 +50,16 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 	session->SetLocalId(localId);
 }
 
+SessionManager::SessionPtr SessionManager::GetSessionById(const SessionID_t id)
+{
+	auto sessPair = m_sessions.find(id);
+	if (sessPair == m_sessions.end()) {
+		TRACE("Oops: didn't find g_sessions[" << id << "]");
+		return nullptr;
+	}
+	return sessPair->second;
+}
+
 void SessionManager::Iterate(SessionCallback_fn fn) {
 	for (auto p : m_sessions) {
 		fn(p.second.get());

@@ -18,6 +18,8 @@ public:
 
 	void OnRegisterSession(json&);
 	void OnLocalIdEvent(json&);
+	void OnOffer(json&);
+	void OnCallRemote(json&);
 
 private:
 	Session* m_session;

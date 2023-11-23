@@ -1,6 +1,6 @@
 import { print } from "./index.js";
 import { ws } from "./websock.js";
-import { localStream } from "./local.js";
+import { localStream, user_name_input, local_id_input } from "./local.js";
 
 var iceCandidates = [];
 var configuration = {
@@ -102,10 +102,9 @@ export async function createOffer() {
     };
 
     try {
-        const offer = await pc.createOffer(offerOptions);
+        print('Creating "offer"...');
+        var offer = await pc.createOffer(offerOptions);
         await pc.setLocalDescription(offer);
-        print('Submitting "offer"...');
-        ws.send(JSON.stringify(offer));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
     }
@@ -120,7 +119,7 @@ export function callRemote() {
         session: pc.localDescription
     };
 
-    print('Sending "offer" via CallRemote to ' + msg.remoteId + '...');
+    print('Submitting "offer" via CallRemote to ' + msg.remoteId + '...');
 
     ws.send(JSON.stringify(msg));
 }
@@ -164,7 +163,6 @@ function OnTableRowOnClick (event) {
     var target = event.target;
     var remoteId = null;
     var remote_id_input = document.getElementById("remote_id_input");
-    var local_id_input = document.getElementById("local_id_input");
 
     if (target.className === "right") {
         remoteId = target.previousSibling.innerHTML;

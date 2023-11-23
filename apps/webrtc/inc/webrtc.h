@@ -44,6 +44,8 @@ namespace webrtc {
 			std::string type;
 			std::string sdp;
 		};
+		void to_json(json& j, const SessionDescription& e);
+		void from_json(const json& j, SessionDescription& e);
 	}
 
 	namespace callRemote {
@@ -54,6 +56,8 @@ namespace webrtc {
 			std::string userName;
 			sessionDescription::SessionDescription session;
 		};
+		void to_json(json& j, const CallRemote& cr);
+		void from_json(const json& j, CallRemote& cr);
 	}
 }
 
