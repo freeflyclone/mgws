@@ -27,8 +27,13 @@ public:
 	~Session();
 
 	SessionID_t getId() { return m_id; };
+
+	const std::string& UserName() { return m_userName; }
+	const std::string& LocalId() { return m_localId; }
+
 	void SetUserName(const std::string& name) { m_userName = name; }
 	void SetLocalId(const std::string& localId) { m_localId = localId; }
+
 	void Send(const json&);
 	void OnMessage(Message*);
 

@@ -6,6 +6,7 @@
 
 class SessionManager {
 public:
+	typedef std::function<void(Session*)> SessionCallback_fn;
 	typedef std::shared_ptr<Session> SessionPtr;
 	typedef std::map<SessionID_t, SessionPtr> SessionsList;
 
@@ -16,6 +17,7 @@ public:
 	SessionPtr NewSession(Connection&);
 	void DeleteSession(Session*);
 	void UpdateSessions(const uint32_t sessionId, const std::string&, const std::string& );
+	void Iterate(SessionCallback_fn fn);
 
 private:
 	SessionsList m_sessions;

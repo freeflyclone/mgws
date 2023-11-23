@@ -47,3 +47,9 @@ void SessionManager::UpdateSessions(const uint32_t id, const std::string& userNa
 	session->SetUserName(userName);
 	session->SetLocalId(localId);
 }
+
+void SessionManager::Iterate(SessionCallback_fn fn) {
+	for (auto p : m_sessions) {
+		fn(p.second.get());
+	}
+}
