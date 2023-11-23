@@ -6,7 +6,9 @@
 Session::Session(uint32_t id, Connection& c)
 	: m_id(id),
 	m_connection(c),
-	m_peer(this)
+	m_peer(this),
+	m_localId(),
+	m_userName()
 {
 	TRACE("Session(" << m_id << ")");
 

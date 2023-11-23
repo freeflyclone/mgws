@@ -27,6 +27,8 @@ public:
 	~Session();
 
 	SessionID_t getId() { return m_id; };
+	void SetUserName(const std::string& name) { m_userName = name; }
+	void SetLocalId(const std::string& localId) { m_localId = localId; }
 	void Send(const json&);
 	void OnMessage(Message*);
 
@@ -34,6 +36,9 @@ private:
 	SessionID_t m_id;
 	Connection& m_connection;
 	Peer m_peer;
+
+	std::string m_localId;
+	std::string m_userName;
 };
 
 #endif // SESSION_H

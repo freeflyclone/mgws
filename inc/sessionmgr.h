@@ -2,6 +2,7 @@
 #define SESSIONMGR_H
 
 #include "session.h"
+#include "webrtc.h"
 
 class SessionManager {
 public:
@@ -14,6 +15,7 @@ public:
 
 	SessionPtr NewSession(Connection&);
 	void DeleteSession(Session*);
+	void UpdateSessions(const uint32_t sessionId, const std::string&, const std::string& );
 
 private:
 	SessionsList m_sessions;

@@ -3,9 +3,36 @@
 #include "mgws.h"
 #include "peer.h"
 #include "session.h"
+#include "sessionmgr.h"
 #include "webrtc.h"
 
 namespace webrtc {
+	namespace localId {
+		void to_json(json& j, const Event& e) {
+			try {
+				j = json{
+					{"type", e.type},
+					{"sessionID", e.sessionId},
+					{"userName", e.userName},
+					{"localId", e.localId}
+				};
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+		void from_json(const json& j, Event& e) {
+			try {
+				j.at("type").get_to(e.type);
+				j.at("sessionID").get_to(e.sessionId);
+				j.at("userName").get_to(e.userName);
+				j.at("localId").get_to(e.localId);
+			}
+			catch (const json::exception& e) {
+				TRACE(__FUNCTION__ << e.what());
+			}
+		}
+	}
 	namespace sessionsChanged {
 		void to_json(json& j, const Session& s) {
 			try {
@@ -93,8 +120,14 @@ void Peer::OnRegisterSession(json& j)
 
 void Peer::OnLocalIdEvent(json& j)
 {
-	TRACE(__FUNCTION__);
-	webrtc::sessionsChanged::Message msg;
+	TRACE(__FUNCTION__ << j);
 
-	msg.type = "SessionsChanged";
+	auto localIdEvent = j.template get<webrtc::localId::Event>();
+
+	if (localIdEvent.sessionId != m_session->getId()) {
+		TRACE("Oops: received sessionID doesn't match m_id: " << localIdEvent.sessionId << " vs " << m_session->getId());
+		return;
+	}
+
+	g_sessions.UpdateSessions(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
 }

@@ -16,6 +16,9 @@ namespace webrtc {
 			std::string userName;
 			std::string localId;
 		};
+
+		void to_json(json& j, const Event& e);
+		void from_json(const json& j, Event& e);
 	}
 
 	namespace sessionsChanged {

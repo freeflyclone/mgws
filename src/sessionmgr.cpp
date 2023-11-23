@@ -33,3 +33,17 @@ void SessionManager::DeleteSession(Session* session) {
 
 	m_sessions.erase(id);
 }
+
+void SessionManager::UpdateSessions(const uint32_t id, const std::string& userName, const std::string& localId) {
+	auto sessPair = m_sessions.find(id);
+	if (sessPair == m_sessions.end()) {
+		TRACE("Oops: didn't find g_sessions[" << id << "]");
+		return;
+	}
+
+	auto session = (sessPair->second);
+
+	// use "localIdEvent" to update g_sessions[m_id]
+	session->SetUserName(userName);
+	session->SetLocalId(localId);
+}
