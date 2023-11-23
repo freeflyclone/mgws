@@ -60,6 +60,18 @@ SessionManager::SessionPtr SessionManager::GetSessionById(const SessionID_t id)
 	return sessPair->second;
 }
 
+SessionManager::SessionPtr SessionManager::GetSessionByLocalId(const std::string& localId)
+{
+	for (auto sessMgrPair : m_sessions) {
+		auto session = sessMgrPair.second;
+		if (session->LocalId() == localId) {
+			return session;
+		}
+	}
+
+	return nullptr;
+}
+
 void SessionManager::Iterate(SessionCallback_fn fn) {
 	for (auto p : m_sessions) {
 		fn(p.second.get());

@@ -42,7 +42,6 @@ export function MakePeerConnection() {
         console.log(event);
     });
     pc.addEventListener("icecandidate", (event) => {
-        console.log(event.type);
         HandleIceCandidate(event.candidate);
     });
     pc.addEventListener("icecandidateerror", (event) => {
@@ -173,7 +172,7 @@ function HandleIceCandidate(candidate) {
     if (candidate != null) {
         iceCandidates.push(candidate);
 
-        var string = "type: " + candidate.type;
+        var string = "ICE candidate, type: " + candidate.type;
         string += ", proto: " + candidate.protocol;
         string += ", address: " + candidate.address;
         string += ":" + candidate.port;

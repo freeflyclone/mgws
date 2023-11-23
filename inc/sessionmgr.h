@@ -18,6 +18,8 @@ public:
 	void DeleteSession(Session*);
 	void UpdateSession(const uint32_t sessionId, const std::string&, const std::string& );
 	SessionPtr GetSessionById(const SessionID_t);
+	SessionPtr GetSessionByLocalId(const std::string&);
+
 	void Iterate(SessionCallback_fn fn);
 
 	void UpdateSessionsList();

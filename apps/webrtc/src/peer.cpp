@@ -186,20 +186,25 @@ void Peer::OnRegisterSession(json& j)
 
 void Peer::OnLocalIdEvent(json& j)
 {
-	TRACE(__FUNCTION__ << j);
+	try {
+		TRACE(__FUNCTION__ << j);
 
-	auto localIdEvent = j.template get<webrtc::localId::Event>();
+		auto localIdEvent = j.template get<webrtc::localId::Event>();
 
-	if (localIdEvent.sessionId != m_session->getId()) {
-		TRACE("Oops: received sessionID doesn't match m_id: " << localIdEvent.sessionId << " vs " << m_session->getId());
-		return;
+		if (localIdEvent.sessionId != m_session->getId()) {
+			TRACE("Oops: received sessionID doesn't match m_id: " << localIdEvent.sessionId << " vs " << m_session->getId());
+			return;
+		}
+
+		g_sessions.UpdateSession(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
+
+		m_session->Send({ {"type", "LocalIdChanged"} });
+
+		g_sessions.UpdateSessionsList();
 	}
-
-	g_sessions.UpdateSession(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
-
-	m_session->Send({ {"type", "LocalIdChanged"} });
-
-	g_sessions.UpdateSessionsList();
+	catch (std::exception& e) {
+		TRACE("Error while handling " << j["type"] << ": " << e.what());
+	}
 }
 
 void Peer::OnOffer(json& j)
@@ -211,37 +216,32 @@ void Peer::OnOffer(json& j)
 
 void Peer::OnCall(json& j)
 {
-	auto call = j.template get<webrtc::call::Call>();
-	auto targetId = call.targetId;
-	std::string::size_type n;
-	if ((n = targetId.find("_00")) == -1) {
-		TRACE("Didn't find '_00'");
-		return;
+	try {
+		auto call = j.template get<webrtc::call::Call>();
+		auto session = g_sessions.GetSessionByLocalId(call.targetId);
+
+		session->Send(j);
+
+		TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
+		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 	}
-	auto id = std::stod(targetId.substr(n + 3));
-	auto session = g_sessions.GetSessionById(id);
-
-	session->Send(j);
-
-	TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
-	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+	catch (std::exception& e) {
+		TRACE("Error while handling " << j["type"] << ": " << e.what());
+	}
 }
 
 void Peer::OnAnswer(json& j)
 {
-	auto answer = j.template get<webrtc::answer::Answer>();
-	auto targetId = answer.targetId;
+	try {
+		auto answer = j.template get<webrtc::answer::Answer>();
+		auto session = g_sessions.GetSessionByLocalId(answer.targetId);
 
-	std::string::size_type n;
-	if ((n = targetId.find("_00")) == -1) {
-		TRACE("Didn't find '_00'");
-		return;
+		session->Send(j);
+
+		TRACE(__FUNCTION__ << ": " << answer.answeringUserName << ", target ID: " << answer.targetId);
+		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 	}
-	auto id = std::stod(targetId.substr(n + 3));
-	auto session = g_sessions.GetSessionById(id);
-
-	session->Send(j);
-
-	TRACE(__FUNCTION__ << ": " << answer.answeringUserName << ", target ID: " << answer.targetId);
-	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+	catch (std::exception& e) {
+		TRACE("Error while handling " << j["type"] << ": " << e.what());
+	}
 }
