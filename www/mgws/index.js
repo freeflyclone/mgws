@@ -1,12 +1,12 @@
 import { MakeWebSocket } from "./websock.js";
-import { MakePeerConnection, createOffer, callRemote } from "./peer.js";
+import { MakePeerConnection, createOffer, call } from "./peer.js";
 import { InitLocalStream, GetStoredUserName } from "./local.js";
 
 export const appVersion = "0.1";
 
 var outputTextarea = document.getElementById('output');
 var createOfferButton = document.getElementById("createOffer");
-var callRemoteButton = document.getElementById("callRemote");
+var callButton = document.getElementById("call");
 
 function IsMobile() {
     const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
@@ -76,7 +76,7 @@ async function closing() {
 
 async function main() {
     createOfferButton.addEventListener('click', createOffer);
-    callRemoteButton.addEventListener('click', callRemote);
+    callButton.addEventListener('click', call);
 
     print("location: " + window.location);
 

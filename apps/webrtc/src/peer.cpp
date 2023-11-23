@@ -117,17 +117,18 @@ namespace webrtc {
 			}
 		}
 	}
-	namespace callRemote {
-		void to_json(json& j, const CallRemote& cr) {
+	namespace call {
+		void to_json(json& j, const Call& call) {
 		}
 
-		void from_json(const json& j, CallRemote& cr) {
+		void from_json(const json& j, Call& call) {
 			try {
-				j.at("type").get_to(cr.type);
-				j.at("sessionId").get_to(cr.sessionId);
-				j.at("remoteId").get_to(cr.remoteId);
-				j.at("userName").get_to(cr.userName);
-				j.at("session").get_to(cr.session);
+				j.at("type").get_to(call.type);
+				j.at("sessionId").get_to(call.sessionId);
+				j.at("callerUserName").get_to(call.callerUserName);
+				j.at("targetId").get_to(call.targetId);
+				j.at("callingId").get_to(call.callingId);
+				j.at("session").get_to(call.session);
 			}
 			catch (const json::exception& e) {
 				TRACE(__FUNCTION__ << e.what());
@@ -146,7 +147,7 @@ Peer::Peer(Session* sess)
 	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);
 	m_pmd["LocalIdEvent"] = std::bind(&Peer::OnLocalIdEvent, this, _1);
 	m_pmd["offer"] = std::bind(&Peer::OnOffer, this, _1);
-	m_pmd["CallRemote"] = std::bind(&Peer::OnCallRemote, this, _1);
+	m_pmd["Call"] = std::bind(&Peer::OnCall, this, _1);
 }
 
 void Peer::HandleMessage(json& j)
@@ -189,20 +190,20 @@ void Peer::OnOffer(json& j)
 	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 }
 
-void Peer::OnCallRemote(json& j) 
+void Peer::OnCall(json& j)
 {
-	auto callRemote = j.template get<webrtc::callRemote::CallRemote>();
-	auto remoteId = callRemote.remoteId;
+	auto call = j.template get<webrtc::call::Call>();
+	auto targetId = call.targetId;
 	std::string::size_type n;
-	if ((n = remoteId.find("_00")) == -1) {
+	if ((n = targetId.find("_00")) == -1) {
 		TRACE("Didn't find '_00'");
 		return;
 	}
-	auto id = std::stod(remoteId.substr(n + 3));
+	auto id = std::stod(targetId.substr(n + 3));
 	auto session = g_sessions.GetSessionById(id);
 
 	session->Send(j);
 
-	TRACE(__FUNCTION__ << ": " << callRemote.userName << ", remote ID: " << callRemote.remoteId);
+	TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
 	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 }

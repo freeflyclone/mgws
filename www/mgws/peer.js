@@ -16,7 +16,6 @@ var configuration = {
 		},
         */
         { urls: "turn:hq.e-man.tv:19302", username: "turnuser", credential: "turn456"},
-        //{ urls: "turn:hq.local:19303", username: "turnuser", credential: "turn456"},
 	],
 	sdpSemantics: "unified-plan",
 };
@@ -110,16 +109,17 @@ export async function createOffer() {
     }
 }
 
-export function callRemote() {
+export function call() {
     var msg = {
-        type: "CallRemote",
+        type: "Call",
         sessionId: ws.sessionID,
-        remoteId: document.getElementById("remote_id_input").value,
-        userName: document.getElementById("user_name_input").value,
+        callerUserName: document.getElementById("user_name_input").value,
+        targetId: document.getElementById("remote_id_input").value,
+        callingId: document.getElementById("local_id_input").value,
         session: pc.localDescription
     };
 
-    print('Submitting "offer" via CallRemote to ' + msg.remoteId + '...');
+    print('Submitting "offer" via Call to ' + msg.targetId + '...');
 
     ws.send(JSON.stringify(msg));
 }
@@ -180,7 +180,7 @@ function OnTableRowOnClick (event) {
 }
 
 export function HandleSessionsChanged(sessionsList) {
-    console.log(sessionsList);
+    console.log("HandleSessionsChanged: ", sessionsList);
     
     const  td_left = '<td class="left">';
     const td_right = '<td class="right">';
@@ -207,17 +207,19 @@ export function HandleSessionsChanged(sessionsList) {
     });
 }
 
-function HandleCallRemote(callRemote) {
-    print("CallRemote: " + callRemote.remoteId + "\r\nCallRemote: " + callRemote.session.sdp);
+function HandleCall(call) {
+    console.log("HandleCall: ", call);
+    print("Call: from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
 }
+
 export function PeerMessageHandler(msg) {
     switch(msg.type) {
         case "SessionsChanged":
             HandleSessionsChanged(msg);
             break;
 
-        case "CallRemote":
-            HandleCallRemote(msg);
+        case "Call":
+            HandleCall(msg);
             break;
 
         case "LocalIdChanged":

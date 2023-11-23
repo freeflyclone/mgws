@@ -48,16 +48,17 @@ namespace webrtc {
 		void from_json(const json& j, SessionDescription& e);
 	}
 
-	namespace callRemote {
-		struct CallRemote {
+	namespace call {
+		struct Call {
 			std::string type;
 			uint32_t sessionId;
-			std::string remoteId;
-			std::string userName;
+			std::string callerUserName;
+			std::string targetId;
+			std::string callingId;
 			sessionDescription::SessionDescription session;
 		};
-		void to_json(json& j, const CallRemote& cr);
-		void from_json(const json& j, CallRemote& cr);
+		void to_json(json& j, const Call& cr);
+		void from_json(const json& j, Call& cr);
 	}
 }
 
