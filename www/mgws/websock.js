@@ -30,7 +30,6 @@ function OnOpen(event) {
 
 function OnMessage(event) {
     var msg = JSON.parse(event.data);
-    print("OnMessage() type: " + msg.type);
 
     switch(msg.type) {
         case "SessionID":
@@ -44,7 +43,7 @@ function OnMessage(event) {
             break;
     }
 
-    console.log("OnMessage: ", msg);
+    //console.log("OnMessage: ", msg);
 }
 
 function OnClose(event) {
