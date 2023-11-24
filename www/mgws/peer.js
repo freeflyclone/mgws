@@ -102,23 +102,16 @@ export function PeerMessageHandler(msg) {
 export async function createOffer() {
     console.log("createOffer()");
 
-    if (typeof pc === 'undefined' || pc === null) {
-        print('Need RTCPeerConnection, please click "New" to continue');
-        return;
-    }
-
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
         return;
     }
 
-    // Do this AFTER connection is established (maybe?)
-    var tracks = localStream.getTracks();
-    console.log("tracks: ", tracks);
-
-    pc.addTrack(tracks[0], localStream);
-    pc.addTrack(tracks[1], localStream);
-
+    localStream.getTracks().forEach(track => {
+        pc.addTrack(track, localStream);
+        console.log("adding track: ", track);
+    });
+    
     const offerOptions = {
         // New spec states offerToReceiveAudio/Video are of type long (due to
         // having to tell how many "m" lines to generate).
@@ -292,6 +285,9 @@ function OnCallMessage(call) {
 function OnAnswerMessage(answer) {
     console.log("OnAnswerMessage(): ", answer);
     print("OnAnswerMessage(): received answer from: " + answer.answeringId + " by: " + answer.answeringUserName);
+
+	// this was the final piece! 
+    pc.setRemoteDescription(new RTCSessionDescription(answer.session));
 }
 
 function OnIceCandidateMessage(candidate) {
