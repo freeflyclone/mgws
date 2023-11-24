@@ -250,6 +250,13 @@ void Peer::OnAnswer(json& j)
 void Peer::OnIceCandidate(json& j)
 {
 	auto candidate = j["candidate"]["candidate"];
+	auto targetId = j["targetId"];
 
-	TRACE(candidate.dump(4, '+'));
+	auto session = g_sessions.GetSessionByLocalId(targetId);
+
+	TRACE(__FUNCTION__ << "(): id: " << m_session->getId() << ", " << targetId << ", " << candidate.dump(4, '+'));
+
+	if (session) {
+		session->Send(j);
+	}
 }

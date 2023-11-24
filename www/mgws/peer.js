@@ -36,7 +36,7 @@ export function MakePeerConnection() {
     print("RTCPeerConnection succeeded!");
     console.log(pc);
     pc.addEventListener("addstream", (event) => {
-        HandleAddStream(event);
+        OnAddStream(event);
     });
     pc.addEventListener("connectionstatechange", (event) => {
         print('connectionstatechange: ' + pc.connectionState);
@@ -46,50 +46,54 @@ export function MakePeerConnection() {
         console.log(event);
     });
     pc.addEventListener("icecandidate", (event) => {
-        HandleIceCandidate(event.candidate);
+        OnIceCandidate(event.candidate);
     });
     pc.addEventListener("icecandidateerror", (event) => {
-        HandleIceCandidateErrorEvent(event);
+        OnIceCandidateErrorEvent(event);
     });
     pc.addEventListener("iceconnectionstatechange", (event) => {
         print("iceconnectionstatechange");
         console.log(event);
     });
     pc.addEventListener("icegatheringstatechange", (event) => {
-        HandleIceGatheringStateChange(event.target);
+        OnIceGatheringStateChange(event.target);
     });
     pc.addEventListener("negotiationneeded", (event) => {
-        HandleNegotiationNeededEvent(event);
+        OnNegotiationNeededEvent(event);
     });
     pc.addEventListener("removestream", (event) => {
         console.log(event);
     });
     pc.addEventListener("signalingstatechange", (event) => {
-        HandleSignalingStateChangeEvent(event);
+        OnSignalingStateChangeEvent(event);
     });
     pc.addEventListener("track", (event) => {
-        HandleTrackEvent(event);
+        OnTrackEvent(event);
     });
 }
 
 export function PeerMessageHandler(msg) {
     switch(msg.type) {
         case "SessionsChanged":
-            HandleSessionsChanged(msg);
+            OnSessionsChangedMessage(msg);
             break;
 
         case "Call":
-            HandleCall(msg);
+            OnCallMessage(msg);
             break;
 
         case "Answer":
-            HandleAnswer(msg);
+            OnAnswerMessage(msg);
             break;
 
         case "LocalIdChanged":
             break;
 
-        default:
+        case "ICECandidate":
+            OnIceCandidateMessage(msg);
+            break;
+
+            default:
             print("msg.type: " + msg.type);
     }
 }
@@ -167,60 +171,61 @@ export async function answer() {
     ws.send(JSON.stringify(msg));
 }
 
-function HandleIceGatheringStateChange(connection) {
-    console.log("HandleIceGatheringStateChange(): ", connection.iceGatheringState);
+function OnIceGatheringStateChange(connection) {
+    console.log("OnIceGatheringStateChange(): ", connection.iceGatheringState);
     print("IceGatheringState: " + connection.iceGatheringState);
 }
 
-function HandleIceCandidate(candidate) {
+function OnIceCandidate(candidate) {
     if (candidate === null) {
         return;
     }
 
-    console.log("HandleIceCandidate(): ", candidate);
     iceCandidates.push(candidate);
 
-    var string = "ICE candidate, type: " + candidate.type;
-    string += ", proto: " + candidate.protocol;
-    string += ", address: " + candidate.address;
+    var string = "ICE candidate: " + candidate.type;
+    string += ", " + candidate.protocol;
+    string += ", " + candidate.address;
     string += ":" + candidate.port;
     print(string);
+    console.log("OnIceCandidate(): " + string + ", " + candidate.candidate);
 
     var msg = {
         type: "ICECandidate",
         sessionId: ws.sessionID,
         targetId: peer_remote_id,
+        originId: document.getElementById("local_id_input").value,
         candidate: candidate,
     };
     ws.send(JSON.stringify(msg));
 }
 
-function HandleIceCandidateErrorEvent(event) {
+function OnIceCandidateErrorEvent(event) {
     var string = "ICECandidateError - url: " + event.url;
     string += ", " + event.errorCode;
     string += ", " + event.errorText;
     string += ", " + event.hostCandidate;
-    console.log("HandleIceCandidateErrorEvent(): " + string);
+    console.log("OnIceCandidateErrorEvent(): " + string);
 }
 
-function HandleNegotiationNeededEvent(event) {
-    console.log("HandleNegotiationNeededEvent()", event);
+function OnNegotiationNeededEvent(event) {
+    console.log("OnNegotiationNeededEvent()", event);
 }
 
-function HandleSignalingStateChangeEvent(event) {
+function OnSignalingStateChangeEvent(event) {
     var string = "SignalingStateChange: " + event.target.signalingState;
-    console.log("HandleSignalingStateChangeEvent(): " + string);
+    console.log("OnSignalingStateChangeEvent(): " + string);
 }
 
-function HandleAddStream(event) {
+function OnAddStream(event) {
     print("AddStream: " + event.stream.id);
-    console.log("HandleAddStream(): ", event);
+    console.log("OnAddStream(): ", event);
 }
 
-function HandleTrackEvent(event) {
+function OnTrackEvent(event) {
     var track = event.receiver.track;
     print("TrackEvent: " + track.id + ", kind: " + track.kind);
-    console.log("HandleTrackEvent(): ", event);
+    console.log("OnTrackEvent(): ", event);
 }
 function OnTableRowOnClick (event) {
     var target = event.target;
@@ -242,8 +247,8 @@ function OnTableRowOnClick (event) {
     remote_id_input.value = remoteId; 
 }
 
-export function HandleSessionsChanged(sessionsList) {
-    console.log("HandleSessionsChanged: ", sessionsList);
+export function OnSessionsChangedMessage(sessionsList) {
+    console.log("OnSessionsChanged: ", sessionsList);
     
     const  td_left = '<td class="left">';
     const td_right = '<td class="right">';
@@ -270,9 +275,9 @@ export function HandleSessionsChanged(sessionsList) {
     });
 }
 
-function HandleCall(call) {
-    console.log("HandleCall(): ", call);
-    print("HandleCall(): from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
+function OnCallMessage(call) {
+    console.log("OnCallMessage(): ", call);
+    print("OnCallMessage(): from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
 
     document.getElementById("remote_id_input").value = call.callingId;
 
@@ -280,7 +285,24 @@ function HandleCall(call) {
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
 }
 
-function HandleAnswer(answer) {
-    console.log("HandleAnswer(): ", answer);
-    print("HandleAnswer(): received answer from: " + answer.answeringId + " by: " + answer.answeringUserName);
+function OnAnswerMessage(answer) {
+    console.log("OnAnswerMessage(): ", answer);
+    print("OnAnswerMessage(): received answer from: " + answer.answeringId + " by: " + answer.answeringUserName);
+}
+
+function OnIceCandidateMessage(candidate) {
+    // add "candidate.candidate to PeerConnection"
+    print("Remote candidate: from " 
+            + JSON.stringify(candidate.originId) 
+            + " to " 
+            + JSON.stringify(candidate.targetId) 
+            + ", sessionId: " 
+            + candidate.sessionId);
+
+    try {
+        pc.addIceCandidate(candidate.candidate);
+    }
+    catch (e) {
+        console.error('Error adding ice candidate', e);
+    }
 }
