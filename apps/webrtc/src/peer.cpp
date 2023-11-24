@@ -119,6 +119,8 @@ namespace webrtc {
 	}
 	namespace call {
 		void to_json(json& j, const Call& call) {
+			(void)j;
+			(void)call;
 		}
 
 		void from_json(const json& j, Call& call) {
@@ -137,6 +139,8 @@ namespace webrtc {
 	}
 	namespace answer {
 		void to_json(json& j, const Answer& answer) {
+			(void)j;
+			(void)answer;
 		}
 
 		void from_json(const json& j, Answer& answer) {
@@ -182,6 +186,7 @@ void Peer::HandleMessage(json& j)
 
 void Peer::OnRegisterSession(json& j) 
 {
+	(void)j;
 	TRACE(__FUNCTION__);
 }
 

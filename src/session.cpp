@@ -28,7 +28,8 @@ Session::~Session()
 
 void Session::OnMessage(Message* msg) {
 	try {
-		m_peer.HandleMessage(json::parse(std::string(msg->data.ptr, msg->data.len)));
+		json j = json::parse(std::string(msg->data.ptr, msg->data.len));
+		m_peer.HandleMessage(j);
 	}
 	catch (std::exception& e) {
 		TRACE("OnMessage exception: " << e.what());
