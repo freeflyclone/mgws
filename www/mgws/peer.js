@@ -39,8 +39,7 @@ export function MakePeerConnection() {
         OnAddStream(event);
     });
     pc.addEventListener("connectionstatechange", (event) => {
-        print('connectionstatechange: ' + pc.connectionState);
-        console.log(event);
+        OnConnectionStateChange(event);
     });
     pc.addEventListener("datachannel", (event) => {
         console.log(event);
@@ -169,6 +168,10 @@ export async function answer() {
 
     peer_remote_id = msg.targetId;
     ws.send(JSON.stringify(msg));
+}
+
+function OnConnectionStateChange(cs) {
+    print("OnConnectionStateChange(): " + cs.target.connectionState);
 }
 
 function OnIceGatheringStateChange(connection) {
