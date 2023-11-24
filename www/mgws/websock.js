@@ -35,15 +35,12 @@ function OnMessage(event) {
         case "SessionID":
             ws.sessionID = msg.id;
             UpdateLocalId();
-            print("Got SessionID: " + msg.id)
             break;
 
         default:
             PeerMessageHandler(msg);
             break;
     }
-
-    //console.log("OnMessage: ", msg);
 }
 
 function OnClose(event) {

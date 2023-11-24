@@ -36,19 +36,14 @@ export function MakePeerConnection() {
     pc = window.peerConnection = new RTCPeerConnection(configuration);
     if (pc === null) {
         print("RTCPeerConnection() failed");
+        return;
     }
-
-    print("RTCPeerConnection succeeded!");
 
     pc.addEventListener("connectionstatechange",    (event) => { OnConnectionStateChange(event); });
     pc.addEventListener("datachannel",              (event) => { console.log(event); });
     pc.addEventListener("icecandidate",             (event) => { OnIceCandidateEvent(event.candidate); });
     pc.addEventListener("icecandidateerror",        (event) => { OnIceCandidateErrorEvent(event); });
-    pc.addEventListener("iceconnectionstatechange", (event) => { OnIceConnectionStateChangeEvent(event); });
-    pc.addEventListener("icegatheringstatechange",  (event) => { OnIceGatheringStateChangeEvent(event.target); });
-    pc.addEventListener("negotiationneeded",        (event) => { OnNegotiationNeededEvent(event); });
     pc.addEventListener("removestream",             (event) => { console.log(event); });
-    pc.addEventListener("signalingstatechange",     (event) => { OnSignalingStateChangeEvent(event); });
     pc.addEventListener("track",                    (event) => { OnTrackEvent(event); });
 }
 
@@ -87,7 +82,7 @@ export async function createOffer() {
     };
 
     try {
-        print('Creating "offer"...');
+        print('Calling "' + peer_remote_id + '"');
         var offer = await pc.createOffer(offerOptions);
         await pc.setLocalDescription(offer);
 
@@ -110,7 +105,7 @@ export async function createOffer() {
 }
 
 export async function answer() {
-    print('Answering: ' + document.getElementById("remote_id_input").value);
+    print('Answering "' + peer_remote_id + '"');
 
     localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
@@ -143,11 +138,6 @@ function OnConnectionStateChange(cs) {
     console.log("OnConnectionStateChange", cs);
 }
 
-function OnIceGatheringStateChangeEvent(connection) {
-    console.log("OnIceGatheringStateChange(): ", connection.iceGatheringState);
-    print("IceGatheringState: " + connection.iceGatheringState);
-}
-
 function OnIceCandidateEvent(candidate) {
     if (candidate === null) {
         return;
@@ -172,29 +162,12 @@ function OnIceCandidateErrorEvent(event) {
     print(string);
 }
 
-function OnIceConnectionStateChangeEvent(event) {
-    var string = "IceConnectionState: " + event.target.iceConnectionState; 
-    print(string);
-    console.log(string);
-}
-function OnNegotiationNeededEvent(event) {
-    console.log("OnNegotiationNeededEvent()", event);
-}
-
-function OnSignalingStateChangeEvent(event) {
-    var string = "SignalingState: " + event.target.signalingState;
-    print(string);
-    console.log(string);
-}
-
 function OnTrackEvent(event) {
     var track = event.receiver.track;
 
     console.log("OnTrackEvent(): ", event);
     if (remote_video.srcObject !== event.streams[0]) {
         remote_video.srcObject = event.streams[0];
-        print("Received remote stream");
-        console.log("Received remote stream");
     }
 }
 
@@ -242,10 +215,11 @@ export function OnSessionsChangedMessage(sessionsList) {
 }
 
 function OnCallMessage(call) {
-    console.log("OnCallMessage(): ", call);
-    print("OnCallMessage(): from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
-
     SetPeerRemoteId(call.callingId);
+    var string = 'Incoming call from: "' + peer_remote_id + '"';
+
+    console.log(string);
+    print(string);
 
     // call.session is RTCSessionDescription AKA "offer" from the caller
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
