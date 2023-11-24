@@ -167,6 +167,7 @@ Peer::Peer(Session* sess)
 	m_pmd["offer"] = std::bind(&Peer::OnOffer, this, _1);
 	m_pmd["Call"] = std::bind(&Peer::OnCall, this, _1);
 	m_pmd["Answer"] = std::bind(&Peer::OnAnswer, this, _1);
+	m_pmd["ICECandidate"] = std::bind(&Peer::OnIceCandidate, this, _1);
 }
 
 void Peer::HandleMessage(json& j)
@@ -244,4 +245,11 @@ void Peer::OnAnswer(json& j)
 	catch (std::exception& e) {
 		TRACE("Error while handling " << j["type"] << ": " << e.what());
 	}
+}
+
+void Peer::OnIceCandidate(json& j)
+{
+	auto candidate = j["candidate"]["candidate"];
+
+	TRACE(candidate.dump(4, '+'));
 }

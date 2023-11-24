@@ -1,5 +1,5 @@
 import { MakeWebSocket } from "./websock.js";
-import { MakePeerConnection, createOffer, call, answer } from "./peer.js";
+import { MakePeerConnection, createOffer, answer } from "./peer.js";
 import { InitLocalStream, GetStoredUserName } from "./local.js";
 
 export const appVersion = "0.1";
@@ -77,7 +77,6 @@ async function closing() {
 
 async function main() {
     createOfferButton.addEventListener('click', createOffer);
-    callButton.addEventListener('click', call);
     answerButton.addEventListener('click', answer);
 
     print("location: " + window.location);

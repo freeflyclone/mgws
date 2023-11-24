@@ -21,6 +21,7 @@ public:
 	void OnOffer(json&);
 	void OnCall(json&);
 	void OnAnswer(json&);
+	void OnIceCandidate(json&);
 
 private:
 	Session* m_session;

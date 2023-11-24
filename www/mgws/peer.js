@@ -19,7 +19,11 @@ var configuration = {
 	],
 	sdpSemantics: "unified-plan",
 };
+
 export var pc;
+
+// callee / caller depending on if WE are the caller or the answerer
+export var peer_remote_id;
 
 export function MakePeerConnection() {
     console.log("MakePeerConnection");
@@ -107,7 +111,7 @@ export async function createOffer() {
     var tracks = localStream.getTracks();
     console.log("tracks: ", tracks);
 
-    //pc.addTrack(tracks[0], localStream);
+    pc.addTrack(tracks[0], localStream);
     pc.addTrack(tracks[1], localStream);
 
     const offerOptions = {
@@ -124,28 +128,27 @@ export async function createOffer() {
         print('Creating "offer"...');
         var offer = await pc.createOffer(offerOptions);
         await pc.setLocalDescription(offer);
+
+        var msg = {
+            type: "Call",
+            sessionId: ws.sessionID,
+            callerUserName: document.getElementById("user_name_input").value,
+            targetId: document.getElementById("remote_id_input").value,
+            callingId: document.getElementById("local_id_input").value,
+            session: pc.localDescription
+        };
+    
+        print('Submitting "offer" via Call to ' + msg.targetId + '...');
+    
+        peer_remote_id = msg.targetId;
+        ws.send(JSON.stringify(msg));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
     }
 }
 
-export function call() {
-    var msg = {
-        type: "Call",
-        sessionId: ws.sessionID,
-        callerUserName: document.getElementById("user_name_input").value,
-        targetId: document.getElementById("remote_id_input").value,
-        callingId: document.getElementById("local_id_input").value,
-        session: pc.localDescription
-    };
-
-    print('Submitting "offer" via Call to ' + msg.targetId + '...');
-
-    ws.send(JSON.stringify(msg));
-}
-
 export async function answer() {
-    print('Answering call from')
+    print('Answering: ' + document.getElementById("remote_id_input").value);
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
@@ -160,6 +163,7 @@ export async function answer() {
 
     console.log("answer(): ", answer);
 
+    peer_remote_id = msg.targetId;
     ws.send(JSON.stringify(msg));
 }
 
@@ -169,16 +173,26 @@ function HandleIceGatheringStateChange(connection) {
 }
 
 function HandleIceCandidate(candidate) {
-    if (candidate != null) {
-        iceCandidates.push(candidate);
-
-        var string = "ICE candidate, type: " + candidate.type;
-        string += ", proto: " + candidate.protocol;
-        string += ", address: " + candidate.address;
-        string += ":" + candidate.port;
-        print(string);
+    if (candidate === null) {
         return;
     }
+
+    console.log("HandleIceCandidate(): ", candidate);
+    iceCandidates.push(candidate);
+
+    var string = "ICE candidate, type: " + candidate.type;
+    string += ", proto: " + candidate.protocol;
+    string += ", address: " + candidate.address;
+    string += ":" + candidate.port;
+    print(string);
+
+    var msg = {
+        type: "ICECandidate",
+        sessionId: ws.sessionID,
+        targetId: peer_remote_id,
+        candidate: candidate,
+    };
+    ws.send(JSON.stringify(msg));
 }
 
 function HandleIceCandidateErrorEvent(event) {
@@ -257,10 +271,16 @@ export function HandleSessionsChanged(sessionsList) {
 }
 
 function HandleCall(call) {
-    console.log("HandleCall: ", call);
-    print("Call: from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
+    console.log("HandleCall(): ", call);
+    print("HandleCall(): from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
 
     document.getElementById("remote_id_input").value = call.callingId;
 
+    // call.session is RTCSessionDescription AKA "offer" from the caller
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
+}
+
+function HandleAnswer(answer) {
+    console.log("HandleAnswer(): ", answer);
+    print("HandleAnswer(): received answer from: " + answer.answeringId + " by: " + answer.answeringUserName);
 }
