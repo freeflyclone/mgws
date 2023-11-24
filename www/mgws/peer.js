@@ -25,6 +25,9 @@ export var pc;
 // callee / caller depending on if WE are the caller or the answerer
 export var peer_remote_id;
 
+export var remote_video = document.getElementById("remote_video");
+export var remoteStream = null;
+
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
     var logString = 'SetPeerRemoteId("' + peer_remote_id + '")'; 
@@ -116,8 +119,8 @@ export async function createOffer() {
         // New spec states offerToReceiveAudio/Video are of type long (due to
         // having to tell how many "m" lines to generate).
         // http://w3c.github.io/webrtc-pc/#idl-def-RTCOfferAnswerOptions.
-        offerToReceiveAudio: 0,
-        offerToReceiveVideo: 0,
+        offerToReceiveAudio: 1,
+        offerToReceiveVideo: 1,
         iceRestart: 0,
         voiceActivityDetection: 0
     };
@@ -147,6 +150,12 @@ export async function createOffer() {
 
 export async function answer() {
     print('Answering: ' + document.getElementById("remote_id_input").value);
+
+    localStream.getTracks().forEach(track => {
+        pc.addTrack(track, localStream);
+        console.log("adding track: ", track);
+    });
+    
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
@@ -167,8 +176,10 @@ export async function answer() {
 }
 
 function OnConnectionStateChange(cs) {
-    print("OnConnectionStateChange(): " + cs.target.connectionState);
-    console.log("OnConnectionStateChange", cs.target);
+    var state = cs.target.connectionState;
+
+    print("OnConnectionStateChange(): " + state);
+    console.log("OnConnectionStateChange", cs);
 }
 
 function OnIceGatheringStateChange(connection) {
@@ -226,7 +237,13 @@ function OnSignalingStateChangeEvent(event) {
 function OnTrackEvent(event) {
     var track = event.receiver.track;
     print("TrackEvent: " + track.id + ", kind: " + track.kind);
+
     console.log("OnTrackEvent(): ", event);
+    if (remote_video.srcObject !== event.streams[0]) {
+        remote_video.srcObject = event.streams[0];
+        print("Received remote stream");
+        console.log("Received remote stream");
+    }
 }
 
 function OnTableRowOnClick (event) {
