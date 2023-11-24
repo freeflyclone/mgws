@@ -25,6 +25,12 @@ export var pc;
 // callee / caller depending on if WE are the caller or the answerer
 export var peer_remote_id;
 
+function SetPeerRemoteId(id) {
+    peer_remote_id = id;
+    var logString = 'SetPeerRemoteId("' + peer_remote_id + '")'; 
+    print(logString);
+    console.log(logString);
+}
 export function MakePeerConnection() {
     console.log("MakePeerConnection");
 
@@ -35,9 +41,6 @@ export function MakePeerConnection() {
 
     print("RTCPeerConnection succeeded!");
     console.log(pc);
-    pc.addEventListener("addstream", (event) => {
-        OnAddStream(event);
-    });
     pc.addEventListener("connectionstatechange", (event) => {
         OnConnectionStateChange(event);
     });
@@ -51,8 +54,7 @@ export function MakePeerConnection() {
         OnIceCandidateErrorEvent(event);
     });
     pc.addEventListener("iceconnectionstatechange", (event) => {
-        print("iceconnectionstatechange");
-        console.log(event);
+        OnIceConnectionStateChangeEvent(event);
     });
     pc.addEventListener("icegatheringstatechange", (event) => {
         OnIceGatheringStateChange(event.target);
@@ -143,7 +145,7 @@ export async function createOffer() {
     
         print('Submitting "offer" via Call to ' + msg.targetId + '...');
     
-        peer_remote_id = msg.targetId;
+        SetPeerRemoteId(msg.targetId);
         ws.send(JSON.stringify(msg));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -154,6 +156,8 @@ export async function answer() {
     print('Answering: ' + document.getElementById("remote_id_input").value);
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
+
+    document.getElementById("remote_id_input").value = peer_remote_id;
 
     var msg = {
         type: "Answer",
@@ -166,12 +170,12 @@ export async function answer() {
 
     console.log("answer(): ", answer);
 
-    peer_remote_id = msg.targetId;
     ws.send(JSON.stringify(msg));
 }
 
 function OnConnectionStateChange(cs) {
     print("OnConnectionStateChange(): " + cs.target.connectionState);
+    console.log("OnConnectionStateChange", cs.target);
 }
 
 function OnIceGatheringStateChange(connection) {
@@ -211,18 +215,19 @@ function OnIceCandidateErrorEvent(event) {
     console.log("OnIceCandidateErrorEvent(): " + string);
 }
 
+function OnIceConnectionStateChangeEvent(event) {
+    var string = "OnIceConnectionStateChange(): " + event.target.iceConnectionState; 
+    print(string);
+    console.log(string);
+}
 function OnNegotiationNeededEvent(event) {
     console.log("OnNegotiationNeededEvent()", event);
 }
 
 function OnSignalingStateChangeEvent(event) {
-    var string = "SignalingStateChange: " + event.target.signalingState;
-    console.log("OnSignalingStateChangeEvent(): " + string);
-}
-
-function OnAddStream(event) {
-    print("AddStream: " + event.stream.id);
-    console.log("OnAddStream(): ", event);
+    var string = "OnSignalingStateChange(): " + event.target.signalingState;
+    print(string);
+    console.log(string);
 }
 
 function OnTrackEvent(event) {
@@ -230,6 +235,7 @@ function OnTrackEvent(event) {
     print("TrackEvent: " + track.id + ", kind: " + track.kind);
     console.log("OnTrackEvent(): ", event);
 }
+
 function OnTableRowOnClick (event) {
     var target = event.target;
     var remoteId = null;
@@ -240,11 +246,6 @@ function OnTableRowOnClick (event) {
     }
     else {
         remoteId = target.innerHTML;
-    }
-
-    // disallow our localId for now (removing from list should be easy)
-    if (remoteId === local_id_input.value) {
-        return;
     }
 
     remote_id_input.value = remoteId; 
@@ -282,7 +283,7 @@ function OnCallMessage(call) {
     console.log("OnCallMessage(): ", call);
     print("OnCallMessage(): from: " + call.callingId + " to: " + call.targetId + " by: " + call.callerUserName);
 
-    document.getElementById("remote_id_input").value = call.callingId;
+    SetPeerRemoteId(call.callingId);
 
     // call.session is RTCSessionDescription AKA "offer" from the caller
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
