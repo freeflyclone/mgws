@@ -2,7 +2,6 @@ import { print } from "./index.js";
 import { ws } from "./websock.js";
 import { localStream, user_name_input, local_id_input } from "./local.js";
 
-var iceCandidates = [];
 var configuration = {
 	iceServers: [
         /*
@@ -30,75 +29,37 @@ export var remoteStream = null;
 
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
-    var logString = 'SetPeerRemoteId("' + peer_remote_id + '")'; 
-    print(logString);
-    console.log(logString);
 }
+
 export function MakePeerConnection() {
     console.log("MakePeerConnection");
-
     pc = window.peerConnection = new RTCPeerConnection(configuration);
     if (pc === null) {
         print("RTCPeerConnection() failed");
     }
 
     print("RTCPeerConnection succeeded!");
-    console.log(pc);
-    pc.addEventListener("connectionstatechange", (event) => {
-        OnConnectionStateChange(event);
-    });
-    pc.addEventListener("datachannel", (event) => {
-        console.log(event);
-    });
-    pc.addEventListener("icecandidate", (event) => {
-        OnIceCandidate(event.candidate);
-    });
-    pc.addEventListener("icecandidateerror", (event) => {
-        OnIceCandidateErrorEvent(event);
-    });
-    pc.addEventListener("iceconnectionstatechange", (event) => {
-        OnIceConnectionStateChangeEvent(event);
-    });
-    pc.addEventListener("icegatheringstatechange", (event) => {
-        OnIceGatheringStateChange(event.target);
-    });
-    pc.addEventListener("negotiationneeded", (event) => {
-        OnNegotiationNeededEvent(event);
-    });
-    pc.addEventListener("removestream", (event) => {
-        console.log(event);
-    });
-    pc.addEventListener("signalingstatechange", (event) => {
-        OnSignalingStateChangeEvent(event);
-    });
-    pc.addEventListener("track", (event) => {
-        OnTrackEvent(event);
-    });
+
+    pc.addEventListener("connectionstatechange",    (event) => { OnConnectionStateChange(event); });
+    pc.addEventListener("datachannel",              (event) => { console.log(event); });
+    pc.addEventListener("icecandidate",             (event) => { OnIceCandidateEvent(event.candidate); });
+    pc.addEventListener("icecandidateerror",        (event) => { OnIceCandidateErrorEvent(event); });
+    pc.addEventListener("iceconnectionstatechange", (event) => { OnIceConnectionStateChangeEvent(event); });
+    pc.addEventListener("icegatheringstatechange",  (event) => { OnIceGatheringStateChangeEvent(event.target); });
+    pc.addEventListener("negotiationneeded",        (event) => { OnNegotiationNeededEvent(event); });
+    pc.addEventListener("removestream",             (event) => { console.log(event); });
+    pc.addEventListener("signalingstatechange",     (event) => { OnSignalingStateChangeEvent(event); });
+    pc.addEventListener("track",                    (event) => { OnTrackEvent(event); });
 }
 
 export function PeerMessageHandler(msg) {
     switch(msg.type) {
-        case "SessionsChanged":
-            OnSessionsChangedMessage(msg);
-            break;
-
-        case "Call":
-            OnCallMessage(msg);
-            break;
-
-        case "Answer":
-            OnAnswerMessage(msg);
-            break;
-
-        case "LocalIdChanged":
-            break;
-
-        case "ICECandidate":
-            OnIceCandidateMessage(msg);
-            break;
-
-            default:
-            print("msg.type: " + msg.type);
+        case "SessionsChanged": OnSessionsChangedMessage(msg); break;
+        case "Call":            OnCallMessage(msg); break;
+        case "Answer":          OnAnswerMessage(msg); break;
+        case "LocalIdChanged":  break;
+        case "ICECandidate":    OnIceCandidateMessage(msg); break;
+        default:                print("msg.type: " + msg.type);
     }
 }
 
@@ -182,24 +143,15 @@ function OnConnectionStateChange(cs) {
     console.log("OnConnectionStateChange", cs);
 }
 
-function OnIceGatheringStateChange(connection) {
+function OnIceGatheringStateChangeEvent(connection) {
     console.log("OnIceGatheringStateChange(): ", connection.iceGatheringState);
     print("IceGatheringState: " + connection.iceGatheringState);
 }
 
-function OnIceCandidate(candidate) {
+function OnIceCandidateEvent(candidate) {
     if (candidate === null) {
         return;
     }
-
-    iceCandidates.push(candidate);
-
-    var string = "ICE candidate: " + candidate.type;
-    string += ", " + candidate.protocol;
-    string += ", " + candidate.address;
-    string += ":" + candidate.port;
-    print(string);
-    console.log("OnIceCandidate(): " + string + ", " + candidate.candidate);
 
     var msg = {
         type: "ICECandidate",
@@ -216,11 +168,12 @@ function OnIceCandidateErrorEvent(event) {
     string += ", " + event.errorCode;
     string += ", " + event.errorText;
     string += ", " + event.hostCandidate;
-    console.log("OnIceCandidateErrorEvent(): " + string);
+    console.log(string);
+    print(string);
 }
 
 function OnIceConnectionStateChangeEvent(event) {
-    var string = "OnIceConnectionStateChange(): " + event.target.iceConnectionState; 
+    var string = "IceConnectionState: " + event.target.iceConnectionState; 
     print(string);
     console.log(string);
 }
@@ -229,14 +182,13 @@ function OnNegotiationNeededEvent(event) {
 }
 
 function OnSignalingStateChangeEvent(event) {
-    var string = "OnSignalingStateChange(): " + event.target.signalingState;
+    var string = "SignalingState: " + event.target.signalingState;
     print(string);
     console.log(string);
 }
 
 function OnTrackEvent(event) {
     var track = event.receiver.track;
-    print("TrackEvent: " + track.id + ", kind: " + track.kind);
 
     console.log("OnTrackEvent(): ", event);
     if (remote_video.srcObject !== event.streams[0]) {
@@ -246,7 +198,7 @@ function OnTrackEvent(event) {
     }
 }
 
-function OnTableRowOnClick (event) {
+function OnTableRowOnClickEvent(event) {
     var target = event.target;
     var remoteId = null;
     var remote_id_input = document.getElementById("remote_id_input");
@@ -284,7 +236,7 @@ export function OnSessionsChangedMessage(sessionsList) {
 
         tr.className = "highlightable";
         tr.innerHTML = td_left + session.localId + td_end + td_right + session.userName + td_end;
-        tr.addEventListener("click", OnTableRowOnClick);
+        tr.addEventListener("click", OnTableRowOnClickEvent);
         remotes_table.appendChild(tr);
     });
 }
@@ -308,14 +260,6 @@ function OnAnswerMessage(answer) {
 }
 
 function OnIceCandidateMessage(candidate) {
-    // add "candidate.candidate to PeerConnection"
-    print("Remote candidate: from " 
-            + JSON.stringify(candidate.originId) 
-            + " to " 
-            + JSON.stringify(candidate.targetId) 
-            + ", sessionId: " 
-            + candidate.sessionId);
-
     try {
         pc.addIceCandidate(candidate.candidate);
     }

@@ -27,8 +27,7 @@ export function UpdateLocalIdPlaceholder(value) {
 export function UpdateLocalId() {
     localStorage.setItem("userName", user_name_input.value);
 
-    var local_id = user_name_input.value + "_00" + ws.sessionID;
-    local_id_input.value = local_id;
+    local_id_input.value = user_name_input.value + "_" + ws.sessionID;
 
     if (ws.sessionID != null) {
         SendLocalIdEvent();
@@ -54,7 +53,6 @@ export function InitLocalStream() {
 
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
-            console.log('Got MediaStream:', stream);
             localStream = stream;
             local_video.srcObject = localStream;
             local_video.play();
