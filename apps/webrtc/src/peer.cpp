@@ -203,9 +203,7 @@ void Peer::OnLocalIdEvent(json& j)
 		}
 
 		g_sessions.UpdateSession(m_session->getId(), localIdEvent.userName, localIdEvent.localId);
-
 		m_session->Send({ {"type", "LocalIdChanged"} });
-
 		g_sessions.UpdateSessionsList();
 	}
 	catch (std::exception& e) {
@@ -226,10 +224,11 @@ void Peer::OnCall(json& j)
 		auto call = j.template get<webrtc::call::Call>();
 		auto session = g_sessions.GetSessionByLocalId(call.targetId);
 
-		session->Send(j);
-
 		TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
 		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+
+		if (session)
+			session->Send(j);
 	}
 	catch (std::exception& e) {
 		TRACE("Error while handling " << j["type"] << ": " << e.what());
@@ -242,10 +241,11 @@ void Peer::OnAnswer(json& j)
 		auto answer = j.template get<webrtc::answer::Answer>();
 		auto session = g_sessions.GetSessionByLocalId(answer.targetId);
 
-		session->Send(j);
-
 		TRACE(__FUNCTION__ << ": " << answer.answeringUserName << ", target ID: " << answer.targetId);
 		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+
+		if (session)
+			session->Send(j);
 	}
 	catch (std::exception& e) {
 		TRACE("Error while handling " << j["type"] << ": " << e.what());
