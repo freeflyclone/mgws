@@ -23,12 +23,17 @@ export var pc;
 
 // callee / caller depending on if WE are the caller or the answerer
 export var peer_remote_id;
+export var peer_remote_call_string;
 
 export var remote_video = document.getElementById("remote_video");
 export var remoteStream = null;
 
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
+}
+
+function SetPeerRemoteCallString(s) {
+    peer_remote_call_string = s;
 }
 
 export function MakePeerConnection() {
@@ -68,7 +73,6 @@ export async function createOffer() {
 
     localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
-        console.log("adding track: ", track);
     });
     
     const offerOptions = {
@@ -81,8 +85,9 @@ export async function createOffer() {
         voiceActivityDetection: 0
     };
 
+    SetPeerRemoteId(document.getElementById('remote_id_input').value);
+
     try {
-        print('Calling "' + peer_remote_id + '"');
         var offer = await pc.createOffer(offerOptions);
         await pc.setLocalDescription(offer);
 
@@ -95,9 +100,11 @@ export async function createOffer() {
             session: pc.localDescription
         };
     
-        print('Submitting "offer" via Call to ' + msg.targetId + '...');
-    
-        SetPeerRemoteId(msg.targetId);
+        SetPeerRemoteCallString(msg.callerUserName + '@' + msg.targetId);
+
+        var callingString = 'calling ' + peer_remote_call_string;
+        print(callingString);
+
         ws.send(JSON.stringify(msg));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -105,11 +112,8 @@ export async function createOffer() {
 }
 
 export async function answer() {
-    print('Answering "' + peer_remote_id + '"');
-
     localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
-        console.log("adding track: ", track);
     });
     
     const answer = await pc.createAnswer();
@@ -134,8 +138,9 @@ export async function answer() {
 function OnConnectionStateChange(cs) {
     var state = cs.target.connectionState;
 
-    print("OnConnectionStateChange(): " + state);
-    console.log("OnConnectionStateChange", cs);
+    if (state === "connected") {
+        print(state + ' to ' + peer_remote_call_string);
+    }
 }
 
 function OnIceCandidateEvent(candidate) {
@@ -163,9 +168,6 @@ function OnIceCandidateErrorEvent(event) {
 }
 
 function OnTrackEvent(event) {
-    var track = event.receiver.track;
-
-    console.log("OnTrackEvent(): ", event);
     if (remote_video.srcObject !== event.streams[0]) {
         remote_video.srcObject = event.streams[0];
     }
@@ -187,8 +189,6 @@ function OnTableRowOnClickEvent(event) {
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
-    console.log("OnSessionsChanged: ", sessionsList);
-    
     const  td_left = '<td class="left">';
     const td_right = '<td class="right">';
     const   td_end = '</td>';
@@ -216,19 +216,18 @@ export function OnSessionsChangedMessage(sessionsList) {
 
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
-    var string = 'Incoming call from: "' + peer_remote_id + '"';
+    SetPeerRemoteCallString(call.callerUserName + '@' + call.callingId);
 
-    console.log(string);
-    print(string);
+    var incomingString = 'Incoming call from ' + peer_remote_call_string;
+
+    console.log(incomingString);
+    print(incomingString);
 
     // call.session is RTCSessionDescription AKA "offer" from the caller
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
 }
 
 function OnAnswerMessage(answer) {
-    console.log("OnAnswerMessage(): ", answer);
-    print("OnAnswerMessage(): received answer from: " + answer.answeringId + " by: " + answer.answeringUserName);
-
 	// this was the final piece! 
     pc.setRemoteDescription(new RTCSessionDescription(answer.session));
 }
