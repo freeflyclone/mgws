@@ -11,9 +11,8 @@ import {
     OnSessionsChangedMessage 
 } from "./ui.js";
 
-callButton.addEventListener('click', createOffer);
-answerButton.addEventListener('click', answer);
-
+callButton.addEventListener('click', Call);
+answerButton.addEventListener('click', Answer);
 
 var configuration = {
 	iceServers: [
@@ -47,10 +46,8 @@ export function MakePeerConnection() {
     }
 
     pc.addEventListener("connectionstatechange",    (event) => { OnConnectionStateChange(event); });
-    pc.addEventListener("datachannel",              (event) => { console.log(event); });
     pc.addEventListener("icecandidate",             (event) => { OnIceCandidateEvent(event.candidate); });
     pc.addEventListener("icecandidateerror",        (event) => { OnIceCandidateErrorEvent(event); });
-    pc.addEventListener("removestream",             (event) => { console.log(event); });
     pc.addEventListener("track",                    (event) => { OnTrackEvent(event); });
 }
 
@@ -65,7 +62,7 @@ export function PeerMessageHandler(msg) {
     }
 }
 
-export async function createOffer() {
+export async function Call() {
     SetPeerRemoteId(remote_id_input.value);
 
     var callingString = 'calling ' + peer_remote_id;
@@ -81,15 +78,7 @@ export async function createOffer() {
         pc.addTrack(track, localStream);
     });
     
-    const offerOptions = {
-        // New spec states offerToReceiveAudio/Video are of type long (due to
-        // having to tell how many "m" lines to generate).
-        // http://w3c.github.io/webrtc-pc/#idl-def-RTCOfferAnswerOptions.
-        offerToReceiveAudio: 1,
-        offerToReceiveVideo: 1,
-        iceRestart: 0,
-        voiceActivityDetection: 0
-    };
+    const offerOptions = { offerToReceiveAudio: 1, offerToReceiveVideo: 1 };
 
     try {
         var offer = await pc.createOffer(offerOptions);
@@ -110,7 +99,7 @@ export async function createOffer() {
     }
 }
 
-export async function answer() {
+export async function Answer() {
     localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
     });
