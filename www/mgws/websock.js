@@ -1,4 +1,4 @@
-import { appVersion, print } from "./index.js";
+import { appVersion } from "./index.js";
 import { UpdateLocalId } from "./local.js";
 import { PeerMessageHandler } from "./peer.js";
 

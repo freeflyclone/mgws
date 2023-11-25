@@ -1,4 +1,3 @@
-import { print } from "./index.js";
 import { ws } from "./websock.js";
 import { localStream } from "./local.js";
 import {
@@ -6,8 +5,15 @@ import {
     local_id_input,
     remote_id_input, 
     remote_video, 
+    callButton,
+    answerButton,
+    print,
     OnSessionsChangedMessage 
 } from "./ui.js";
+
+callButton.addEventListener('click', createOffer);
+answerButton.addEventListener('click', answer);
+
 
 var configuration = {
 	iceServers: [

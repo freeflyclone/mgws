@@ -1,10 +1,7 @@
 import { ws } from "./websock.js";
+import { user_name_input, local_id_input } from "./ui.js";
 
 export var localStream = null;
-
-export var user_name_input = document.getElementById("user_name_input");
-export var local_id_input = document.getElementById("local_id_input");
-var local_video = document.getElementById("local_video");
 
 user_name_input.addEventListener('change', UpdateLocalId);
 
