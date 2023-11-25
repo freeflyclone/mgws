@@ -193,8 +193,6 @@ void Peer::OnRegisterSession(json& j)
 void Peer::OnLocalIdEvent(json& j)
 {
 	try {
-		TRACE(__FUNCTION__ << j);
-
 		auto localIdEvent = j.template get<webrtc::localId::Event>();
 
 		if (localIdEvent.sessionId != m_session->getId()) {
@@ -207,15 +205,13 @@ void Peer::OnLocalIdEvent(json& j)
 		g_sessions.UpdateSessionsList();
 	}
 	catch (std::exception& e) {
-		TRACE("Error while handling " << j["type"] << ": " << e.what());
+		TRACE("Error while handling LocalIdEvent: " << e.what());
 	}
 }
 
 void Peer::OnOffer(json& j)
 {
-	TRACE(__FUNCTION__ << ": " << j["type"]);
-
-	//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
+	(void)j;
 }
 
 void Peer::OnCall(json& j)
@@ -225,13 +221,12 @@ void Peer::OnCall(json& j)
 		auto session = g_sessions.GetSessionByLocalId(call.targetId);
 
 		TRACE(__FUNCTION__ << ": " << call.callerUserName << ", target ID: " << call.targetId);
-		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 
 		if (session)
 			session->Send(j);
 	}
 	catch (std::exception& e) {
-		TRACE("Error while handling " << j["type"] << ": " << e.what());
+		TRACE("Error while handling Call: " << e.what());
 	}
 }
 
@@ -242,26 +237,26 @@ void Peer::OnAnswer(json& j)
 		auto session = g_sessions.GetSessionByLocalId(answer.targetId);
 
 		TRACE(__FUNCTION__ << ": " << answer.answeringUserName << ", target ID: " << answer.targetId);
-		//TRACE(__FUNCTION__ << ": " << j.dump(4, '-'));
 
 		if (session)
 			session->Send(j);
 	}
 	catch (std::exception& e) {
-		TRACE("Error while handling " << j["type"] << ": " << e.what());
+		TRACE("Error while handling Answer: " << e.what());
 	}
 }
 
 void Peer::OnIceCandidate(json& j)
 {
-	auto candidate = j["candidate"]["candidate"];
-	auto targetId = j["targetId"];
+	try {
+		auto targetId = j["targetId"];
+		auto session = g_sessions.GetSessionByLocalId(targetId);
 
-	auto session = g_sessions.GetSessionByLocalId(targetId);
-
-	TRACE(__FUNCTION__ << "(): id: " << m_session->getId() << ", " << targetId << ", " << candidate.dump(4, '+'));
-
-	if (session) {
-		session->Send(j);
+		if (session) {
+			session->Send(j);
+		}
+	}
+	catch (std::exception& e) {
+		TRACE("Error while handling ICECandidate: " << e.what());
 	}
 }
