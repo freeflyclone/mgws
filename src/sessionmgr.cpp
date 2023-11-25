@@ -45,7 +45,7 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 
 	auto session = (sessPair->second);
 
-	// use "localIdEvent" to update g_sessions[m_id]
+	// used by Peer::OnLocalIdEvent() to update g_sessions[m_id]
 	session->SetUserName(userName);
 	session->SetLocalId(localId);
 }
@@ -79,11 +79,15 @@ void SessionManager::Iterate(SessionCallback_fn fn) {
 }
 
 void SessionManager::UpdateSessionsList() {
-	webrtc::sessionsChanged::Message msg;
-	msg.type = "SessionsChanged";
+	json msg = { { "type", "SessionsChanged"} };
 
 	g_sessions.Iterate([&](Session* session) {
-		msg.sessions.push_back({ session->getId(), session->UserName(), session->LocalId() });
+		json s = {
+			{"sessionID", session->getId() },
+			{"userName", session->UserName() },
+			{"localId", session->LocalId() }
+		};
+		msg["sessions"].push_back(s);
 	});
 
 	g_sessions.Iterate([&](Session* session) {

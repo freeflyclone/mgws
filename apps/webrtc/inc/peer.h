@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 
+using namespace nlohmann::literals;
 using json = nlohmann::json;
 
 class Session;
@@ -18,7 +19,6 @@ public:
 
 	void OnRegisterSession(json&);
 	void OnLocalIdEvent(json&);
-	void OnOffer(json&);
 	void OnCall(json&);
 	void OnAnswer(json&);
 	void OnIceCandidate(json&);

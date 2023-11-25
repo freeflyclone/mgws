@@ -23,7 +23,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(uint32_t it, Connection& c);
+	explicit Session(SessionID_t, Connection&);
 	~Session();
 
 	SessionID_t getId() { return m_id; };

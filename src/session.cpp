@@ -3,7 +3,7 @@
 #include "mgws.h"
 #include "session.h"
 
-Session::Session(uint32_t id, Connection& c)
+Session::Session(SessionID_t id, Connection& c)
 	: m_id(id),
 	m_connection(c),
 	m_peer(this),

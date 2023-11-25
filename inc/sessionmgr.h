@@ -2,7 +2,6 @@
 #define SESSIONMGR_H
 
 #include "session.h"
-#include "webrtc.h"
 
 class SessionManager {
 public:

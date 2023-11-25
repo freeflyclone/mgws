@@ -18,13 +18,14 @@ set(HEADER_FILES
 	${PROJECT_SOURCE_DIR}/inc/session.h
 	${PROJECT_SOURCE_DIR}/inc/sessionmgr.h
 	${INCS}/peer.h
-	${INCS}/webrtc.h
 )
 
 set(WWW_FILES
 	${PROJECT_SOURCE_DIR}/www/mgws/index.html
 	${PROJECT_SOURCE_DIR}/www/mgws/index.js
 	${PROJECT_SOURCE_DIR}/www/mgws/local.js
+	${PROJECT_SOURCE_DIR}/www/mgws/theme.js
+	${PROJECT_SOURCE_DIR}/www/mgws/ui.js
 	${PROJECT_SOURCE_DIR}/www/mgws/websock.js
 	${PROJECT_SOURCE_DIR}/www/mgws/peer.js
 	${PROJECT_SOURCE_DIR}/www/mgws/flex.css
