@@ -12,10 +12,9 @@
 	<div class="wrapper">
 		<div class="ui_workspace" style="visibility: visible">
 			<div class="ui_header_left" style="flex:2">
-				<h1>Left Side Bar</h1>
-				<span class="ui_span">User Name:</span> <input class="ui_input" id="user_name_input" type="text" placeholder="Name is required..."/><br>
-				<span class="ui_span">Local Ident:</span> <input class="ui_input" id="local_id_input" type="text" placeholder="Connecting..."/></br>
-				<span class="ui_span">Remote ID: </span> <input class="ui_input" id="remote_id_input" type="text" placeholder="Choose below..."/><br>
+				<span class="ui_span">User </span> <input class="ui_input" id="user_name_input" type="text" placeholder="Name is required..."/><br>
+				<span class="ui_span">Local </span> <input class="ui_input" id="local_id_input" type="text" placeholder="Connecting..."/></br>
+				<span class="ui_span">Rmt </span> <input class="ui_input" id="remote_id_input" type="text" placeholder="Choose below..."/><br>
 				<hr/>
 				<div id="remotes-list">
 					<div id="remotes-table-wrapper">
@@ -28,9 +27,9 @@
 				<button id="answer">Answer</button>
 			</div>
 			<div class="ui_workspace_center">
-				<video id="local_video" autoPlay="true" playsInline="true"></video>
+				<video id="local_video" autoPlay="true" playsInline="true"></video><br>
 				<video id="remote_video" autoPlay="true" playsInline="true"></video><br>
-				<textarea id="output"></textarea>
+				<textarea id="output" style="visibility: hidden"></textarea>
 			</div>
 		</div>
 	</div>

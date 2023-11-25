@@ -21,6 +21,9 @@ textarea {
     font: 14pt arial;
 }
 
+.ui_input {
+    width: 80px;
+}
 .ui_header {
     display: flex;
     background-color: darkgray;
@@ -87,8 +90,8 @@ textarea {
 
 #remote_video {
     background-color: black;
-    width: 160px;
-    height: 120px;
+    width: 640px;
+    height: 480px;
 }
 #remotes-list {
     border-radius: 11pt;
