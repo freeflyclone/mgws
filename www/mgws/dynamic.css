@@ -1,0 +1,16 @@
+#local_video {
+    background-color: black;
+    width: 160px;
+    height: 120px;
+}
+
+#remote_video {
+    background-color: black;
+    width: 640px;
+    height: 480px;
+}
+
+textarea {
+    height: 600px;
+    width: 100%;
+}
