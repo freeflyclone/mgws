@@ -6,38 +6,20 @@ export var local_id_input  = document.getElementById("local_id_input");
 export var outputTextarea  = document.getElementById('output');
 export var callButton      = document.getElementById("call");
 export var answerButton    = document.getElementById("answer");
+export var remotes_table   = document.getElementById("remotes-table");
 
 export function print(what) {
     outputTextarea.value += what + "\r\n";
 }
 
 function OnTableRowOnClickEvent(event) {
-    var target = event.target;
-    var remoteId = null;
-    var remote_id_input = document.getElementById("remote_id_input");
-
-    if (target.className === "right") {
-        remoteId = target.previousSibling.innerHTML;
-    }
-    else {
-        remoteId = target.innerHTML;
-    }
-
-    remote_id_input.value = remoteId; 
+    remote_id_input.value = event.target.innerHTML; 
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
-    const  td_left = '<td class="left">';
-    const td_right = '<td class="right">';
-    const   td_end = '</td>';
+    // Rebuild table from scratch every time it changes...
+    remotes_table.innerHTML = '<tr><th>Remote ID:</th></tr><tr><td>----------</td></tr>'
 
-    // Overwrite "remotes-table" with new header (start from scratch)
-    var remotes_table = document.getElementById("remotes-table");
-    remotes_table.innerHTML = 
-        '<tr><th class="left">Remote ID:</th><th class="right">User Name</th></tr>' + 
-        '<tr class="short">' + td_left + '---------- ' + td_end + td_right + ' ----------' + td_end + '</tr>';
-
-    // Add 2 column HTML table row as child element of "remotes_table" for each session...
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical
         if (session.localId === local_id_input.value)
@@ -46,8 +28,10 @@ export function OnSessionsChangedMessage(sessionsList) {
         var tr = document.createElement('tr');
 
         tr.className = "highlightable";
-        tr.innerHTML = td_left + session.localId + td_end + td_right + session.userName + td_end;
+        tr.innerHTML = "<td>" + session.localId + "</td>";
+
         tr.addEventListener("click", OnTableRowOnClickEvent);
+
         remotes_table.appendChild(tr);
     });
 }
