@@ -1,3 +1,7 @@
+export var remote_video    = document.getElementById("remote_video");
+export var remote_id_input = document.getElementById('remote_id_input');
+export var user_name_input = document.getElementById("user_name_input");
+export var local_id_input  = document.getElementById("local_id_input");
 
 function OnTableRowOnClickEvent(event) {
     var target = event.target;
