@@ -1,27 +1,70 @@
 html {
     background: darkslategray;
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.smallVideo {
+    position: absolute;
+    overflow: hidden;
+    top: 0px;
+    z-index: 0;
+    margin: 4px;
+}
+
+#local_video {
+    background-color: darkblue;
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    object-position: 50% 50%;
+    overflow: hidden;
+}
+
+.bigVideo {
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    color: white;
+    overflow: hidden;
+}
+#remote_video {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .wrapper {
-    display: grid;
-    grid-template-columns: 160px 200px 160px 100%;
-    gap: 4px;
-  }
-
-.smallVideo {
-    width: 160px;
-    height: 120px;
-    grid-column: 1 / 1;
-    grid-row: 1;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    background: darkgray;
+    padding: 0px;
+    z-index: 2;
+    top: 120px;
+    left: 0px;
+    width: max-content;
+    height: max-content;
 }
 
 .controls {
-    width: 200px;
-    grid-column: 2;
-    grid-row: 1 / 1;
+    width: 180px;
+    height: 110px;
     background: rgba(160, 0, 16, 1);
     color: white;
     text-align: right;
+    border-radius: 10px;
+    margin: 4px 2px 4px 4px;
+    font: 9pt arial;
 }
 
 .controlButtons {
@@ -30,18 +73,18 @@ html {
 }
 
 .remotes {
-    grid-column: 3;
-    grid-row: 1 / 1;
-    background: rgba(16, 16, 127, 1);
+    width: 120px;
+    height: 110px;
+    background: rgba(0, 16, 127, 1);
     color: white;
-    text-align: center;
+    text-align: right;
+    border-radius: 10px;
+    margin: 4px 4px 4px 2px;
 }
 
-.bigVideo {
-    width: 640px;
-    height: 480px;
-    grid-column: 1 / 3;
-    grid-row: 2;
+#remotes_table {
+    margin: 0 auto;
+    font: 9pt arial;
 }
 
 .printWindow {
@@ -52,29 +95,17 @@ html {
     visibility: hidden;
 }
 
-.ui_input {
-    width: 120px;
-}
-
-#local_video {
-    background-color: darkblue;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-#remote_video {
-    background-color: black;
-    width: 100%;
-    height: 100%;
-}
-
-#remotes_table {
-    margin: 0 auto;
-}
-
 #output {
     width: 100%;
     height: 100%;
 }
+
+.ui_span {
+    font: 9pt arial;
+}
+.ui_input {
+    width: 100px;
+    font: 9pt arial;
+}
+
 

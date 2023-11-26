@@ -3,19 +3,20 @@
 <head>
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta charset="utf-8">
-<!--
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
--->
+	<meta name="viewport" content="initial-scale=1" />
 	<title>MGWS</title>
     <link rel="stylesheet" href="dynamic.css">
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body>
+	<div class="bigVideo">
+		<video id="remote_video" autoPlay="true" playsInline="true"></video><br>
+		<p>test</p>
+	</div>
+	<div class="smallVideo">
+		<video id="local_video" autoPlay="true" playsInline="true" muted="muted"></video><br>
+	</div>
 	<div class="wrapper">
-		<div class="smallVideo">
-			<video id="local_video" autoPlay="true" playsInline="true" muted="muted"></video><br>
-		</div>
-
 		<div class="controls">
 			<span class="ui_span">User </span> <input class="ui_input" id="user_name_input" type="text" placeholder="Name is required..."/><br>
 			<span class="ui_span">Local </span> <input class="ui_input" id="local_id_input" type="text" placeholder="Connecting..."/></br>
@@ -31,15 +32,12 @@
 		<div class="remotes">
 			<table id="remotes_table"></table>
 		</div>
-
-		<div class="bigVideo">
-			<video id="remote_video" autoPlay="true" playsInline="true"></video><br>
-		</div>
-
+<!--
 		<div class="printWindow">
 			<textarea id="output"></textarea>
 		</div>
-</div>
+-->
+	</div>
 	<script type="module" src="index.js"></script>
 </body>
 </html> 

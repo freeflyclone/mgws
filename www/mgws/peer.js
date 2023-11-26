@@ -11,9 +11,6 @@ import {
     OnSessionsChangedMessage 
 } from "./ui.js";
 
-callButton.addEventListener('click', Call);
-answerButton.addEventListener('click', Answer);
-
 var configuration = {
 	iceServers: [
         /*
@@ -39,6 +36,9 @@ function SetPeerRemoteId(id) {
 }
 
 export function MakePeerConnection() {
+    callButton.addEventListener('click', Call);
+    answerButton.addEventListener('click', Answer);
+    
     pc = window.peerConnection = new RTCPeerConnection(configuration);
     if (pc === null) {
         print("RTCPeerConnection() failed");
