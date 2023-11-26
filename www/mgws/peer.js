@@ -7,6 +7,7 @@ import {
     remote_video, 
     callButton,
     answerButton,
+    hangupButton,
     print,
     OnSessionsChangedMessage 
 } from "./ui.js";
@@ -38,6 +39,7 @@ function SetPeerRemoteId(id) {
 export function MakePeerConnection() {
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
+    hangupButton.addEventListener('click', Hangup);
     
     pc = window.peerConnection = new RTCPeerConnection(configuration);
     if (pc === null) {
@@ -120,6 +122,15 @@ export async function Answer() {
     ws.send(JSON.stringify(msg));
 }
 
+async function Hangup() {
+    if (pc) {
+      pc.close();
+      pc = null;
+    }
+    localStream.getTracks().forEach(track => track.stop());
+    localStream = null;
+  };
+  
 function OnConnectionStateChange(cs) {
     var state = cs.target.connectionState;
 
