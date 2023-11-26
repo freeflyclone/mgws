@@ -40,6 +40,11 @@ export function SendLocalIdEvent() {
     ws.send(JSON.stringify(localIdEvent));
 }
 
+export function StopLocalStream() {
+    localStream.getTracks().forEach(track => {
+        track.stop();
+    });
+}
 export function InitLocalStream() {
     const constraints = {
         'video': true,

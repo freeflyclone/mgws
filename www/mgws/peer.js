@@ -1,5 +1,5 @@
 import { ws } from "./websock.js";
-import { localStream } from "./local.js";
+import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
     user_name_input,
     local_id_input,
@@ -76,9 +76,14 @@ export async function Call() {
         return;
     }
 
-    localStream.getTracks().forEach(track => {
-        pc.addTrack(track, localStream);
-    });
+    try {
+        localStream.getTracks().forEach(track => {
+            pc.addTrack(track, localStream);
+        });
+    }
+    catch (err) {
+        console.log("caught error: " + err);
+    }
     
     const offerOptions = { offerToReceiveAudio: 1, offerToReceiveVideo: 1 };
 
@@ -123,13 +128,14 @@ export async function Answer() {
 }
 
 async function Hangup() {
+    StopLocalStream();
     if (pc) {
-      pc.close();
-      pc = null;
+        pc.close();
+        pc = null;
+        MakePeerConnection();
+        InitLocalStream();
     }
-    localStream.getTracks().forEach(track => track.stop());
-    localStream = null;
-  };
+};
   
 function OnConnectionStateChange(cs) {
     var state = cs.target.connectionState;
