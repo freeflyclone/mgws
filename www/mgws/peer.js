@@ -7,6 +7,7 @@ import {
     remote_video, 
     callButton,
     answerButton,
+    hangupButton,
     print,
     OnSessionsChangedMessage 
 } from "./ui.js";
