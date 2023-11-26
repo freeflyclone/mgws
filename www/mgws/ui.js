@@ -6,6 +6,7 @@ export var local_id_input  = document.getElementById("local_id_input");
 export var outputTextarea  = document.getElementById('output');
 export var callButton      = document.getElementById("call");
 export var answerButton    = document.getElementById("answer");
+export var hangupButton    = document.getElementById("hangup");
 export var remotes_table   = document.getElementById("remotes_table");
 
 export function print(what) {
