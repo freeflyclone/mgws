@@ -47,13 +47,14 @@ body {
     display: flex;
     flex-direction: row;
     position: relative;
-    background: darkgray;
+    background: rgba(32, 32, 32, 0.5);
     padding: 0px;
     z-index: 2;
     top: 120px;
     left: 0px;
     width: max-content;
     height: max-content;
+    border-radius: 10px;
 }
 
 .controls {
@@ -64,7 +65,8 @@ body {
     text-align: right;
     border-radius: 10px;
     margin: 4px 2px 4px 4px;
-    font: 9pt arial;
+    font: 8pt arial;
+    padding: 10px 10px 0px 0px;
 }
 
 .controlButtons {
@@ -80,11 +82,12 @@ body {
     text-align: right;
     border-radius: 10px;
     margin: 4px 4px 4px 2px;
+    padding: 10px 10px 0px 0px;
 }
 
 #remotes_table {
     margin: 0 auto;
-    font: 9pt arial;
+    font: 8pt arial;
 }
 
 .printWindow {
@@ -101,11 +104,11 @@ body {
 }
 
 .ui_span {
-    font: 9pt arial;
+    font: 8pt arial;
 }
 .ui_input {
     width: 100px;
-    font: 9pt arial;
+    font: 8pt arial;
 }
 
 
