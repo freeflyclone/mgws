@@ -5,8 +5,6 @@
 #include "peer.h"
 #include "session.h"
 #include "sessionmgr.h"
-#include "webrtc.h"
-
 
 Peer::Peer(Session* sess) :	m_session(sess)
 {
