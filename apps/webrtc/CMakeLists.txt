@@ -7,6 +7,7 @@ set(SOURCE_FILES
 	${PROJECT_SOURCE_DIR}/src/mongoose.cpp
 	${PROJECT_SOURCE_DIR}/src/session.cpp
 	${PROJECT_SOURCE_DIR}/src/sessionmgr.cpp
+	${PROJECT_SOURCE_DIR}/src/sqlite3.c
 	${SRCS}/peer.cpp
 	${SRCS}/main.cpp
 )
@@ -17,6 +18,8 @@ set(HEADER_FILES
 	${PROJECT_SOURCE_DIR}/inc/mgws.h
 	${PROJECT_SOURCE_DIR}/inc/session.h
 	${PROJECT_SOURCE_DIR}/inc/sessionmgr.h
+	${PROJECT_SOURCE_DIR}/inc/sqlite3.h
+	${PROJECT_SOURCE_DIR}/inc/sqlite3ext.h
 	${INCS}/peer.h
 )
 
