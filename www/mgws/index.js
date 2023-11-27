@@ -1,6 +1,7 @@
 import { MakeWebSocket } from "./websock.js";
 import { MakePeerConnection } from "./peer.js";
 import { InitLocalStream, GetStoredUserName } from "./local.js";
+import { AudioInit, audioMgr } from "./audio.js";
 import { print } from "./ui.js";
 
 export const appVersion = "0.1";
@@ -31,6 +32,7 @@ async function main() {
 
     ShowSupportedConstraints();
 
+    AudioInit();
     InitLocalStream();
     GetStoredUserName();
     MakeWebSocket();

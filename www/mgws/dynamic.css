@@ -1,0 +1,117 @@
+html {
+    background: darkslategray;
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+.smallVideo {
+    position: absolute;
+    overflow: hidden;
+    top: 0px;
+    z-index: 0;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+#local_video {
+    background-color: darkblue;
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    object-position: 50% 50%;
+    overflow: hidden;
+}
+
+.bigVideo {
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    color: white;
+    overflow: hidden;
+}
+#remote_video {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    background: rgba(32, 32, 32, 0.5);
+    padding: 0px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(100%, 100%);
+    width: max-content;
+    height: max-content;
+    border-radius: 10px;
+}
+
+.controls {
+    width: 180px;
+    height: 104px;
+    background: rgba(160, 0, 16, 0.75);
+    color: white;
+    text-align: right;
+    border-radius: 10px;
+    margin: 4px 2px 4px 4px;
+    font: 8pt arial;
+    padding: 6px 6px 0px 6px;
+}
+
+.controlButtons {
+    width: 100%;
+    text-align: center;
+}
+
+.remotes {
+    width: 100px;
+    height: 104px;
+    background: rgba(0, 16, 127, 0.75);
+    color: white;
+    text-align: right;
+    border-radius: 10px;
+    margin: 4px 4px 4px 2px;
+    padding: 6px 2px 0px 2px;
+}
+
+#remotes_table {
+    margin: 0 auto;
+    font: 8pt arial;
+}
+
+.printWindow {
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
+    width: 640px;
+    height: 100px;
+    z-index: 4;
+}
+
+#output {
+    width: 100%;
+    height: 100%;
+}
+
+.ui_span {
+    font: 8pt arial;
+}
+.ui_input {
+    width: 100px;
+    font: 8pt arial;
+}
+
+

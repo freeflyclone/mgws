@@ -6,10 +6,13 @@ export var local_id_input  = document.getElementById("local_id_input");
 export var outputTextarea  = document.getElementById('output');
 export var callButton      = document.getElementById("call");
 export var answerButton    = document.getElementById("answer");
-export var remotes_table   = document.getElementById("remotes-table");
+export var hangupButton    = document.getElementById("hangup");
+export var remotes_table   = document.getElementById("remotes_table");
 
 export function print(what) {
-    outputTextarea.value += what + "\r\n";
+    if (outputTextarea) {
+        outputTextarea.value += what + "\r\n";
+    }
 }
 
 function OnTableRowOnClickEvent(event) {
@@ -18,7 +21,7 @@ function OnTableRowOnClickEvent(event) {
 
 export function OnSessionsChangedMessage(sessionsList) {
     // Rebuild table from scratch every time it changes...
-    remotes_table.innerHTML = '<tr><th>Remote ID:</th></tr><tr><td>----------</td></tr>'
+    remotes_table.innerHTML = '<tr><th>Remotes:</th></tr><tr><hr></tr>'
 
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical

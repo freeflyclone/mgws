@@ -17,11 +17,12 @@ public:
 
 	void HandleMessage(json&);
 
+	// Usually we just want to send msgs to another user
+	void OnForwardMessage(json&);
+
 	void OnRegisterSession(json&);
+
 	void OnLocalIdEvent(json&);
-	void OnCall(json&);
-	void OnAnswer(json&);
-	void OnIceCandidate(json&);
 
 private:
 	Session* m_session;

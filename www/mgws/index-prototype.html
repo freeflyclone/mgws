@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>MGWS</title>
+    <link rel="stylesheet" href="flex.css">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+	<div class="wrapper">
+		<div class="ui_workspace" style="visibility: visible">
+			<div class="ui_header_left" style="flex:2">
+				<span class="ui_span">User </span> <input class="ui_input" id="user_name_input" type="text" placeholder="Name is required..."/><br>
+				<span class="ui_span">Local </span> <input class="ui_input" id="local_id_input" type="text" placeholder="Connecting..."/></br>
+				<span class="ui_span">Rmt </span> <input class="ui_input" id="remote_id_input" type="text" placeholder="Choose below..."/><br>
+				<hr/>
+				<div id="remotes-list">
+					<div id="remotes-table-wrapper">
+						<table id="remotes-table">
+						</table>
+					</div>
+				</div>
+				<hr/>
+				<button id="call">Call</button>
+				<button id="answer">Answer</button>
+			</div>
+			<div class="ui_workspace_center">
+				<video id="local_video" autoPlay="true" playsInline="true" muted="muted"></video><br>
+				<video id="remote_video" autoPlay="true" playsInline="true"></video><br>
+				<textarea id="output" style="visibility: hidden"></textarea>
+			</div>
+		</div>
+	</div>
+	<script type="module" src="index.js"></script>
+</body>
+</html> 

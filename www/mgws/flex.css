@@ -1,3 +1,15 @@
+#local_video {
+    background-color: darkblue;
+    width: 160px;
+    height: 120px;
+}
+
+#remote_video {
+    background-color: darkcyan;
+    width: 640px;
+    height: 480px;
+}
+
 textarea {
     height: 600px;
     width: 100%;
@@ -21,6 +33,9 @@ textarea {
     font: 14pt arial;
 }
 
+.ui_input {
+    width: 80px;
+}
 .ui_header {
     display: flex;
     background-color: darkgray;
@@ -78,17 +93,6 @@ textarea {
 
 .ui_span {
     font: 14px arial;
-}
-#local_video {
-    background-color: black;
-    width: 160px;
-    height: 120px;
-}
-
-#remote_video {
-    background-color: black;
-    width: 160px;
-    height: 120px;
 }
 #remotes-list {
     border-radius: 11pt;

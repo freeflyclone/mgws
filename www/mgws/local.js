@@ -3,8 +3,6 @@ import { user_name_input, local_id_input } from "./ui.js";
 
 export var localStream = null;
 
-user_name_input.addEventListener('change', UpdateLocalId);
-
 export function GetStoredUserName() {
     console.log("GetStoredUserName()");
 
@@ -42,11 +40,18 @@ export function SendLocalIdEvent() {
     ws.send(JSON.stringify(localIdEvent));
 }
 
+export function StopLocalStream() {
+    localStream.getTracks().forEach(track => {
+        track.stop();
+    });
+}
 export function InitLocalStream() {
     const constraints = {
         'video': true,
         'audio': true
     }
+
+    user_name_input.addEventListener('change', UpdateLocalId);
 
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {

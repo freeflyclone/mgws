@@ -5,20 +5,17 @@
 #include "peer.h"
 #include "session.h"
 #include "sessionmgr.h"
-#include "webrtc.h"
 
-
-Peer::Peer(Session* sess)
-  : 
-	m_session(sess)
+Peer::Peer(Session* sess) :	m_session(sess)
 {
 	using namespace std::placeholders;
 
 	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);
 	m_pmd["LocalIdEvent"]    = std::bind(&Peer::OnLocalIdEvent,    this, _1);
-	m_pmd["Call"]            = std::bind(&Peer::OnCall,            this, _1);
-	m_pmd["Answer"]          = std::bind(&Peer::OnAnswer,          this, _1);
-	m_pmd["ICECandidate"]    = std::bind(&Peer::OnIceCandidate,    this, _1);
+	m_pmd["ICECandidate"]    = std::bind(&Peer::OnForwardMessage,  this, _1);
+	m_pmd["Call"]            = std::bind(&Peer::OnForwardMessage,  this, _1);
+	m_pmd["Answer"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
+	m_pmd["Hangup"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
 }
 
 void Peer::HandleMessage(json& j)
@@ -59,51 +56,21 @@ void Peer::OnLocalIdEvent(json& j)
 	}
 }
 
-void Peer::OnCall(json& j)
+void Peer::OnForwardMessage(json& j)
 {
 	try {
-		auto userName = j["callerUserName"];
-		auto targetId = j["targetId"];
-		auto session = g_sessions.GetSessionByLocalId(targetId);
-
-		TRACE(__FUNCTION__ << ": " << userName << ", target ID: " << targetId);
+		auto session = g_sessions.GetSessionByLocalId(j["targetId"]);
 
 		if (session)
 			session->Send(j);
+
+		// don't log this
+		if (j["type"] == "ICECandidate")
+			return;
+
+		TRACE(__FUNCTION__ << "type: " << j["type"] << ", from: " << j["userName"] << ", to: " << j["targetId"]);
 	}
 	catch (std::exception& e) {
-		TRACE("Error while handling Call: " << e.what());
-	}
-}
-
-void Peer::OnAnswer(json& j)
-{
-	try {
-		auto userName = j["answeringUserName"];
-		auto targetId = j["targetId"];
-		auto session = g_sessions.GetSessionByLocalId(targetId);
-
-		TRACE(__FUNCTION__ << ": " << userName << ", target ID: " << targetId);
-
-		if (session)
-			session->Send(j);
-	}
-	catch (std::exception& e) {
-		TRACE("Error while handling Answer: " << e.what());
-	}
-}
-
-void Peer::OnIceCandidate(json& j)
-{
-	try {
-		auto targetId = j["targetId"];
-		auto session = g_sessions.GetSessionByLocalId(targetId);
-
-		if (session) {
-			session->Send(j);
-		}
-	}
-	catch (std::exception& e) {
-		TRACE("Error while handling ICECandidate: " << e.what());
+		TRACE("Error while handling ForwardMessage: " << e.what());
 	}
 }
