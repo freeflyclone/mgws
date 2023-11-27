@@ -1,4 +1,4 @@
-let audioMgr = null;
+export var audioMgr = null;
 
 class AudioManager {
     constructor() {
@@ -61,20 +61,29 @@ class AudioManager {
         request.send();
     }
 
-    play(idx) {
+    play(idx, repeat, abort_fn) {
         let self = this;
         const src = self.audioContext.createBufferSource();
 
         src.buffer = self.soundBuffers[idx];
         src.connect(self.nodes.masterGain);
         src.onended = (event) => {
-            event.target.disconnect();
+            if (repeat === 0) {
+                event.target.disconnect();
+            }
+
+            if (abort_fn()) {
+                event.target.disconnect();
+            }
+            else {
+                this.play(idx, repeat, abort_fn);
+            }
         };
         src.start();
     }
 }
 
-function AudioInit() {
+export function AudioInit() {
     audioMgr = new AudioManager();
 
     addEventListener("focus", (event) => {
@@ -88,6 +97,6 @@ function AudioInit() {
     });
 
     // load order is preserved
-    audioMgr.load("/audio/ShotSound.mp3");
-    audioMgr.load("/audio/HitFiasco2.mp3");    
+    audioMgr.load("sounds/remote-ring.m4a");
+    audioMgr.load("sounds/telephone-ring.m4a");
 }

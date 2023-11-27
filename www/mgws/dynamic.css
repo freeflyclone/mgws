@@ -40,19 +40,20 @@ body {
     background-color: black;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     overflow: hidden;
 }
 
 .wrapper {
     display: flex;
     flex-direction: row;
-    position: relative;
+    position: absolute;
     background: rgba(32, 32, 32, 0.5);
     padding: 0px;
     z-index: 2;
-    top: 130px;
-    left: 0px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(100%, 100%);
     width: max-content;
     height: max-content;
     border-radius: 10px;
@@ -60,14 +61,14 @@ body {
 
 .controls {
     width: 180px;
-    height: 110px;
-    background: rgba(160, 0, 16, 1);
+    height: 104px;
+    background: rgba(160, 0, 16, 0.75);
     color: white;
     text-align: right;
     border-radius: 10px;
     margin: 4px 2px 4px 4px;
     font: 8pt arial;
-    padding: 10px 10px 0px 0px;
+    padding: 6px 6px 0px 6px;
 }
 
 .controlButtons {
@@ -77,13 +78,13 @@ body {
 
 .remotes {
     width: 100px;
-    height: 110px;
-    background: rgba(0, 16, 127, 1);
+    height: 104px;
+    background: rgba(0, 16, 127, 0.75);
     color: white;
     text-align: right;
     border-radius: 10px;
     margin: 4px 4px 4px 2px;
-    padding: 10px 10px 0px 0px;
+    padding: 6px 2px 0px 2px;
 }
 
 #remotes_table {
@@ -92,11 +93,12 @@ body {
 }
 
 .printWindow {
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
     width: 640px;
     height: 100px;
-    grid-column: 1 / 5;
-    grid-row: 3;
-    visibility: hidden;
+    z-index: 4;
 }
 
 #output {

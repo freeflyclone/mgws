@@ -1,4 +1,5 @@
 import { ws } from "./websock.js";
+import { audioMgr }from "./audio.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
     user_name_input,
@@ -13,34 +14,42 @@ import {
 } from "./ui.js";
 
 var configuration = {
-	iceServers: [
-        /*
-		{ urls: "stun:stun.l.google.com:19302" },
-		{
-			urls: [
-				"turn:us-0.turn.peerjs.com:3478",
-			],
-			username: "peerjs",
-			credential: "peerjsp",
-		},
-        */
-        { urls: "turn:hq.e-man.tv:19302", username: "turnuser", credential: "turn456"},
-	],
+	iceServers: [ { urls: "turn:hq.e-man.tv:19302", username: "turnuser", credential: "turn456" } ],
 	sdpSemantics: "unified-plan",
 };
 
 export var pc;
-export var peer_remote_id;
 
+export var peer_remote_id;
+var callInProgress;
+var callCompleted;
+
+function ResetCallState() {
+    peer_remote_id = false;
+    callInProgress = false;
+    callCompleted = false;
+    audioMgr.unmute();
+}
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
+}
+
+function SetCallInProgress(enable) {
+    callInProgress = enable;
+    callButton.enable = !enable;
+}
+
+function SetCallCompleted() {
+    callCompleted = true;
+    audioMgr.mute();
 }
 
 export function MakePeerConnection() {
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
     hangupButton.addEventListener('click', Hangup);
-    
+    ResetCallState();
+
     pc = window.peerConnection = new RTCPeerConnection(configuration);
     if (pc === null) {
         print("RTCPeerConnection() failed");
@@ -58,6 +67,7 @@ export function PeerMessageHandler(msg) {
         case "SessionsChanged": OnSessionsChangedMessage(msg); break;
         case "Call":            OnCallMessage(msg); break;
         case "Answer":          OnAnswerMessage(msg); break;
+        case "Hangup":          OnHangupMessage(msg)); break;
         case "LocalIdChanged":  break;
         case "ICECandidate":    OnIceCandidateMessage(msg); break;
         default:                print("msg.type: " + msg.type);
@@ -65,11 +75,15 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
+    if (callInProgress) {
+        console.log("call in progress, aborting new call");
+        return;
+    }
     SetPeerRemoteId(remote_id_input.value);
+    SetCallInProgress(true);
 
     var callingString = 'calling ' + peer_remote_id;
     print(callingString);
-
 
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
@@ -101,6 +115,8 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
+        audioMgr.play(0, 1, function() { return callCompleted; });
+
     } catch (e) {
         print(`Failed to create offer: ${e}`);
     }
@@ -128,12 +144,17 @@ export async function Answer() {
 }
 
 async function Hangup() {
+    if (!callInProgress) {
+        console.log("Hangup(): no call in progress");
+    }
+
     StopLocalStream();
     if (pc) {
         pc.close();
         pc = null;
         MakePeerConnection();
         InitLocalStream();
+        ResetCallState();
     }
 };
   
@@ -142,6 +163,7 @@ function OnConnectionStateChange(cs) {
 
     if (state === "connected") {
         print(state + ' to ' + peer_remote_id);
+        SetCallCompleted();
     }
 }
 
@@ -175,6 +197,15 @@ function OnTrackEvent(event) {
     }
 }
 
+function OnIceCandidateMessage(candidate) {
+    try {
+        pc.addIceCandidate(candidate.candidate);
+    }
+    catch (e) {
+        console.error('Error adding ice candidate', e);
+    }
+}
+
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
 
@@ -184,17 +215,13 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
+    audioMgr.play(1, 1, function() { return callCompleted; });
 }
 
 function OnAnswerMessage(answer) {
     pc.setRemoteDescription(new RTCSessionDescription(answer.session));
 }
 
-function OnIceCandidateMessage(candidate) {
-    try {
-        pc.addIceCandidate(candidate.candidate);
-    }
-    catch (e) {
-        console.error('Error adding ice candidate', e);
-    }
+function OnHangupMessage(answer) {
+    console.log("OnHangupMessage");
 }
