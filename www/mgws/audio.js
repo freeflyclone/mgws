@@ -49,7 +49,6 @@ class AudioManager {
         request.responseType = "arraybuffer";
     
         request.onload = function () {
-            console.log("request.onload()");
             self.audioContext.decodeAudioData(
                 request.response, 
                 function(buffer) {
@@ -85,7 +84,7 @@ class AudioManager {
 
 export function AudioInit() {
     audioMgr = new AudioManager();
-
+    
     addEventListener("focus", (event) => {
         console.log("audio focus");
         audioMgr.unmute();

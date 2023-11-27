@@ -67,7 +67,7 @@ export function PeerMessageHandler(msg) {
         case "SessionsChanged": OnSessionsChangedMessage(msg); break;
         case "Call":            OnCallMessage(msg); break;
         case "Answer":          OnAnswerMessage(msg); break;
-        case "Hangup":          OnHangupMessage(msg)); break;
+        case "Hangup":          OnHangupMessage(msg); break;
         case "LocalIdChanged":  break;
         case "ICECandidate":    OnIceCandidateMessage(msg); break;
         default:                print("msg.type: " + msg.type);
@@ -107,10 +107,10 @@ export async function Call() {
 
         var msg = {
                       type: "Call",
-                 sessionId: ws.sessionID,
-            callerUserName: user_name_input.value,
+                  userName: user_name_input.value,
                   targetId: remote_id_input.value,
                  callingId: local_id_input.value,
+                 sessionId: ws.sessionID,
                    session: pc.localDescription
         };
     
@@ -134,10 +134,10 @@ export async function Answer() {
 
     var msg = {
                      type: "Answer",
-                sessionId: ws.sessionID,
-        answeringUserName: user_name_input.value,
+                 userName: user_name_input.value,
                  targetId: remote_id_input.value,
               answeringId: local_id_input.value,
+                sessionId: ws.sessionID,
                   session: pc.localDescription
     };
     ws.send(JSON.stringify(msg));
@@ -156,6 +156,13 @@ async function Hangup() {
         InitLocalStream();
         ResetCallState();
     }
+
+    var msg = {
+        type: "Hangup",
+        userName: user_name_input.value,
+        targetId: remote_id_input.value,
+    };
+    ws.send(JSON.stringify(msg));
 };
   
 function OnConnectionStateChange(cs) {
@@ -174,9 +181,8 @@ function OnIceCandidateEvent(candidate) {
 
     var msg = {
              type: "ICECandidate",
-        sessionId: ws.sessionID,
+         userName: local_id_input.value,
          targetId: peer_remote_id,
-         originId: local_id_input.value,
         candidate: candidate,
     };
     ws.send(JSON.stringify(msg));
