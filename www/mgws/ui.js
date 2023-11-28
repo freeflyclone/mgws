@@ -1,3 +1,4 @@
+import { ws } from "./websock.js";
 export var remote_video    = document.getElementById("remote_video");
 export var local_video     = document.getElementById("local_video");
 export var remote_id_input = document.getElementById('remote_id_input');
@@ -25,13 +26,13 @@ export function OnSessionsChangedMessage(sessionsList) {
 
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical
-        if (session.localId === local_id_input.value)
+        if (session.sessionId === ws.sessionID)
             return;
 
         var tr = document.createElement('tr');
 
         tr.className = "highlightable";
-        tr.innerHTML = "<td>" + session.localId + "</td>";
+        tr.innerHTML = "<td>" + session.userName + '(' + session.sessionId + ")</td>";
 
         tr.addEventListener("click", OnTableRowOnClickEvent);
 

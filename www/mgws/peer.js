@@ -28,13 +28,14 @@ var callCompleted;
 export function PeerRegisterSession() {
     console.log("PeerRegisterSession()");
 
-    var regSession = {
+    var msg = {
         type: "RegisterSession",
-        userName: localStorage.getItem("userName"),
+        sessionId: ws.sessionID,
         appVersion: appVersion,
+        userName: localStorage.getItem("userName"),
     };
   
-    ws.send(JSON.stringify(regSession));
+    ws.send(JSON.stringify(msg));
 }
 
 function ResetCallState() {
