@@ -22,7 +22,7 @@ export function UpdateLocalIdPlaceholder(value) {
 export function UpdateLocalId() {
     localStorage.setItem("userName", user_name_input.value);
 
-    local_id_input.value = user_name_input.value + "_" + ws.sessionID;
+    local_id_input.value = user_name_input.value + '(' + ws.sessionID + ')';
 
     if (ws.sessionID != null) {
         SendLocalIdEvent();

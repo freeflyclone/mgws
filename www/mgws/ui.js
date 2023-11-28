@@ -10,6 +10,9 @@ export var answerButton    = document.getElementById("answer");
 export var hangupButton    = document.getElementById("hangup");
 export var remotes_table   = document.getElementById("remotes_table");
 
+local_id_input.readOnly = true;
+local_id_input.disabled = true;
+
 export function print(what) {
     if (outputTextarea) {
         outputTextarea.value += what + "\r\n";
