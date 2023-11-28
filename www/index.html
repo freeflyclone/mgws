@@ -7,7 +7,7 @@
 	<title>MadStyle.Social</title>
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">
 	<style>
-		body { background-color: black; }
+		body { visibility: hidden; background-color: black; }
 		h1, h2, p { margin: 0px; padding: 0px; }
 		h1 { font: 16pt arial; }
 		h2 { font: 14pt arial; }
@@ -43,7 +43,17 @@
 	</style>
 </head>
 <body>
-	<div class="tooltip">
+	<script type="text/javascript">
+		onload = () => {
+			if (localStorage.getItem('userName')) {
+				window.location.assign("/mgws")
+			}
+			else {
+				document.getElementById("qr").style.visibility = "visible";
+			}
+		}
+	</script>
+	<div class="tooltip" id="qr">
 		<a href="mgws">
 			<img src="hq-e-man-tv-qr.png" height="100%"><br>
 			<div class="tooltiptext">
