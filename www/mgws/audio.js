@@ -82,7 +82,7 @@ class AudioManager {
         this.sounds[idx] = src;
     }
 
-    Stop(idx) {
+    stop(idx) {
         var buffer = this.sounds[idx];
 
         if (typeof buffer == 'undefined') {

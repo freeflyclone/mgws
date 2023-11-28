@@ -51,6 +51,7 @@ function SetCallInProgress(enable) {
     callInProgress = enable;
     callButton.disabled = enable;
     hangupButton.disabled = !enable;
+    audioMgr.stop(1);
 }
 
 function SetCallCompleted() {
@@ -69,8 +70,8 @@ function AbortCall() {
     }
 
     callCompleted = true;
-    audioMgr.Stop(0);
-    audioMgr.Stop(1);
+    audioMgr.stop(0);
+    audioMgr.stop(1);
     hangupButton.disabled = true;
     answerButton.disabled = true;
 }
@@ -146,7 +147,7 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
-        audioMgr.Play(0, 1, function() { if (callCompleted) audioMgr.Stop(0); return callCompleted; });
+        audioMgr.play(0, 1, function() { if (callCompleted) audioMgr.stop(0); return callCompleted; });
 
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -249,7 +250,7 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.Play(1, 1, function() { return callCompleted; });
+    audioMgr.play(1, 1, function() { if (callCompleted) audioMgr.stop(1); return callCompleted; });
     answerButton.disabled = false;
 }
 
