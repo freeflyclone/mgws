@@ -1,6 +1,5 @@
-import { appVersion } from "./index.js";
 import { UpdateLocalId } from "./local.js";
-import { PeerMessageHandler } from "./peer.js";
+import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
 
 export var ws;
 
@@ -19,13 +18,6 @@ export function MakeWebSocket() {
 
 function OnOpen(event) {
     console.log("OnOpen: ", ws.url);
-
-    var regSession = {
-        type: "RegisterSession",
-        appVersion: appVersion,
-    };
-  
-    ws.send(JSON.stringify(regSession));
 };
 
 function OnMessage(event) {
@@ -34,6 +26,7 @@ function OnMessage(event) {
     switch(msg.type) {
         case "SessionID":
             ws.sessionID = msg.id;
+            PeerRegisterSession();
             UpdateLocalId();
             break;
 

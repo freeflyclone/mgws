@@ -1,3 +1,4 @@
+import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
 import { audioMgr }from "./audio.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
@@ -23,6 +24,18 @@ export var pc;
 export var peer_remote_id;
 var callInProgress;
 var callCompleted;
+
+export function PeerRegisterSession() {
+    console.log("PeerRegisterSession()");
+
+    var regSession = {
+        type: "RegisterSession",
+        userName: localStorage.getItem("userName"),
+        appVersion: appVersion,
+    };
+  
+    ws.send(JSON.stringify(regSession));
+}
 
 function ResetCallState() {
     peer_remote_id = false;
@@ -215,7 +228,7 @@ function OnIceCandidateMessage(candidate) {
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
 
-    var incomingString = 'call from ' + peer_remote_id;
+    var incomingString = 'call from ' + peer_remote_id + 'userName: ' + call.userName;
 
     console.log(incomingString);
     print(incomingString);

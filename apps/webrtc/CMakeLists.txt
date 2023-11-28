@@ -4,22 +4,22 @@ set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
-	${PROJECT_SOURCE_DIR}/src/mongoose.cpp
+	${PROJECT_SOURCE_DIR}/src/mongoose.c
+	${PROJECT_SOURCE_DIR}/src/sqlite3.c
 	${PROJECT_SOURCE_DIR}/src/session.cpp
 	${PROJECT_SOURCE_DIR}/src/sessionmgr.cpp
-	${PROJECT_SOURCE_DIR}/src/sqlite3.c
 	${SRCS}/peer.cpp
 	${SRCS}/main.cpp
 )
 
 set(HEADER_FILES
 	${PROJECT_SOURCE_DIR}/inc/mongoose.h
+	${PROJECT_SOURCE_DIR}/inc/sqlite3.h
+	${PROJECT_SOURCE_DIR}/inc/sqlite3ext.h
 	${PROJECT_SOURCE_DIR}/inc/nlohmann/json.hpp
 	${PROJECT_SOURCE_DIR}/inc/mgws.h
 	${PROJECT_SOURCE_DIR}/inc/session.h
 	${PROJECT_SOURCE_DIR}/inc/sessionmgr.h
-	${PROJECT_SOURCE_DIR}/inc/sqlite3.h
-	${PROJECT_SOURCE_DIR}/inc/sqlite3ext.h
 	${INCS}/peer.h
 )
 
