@@ -70,11 +70,11 @@ function AbortCall() {
         ResetCallState();
     }
 
-    callCompleted = true;
     audioMgr.stop(0);
     audioMgr.stop(1);
     hangupButton.disabled = true;
     answerButton.disabled = true;
+    ResetCallState();
 }
 
 export function MakePeerConnection() {
@@ -148,7 +148,13 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
-        audioMgr.play(0, 1, function() { if (callCompleted) audioMgr.stop(0); return callCompleted; });
+        audioMgr.play(0, 1, function() { 
+            if (callCompleted || !callInProgress) {
+                audioMgr.stop(0); 
+                return true;
+            }
+            return false;
+        });
 
     } catch (e) {
         print(`Failed to create offer: ${e}`);
