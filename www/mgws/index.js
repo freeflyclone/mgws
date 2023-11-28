@@ -33,8 +33,8 @@ async function main() {
     alert("Call signaling sounds will occur.");
     ShowSupportedConstraints();
 
-    AudioInit();
     InitLocalStream();
+    AudioInit();
     GetStoredUserName();
     MakeWebSocket();
     MakePeerConnection();
