@@ -30,8 +30,11 @@ void Peer::HandleMessage(json& j)
 
 void Peer::OnRegisterSession(json& j) 
 {
-	(void)j;
-	TRACE(__FUNCTION__);
+	auto sessionId = j["sessionId"];
+	auto appVersion = j["appVersion"];
+	auto userName = j["userName"];
+
+	TRACE(__FUNCTION__ << "(): id: " << sessionId << ", appVersion: " << appVersion << ", userName: " << userName);
 }
 
 void Peer::OnLocalIdEvent(json& j)
