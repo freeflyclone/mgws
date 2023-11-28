@@ -12,6 +12,10 @@ export var remotes_table   = document.getElementById("remotes_table");
 
 local_id_input.readOnly = true;
 local_id_input.disabled = true;
+remote_id_input.disabled = true;
+callButton.disabled = true;
+answerButton.disabled = true;
+hangupButton.disabled = true;
 
 export function print(what) {
     if (outputTextarea) {
@@ -20,7 +24,8 @@ export function print(what) {
 }
 
 function OnTableRowOnClickEvent(event) {
-    remote_id_input.value = event.target.innerHTML; 
+    remote_id_input.value = event.target.innerHTML;
+    callButton.disabled = false;
 }
 
 export function OnSessionsChangedMessage(sessionsList) {

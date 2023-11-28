@@ -42,7 +42,6 @@ function ResetCallState() {
     peer_remote_id = false;
     callInProgress = false;
     callCompleted = false;
-    audioMgr.unmute();
 }
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
@@ -50,12 +49,30 @@ function SetPeerRemoteId(id) {
 
 function SetCallInProgress(enable) {
     callInProgress = enable;
-    callButton.enable = !enable;
+    callButton.disabled = enable;
+    hangupButton.disabled = !enable;
 }
 
 function SetCallCompleted() {
     callCompleted = true;
-    audioMgr.mute();
+}
+
+function AbortCall() {
+    StopLocalStream();
+    
+    if (pc) {
+        pc.close();
+        pc = null;
+        MakePeerConnection();
+        InitLocalStream();
+        ResetCallState();
+    }
+
+    callCompleted = true;
+    audioMgr.Stop(0);
+    audioMgr.Stop(1);
+    hangupButton.disabled = true;
+    answerButton.disabled = true;
 }
 
 export function MakePeerConnection() {
@@ -129,7 +146,7 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
-        audioMgr.play(0, 1, function() { return callCompleted; });
+        audioMgr.Play(0, 1, function() { if (callCompleted) audioMgr.Stop(0); return callCompleted; });
 
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -155,6 +172,9 @@ export async function Answer() {
                   session: pc.localDescription
     };
     ws.send(JSON.stringify(msg));
+
+    SetCallInProgress(true);
+    answerButton.disabled = true;
 }
 
 async function Hangup() {
@@ -162,20 +182,14 @@ async function Hangup() {
         console.log("Hangup(): no call in progress");
     }
 
-    StopLocalStream();
-    if (pc) {
-        pc.close();
-        pc = null;
-        MakePeerConnection();
-        InitLocalStream();
-        ResetCallState();
-    }
+    AbortCall();
 
     var msg = {
         type: "Hangup",
         userName: user_name_input.value,
         targetId: remote_id_input.value,
     };
+
     ws.send(JSON.stringify(msg));
 };
   
@@ -235,7 +249,8 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.play(1, 1, function() { return callCompleted; });
+    audioMgr.Play(1, 1, function() { return callCompleted; });
+    answerButton.disabled = false;
 }
 
 function OnAnswerMessage(answer) {
@@ -244,4 +259,5 @@ function OnAnswerMessage(answer) {
 
 function OnHangupMessage(answer) {
     console.log("OnHangupMessage");
+    AbortCall();
 }

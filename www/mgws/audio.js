@@ -3,7 +3,7 @@ export var audioMgr = null;
 class AudioManager {
     constructor() {
         this.audioContext = new AudioContext(window.AudioContext || window.webkitAudioContext);
-        this.sounds = {};
+        this.sounds = [];
         this.soundBuffers = [];
         this.soundCount = 0;
 
@@ -79,6 +79,17 @@ class AudioManager {
             }
         };
         src.start();
+        this.sounds[idx] = src;
+    }
+
+    Stop(idx) {
+        var buffer = this.sounds[idx];
+
+        if (typeof buffer == 'undefined') {
+            return;
+        }
+
+        buffer.stop();
     }
 }
 
