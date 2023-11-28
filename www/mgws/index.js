@@ -30,6 +30,7 @@ async function closing() {
 async function main() {
     print("location: " + window.location);
 
+    alert("Call signaling sounds will occur.");
     ShowSupportedConstraints();
 
     AudioInit();
