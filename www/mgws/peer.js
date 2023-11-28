@@ -51,11 +51,12 @@ function SetCallInProgress(enable) {
     callInProgress = enable;
     callButton.disabled = enable;
     hangupButton.disabled = !enable;
-    audioMgr.stop(1);
 }
 
 function SetCallCompleted() {
     callCompleted = true;
+    audioMgr.stop(1);
+    hangupButton.disabled = false;
 }
 
 function AbortCall() {
@@ -174,13 +175,13 @@ export async function Answer() {
     };
     ws.send(JSON.stringify(msg));
 
-    SetCallInProgress(true);
+    SetCallCompleted(true);
     answerButton.disabled = true;
 }
 
 async function Hangup() {
-    if (!callInProgress) {
-        console.log("Hangup(): no call in progress");
+    if (!callInProgress && !callCompleted) {
+        console.log("Hangup(): no call established or in progress");
     }
 
     AbortCall();
@@ -244,7 +245,7 @@ function OnIceCandidateMessage(candidate) {
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
 
-    var incomingString = 'call from ' + peer_remote_id + 'userName: ' + call.userName;
+    var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
 
     console.log(incomingString);
     print(incomingString);
