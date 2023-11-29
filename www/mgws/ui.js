@@ -1,8 +1,11 @@
 import { ws } from "./websock.js";
+
 export var remote_video    = document.getElementById("remote_video");
 export var local_video     = document.getElementById("local_video");
 export var remote_id_input = document.getElementById('remote_id_input');
+export var remote_id_label = document.getElementById('remote_id_label');
 export var user_name_input = document.getElementById("user_name_input");
+export var user_name_label = document.getElementById("user_name_label");
 export var local_id_input  = document.getElementById("local_id_input");
 export var outputTextarea  = document.getElementById('output');
 export var callButton      = document.getElementById("call");
@@ -24,8 +27,7 @@ export function print(what) {
 }
 
 function OnTableRowOnClickEvent(event) {
-    remote_id_input.value = event.target.innerHTML;
-    callButton.disabled = false;
+    UpdateRemoteId(event.target.innerHTML);
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
@@ -46,5 +48,32 @@ export function OnSessionsChangedMessage(sessionsList) {
 
         remotes_table.appendChild(tr);
     });
+}
+
+export function ButtonDisable(button, disable) {
+    button.disabled = disable;
+}
+
+export function UpdateRemoteId(id) {
+    remote_id_input.value = id;
+    StopRemoteIdBlinking();
+
+    callButton.disabled = false;
+}
+
+export function StopUserNameBlinking() {
+    if (user_name_input.value !== '') {
+        user_name_label.style.animation = 'none';
+        user_name_label.offsetHeight;
+        user_name_label.style.animationPlayState = 'paused';
+    }
+}
+
+export function StopRemoteIdBlinking() {
+    if (remote_id_input.value !== '') {
+        remote_id_label.style.animation = 'none';
+        remote_id_label.offsetHeight;
+        remote_id_label.style.animationPlayState = 'paused';
+    }
 }
 

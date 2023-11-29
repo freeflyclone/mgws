@@ -11,7 +11,9 @@ import {
     answerButton,
     hangupButton,
     print,
-    OnSessionsChangedMessage 
+    OnSessionsChangedMessage,
+    UpdateRemoteId,
+    ButtonDisable,
 } from "./ui.js";
 
 var configuration = {
@@ -20,10 +22,45 @@ var configuration = {
 };
 
 export var pc;
-
 export var peer_remote_id;
-var callInProgress;
-var callCompleted;
+
+export const CallState = {
+    Idle: Symbol("Idle"),
+    Calling: Symbol("Calling"),
+    Ringing: Symbol("Ringing"),
+    Connected: Symbol("Connected"),
+}
+
+var callState = CallState.Idle;
+
+function SetCallState(state) {
+    callState = state;
+    switch(callState) {
+        case CallState.Idle:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, true);
+            break;
+
+        case CallState.Calling:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, false);
+            break;
+
+        case CallState.Ringing:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, false);
+            ButtonDisable(hangupButton, false);
+            break;
+
+        case CallState.Connected:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, false);
+            true
+    }
+}
 
 export function PeerRegisterSession() {
     console.log("PeerRegisterSession()");
@@ -40,23 +77,11 @@ export function PeerRegisterSession() {
 
 function ResetCallState() {
     peer_remote_id = false;
-    callInProgress = false;
-    callCompleted = false;
+    callState = CallState.Idle;
 }
+
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
-}
-
-function SetCallInProgress(enable) {
-    callInProgress = enable;
-    callButton.disabled = enable;
-    hangupButton.disabled = !enable;
-}
-
-function SetCallCompleted() {
-    callCompleted = true;
-    audioMgr.stop(1);
-    hangupButton.disabled = false;
 }
 
 function AbortCall() {
@@ -72,9 +97,8 @@ function AbortCall() {
 
     audioMgr.stop(0);
     audioMgr.stop(1);
-    hangupButton.disabled = true;
-    answerButton.disabled = true;
-    ResetCallState();
+
+    SetCallState(CallState.Idle);
 }
 
 export function MakePeerConnection() {
@@ -108,12 +132,13 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    if (callInProgress) {
+    if (callState === CallState.Calling) {
         console.log("call in progress, aborting new call");
         return;
     }
+
     SetPeerRemoteId(remote_id_input.value);
-    SetCallInProgress(true);
+    SetCallState(CallState.Calling);
 
     var callingString = 'calling ' + peer_remote_id;
     print(callingString);
@@ -149,7 +174,7 @@ export async function Call() {
     
         ws.send(JSON.stringify(msg));
         audioMgr.play(0, 1, function() { 
-            if (callCompleted || !callInProgress) {
+            if (callState === CallState.Connected || callState === CallState.Idle) {
                 audioMgr.stop(0); 
                 return true;
             }
@@ -169,7 +194,7 @@ export async function Answer() {
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
-    remote_id_input.value = peer_remote_id;
+    UpdateRemoteId(peer_remote_id);
 
     var msg = {
                      type: "Answer",
@@ -181,12 +206,12 @@ export async function Answer() {
     };
     ws.send(JSON.stringify(msg));
 
-    SetCallCompleted(true);
+    SetCallState(CallState.Connected);
     answerButton.disabled = true;
 }
 
 async function Hangup() {
-    if (!callInProgress && !callCompleted) {
+    if (callState === CallState.Idle) {
         console.log("Hangup(): no call established or in progress");
     }
 
@@ -206,7 +231,7 @@ function OnConnectionStateChange(cs) {
 
     if (state === "connected") {
         print(state + ' to ' + peer_remote_id);
-        SetCallCompleted();
+        SetCallState(CallState.Connected);
     }
 }
 
@@ -257,7 +282,13 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.play(1, 1, function() { if (callCompleted) audioMgr.stop(1); return callCompleted; });
+    audioMgr.play(1, 1, function() { 
+        if (callState === CallState.Idle || callState === CallState.Connected) {
+            audioMgr.stop(1); 
+            return true; 
+        }
+        return false;
+    });
     answerButton.disabled = false;
 }
 
@@ -267,5 +298,6 @@ function OnAnswerMessage(answer) {
 
 function OnHangupMessage(answer) {
     console.log("OnHangupMessage");
+    audioMgr.stop(1);
     AbortCall();
 }
