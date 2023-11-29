@@ -30,7 +30,7 @@ function OnTableRowOnClickEvent(event) {
 
 export function OnSessionsChangedMessage(sessionsList) {
     // Rebuild table from scratch every time it changes...
-    remotes_table.innerHTML = '<tr><th>Remotes:</th></tr><tr><hr></tr>'
+    remotes_table.innerHTML = null;
 
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical
