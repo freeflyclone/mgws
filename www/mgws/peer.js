@@ -169,10 +169,6 @@ export async function Answer() {
 }
 
 async function Hangup() {
-    if (callState === CallState.Idle) {
-        console.log("Hangup(): no call established or in progress");
-    }
-
     AbortCall();
 
     var msg = {
@@ -249,6 +245,5 @@ function OnAnswerMessage(answer) {
 }
 
 function OnHangupMessage(answer) {
-    console.log("OnHangupMessage");
     AbortCall();
 }
