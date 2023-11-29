@@ -16,6 +16,7 @@ export var remotes_table   = document.getElementById("remotes_table");
 local_id_input.readOnly = true;
 local_id_input.disabled = true;
 remote_id_input.disabled = true;
+
 callButton.disabled = true;
 answerButton.disabled = true;
 hangupButton.disabled = true;
@@ -58,7 +59,7 @@ export function UpdateRemoteId(id) {
     remote_id_input.value = id;
     StopRemoteIdBlinking();
 
-    callButton.disabled = false;
+    ButtonDisable(callButton, false);
 }
 
 export function StopUserNameBlinking() {

@@ -206,8 +206,7 @@ export async function Answer() {
     };
     ws.send(JSON.stringify(msg));
 
-    SetCallState(CallState.Connected);
-    answerButton.disabled = true;
+    ButtonDisable(answerButton, true);
 }
 
 async function Hangup() {
@@ -246,6 +245,7 @@ function OnIceCandidateEvent(candidate) {
          targetId: peer_remote_id,
         candidate: candidate,
     };
+    
     ws.send(JSON.stringify(msg));
 }
 
@@ -275,6 +275,7 @@ function OnIceCandidateMessage(candidate) {
 
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
+    SetCallState(CallState.Ringing);
 
     var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
 
@@ -289,7 +290,6 @@ function OnCallMessage(call) {
         }
         return false;
     });
-    answerButton.disabled = false;
 }
 
 function OnAnswerMessage(answer) {
