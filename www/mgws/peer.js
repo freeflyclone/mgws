@@ -11,7 +11,10 @@ import {
     answerButton,
     hangupButton,
     print,
-    OnSessionsChangedMessage 
+    OnSessionsChangedMessage,
+    UpdateRemoteId,
+    ButtonDisable,
+    UpdateCallStateUI
 } from "./ui.js";
 
 var configuration = {
@@ -20,14 +23,23 @@ var configuration = {
 };
 
 export var pc;
-
 export var peer_remote_id;
-var callInProgress;
-var callCompleted;
+
+export const CallState = {
+    Idle: Symbol("Idle"),
+    Calling: Symbol("Calling"),
+    Ringing: Symbol("Ringing"),
+    Connected: Symbol("Connected"),
+}
+
+var callState = CallState.Idle;
+
+function SetCallState(state) {
+    callState = state;
+    UpdateCallStateUI(callState);
+}
 
 export function PeerRegisterSession() {
-    console.log("PeerRegisterSession()");
-
     var msg = {
         type: "RegisterSession",
         sessionId: ws.sessionID,
@@ -40,23 +52,11 @@ export function PeerRegisterSession() {
 
 function ResetCallState() {
     peer_remote_id = false;
-    callInProgress = false;
-    callCompleted = false;
+    UpdateCallStateUI(CallState.Idle);
 }
+
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
-}
-
-function SetCallInProgress(enable) {
-    callInProgress = enable;
-    callButton.disabled = enable;
-    hangupButton.disabled = !enable;
-}
-
-function SetCallCompleted() {
-    callCompleted = true;
-    audioMgr.stop(1);
-    hangupButton.disabled = false;
 }
 
 function AbortCall() {
@@ -72,9 +72,8 @@ function AbortCall() {
 
     audioMgr.stop(0);
     audioMgr.stop(1);
-    hangupButton.disabled = true;
-    answerButton.disabled = true;
-    ResetCallState();
+
+    SetCallState(CallState.Idle);
 }
 
 export function MakePeerConnection() {
@@ -108,12 +107,8 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    if (callInProgress) {
-        console.log("call in progress, aborting new call");
-        return;
-    }
     SetPeerRemoteId(remote_id_input.value);
-    SetCallInProgress(true);
+    SetCallState(CallState.Calling);
 
     var callingString = 'calling ' + peer_remote_id;
     print(callingString);
@@ -149,7 +144,7 @@ export async function Call() {
     
         ws.send(JSON.stringify(msg));
         audioMgr.play(0, 1, function() { 
-            if (callCompleted || !callInProgress) {
+            if (callState === CallState.Connected || callState === CallState.Idle) {
                 audioMgr.stop(0); 
                 return true;
             }
@@ -169,7 +164,7 @@ export async function Answer() {
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
-    remote_id_input.value = peer_remote_id;
+    UpdateRemoteId(peer_remote_id);
 
     var msg = {
                      type: "Answer",
@@ -181,12 +176,11 @@ export async function Answer() {
     };
     ws.send(JSON.stringify(msg));
 
-    SetCallCompleted(true);
-    answerButton.disabled = true;
+    ButtonDisable(answerButton, true);
 }
 
 async function Hangup() {
-    if (!callInProgress && !callCompleted) {
+    if (callState === CallState.Idle) {
         console.log("Hangup(): no call established or in progress");
     }
 
@@ -206,7 +200,7 @@ function OnConnectionStateChange(cs) {
 
     if (state === "connected") {
         print(state + ' to ' + peer_remote_id);
-        SetCallCompleted();
+        SetCallState(CallState.Connected);
     }
 }
 
@@ -221,6 +215,7 @@ function OnIceCandidateEvent(candidate) {
          targetId: peer_remote_id,
         candidate: candidate,
     };
+
     ws.send(JSON.stringify(msg));
 }
 
@@ -250,6 +245,7 @@ function OnIceCandidateMessage(candidate) {
 
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
+    SetCallState(CallState.Ringing);
 
     var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
 
@@ -257,8 +253,13 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.play(1, 1, function() { if (callCompleted) audioMgr.stop(1); return callCompleted; });
-    answerButton.disabled = false;
+    audioMgr.play(1, 1, function() { 
+        if (callState === CallState.Idle || callState === CallState.Connected) {
+            audioMgr.stop(1); 
+            return true; 
+        }
+        return false;
+    });
 }
 
 function OnAnswerMessage(answer) {
@@ -267,5 +268,6 @@ function OnAnswerMessage(answer) {
 
 function OnHangupMessage(answer) {
     console.log("OnHangupMessage");
+    audioMgr.stop(1);
     AbortCall();
 }

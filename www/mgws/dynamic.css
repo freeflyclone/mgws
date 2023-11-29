@@ -44,7 +44,7 @@ body {
     overflow: hidden;
 }
 
-.wrapper {
+.controlsWrapper {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -119,6 +119,14 @@ body {
 .ui_input {
     width: 100px;
     font: 8pt arial;
+}
+
+#user_name_label, #remote_id_label {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
 }
 
 
