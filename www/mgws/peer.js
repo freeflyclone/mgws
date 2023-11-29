@@ -14,6 +14,7 @@ import {
     OnSessionsChangedMessage,
     UpdateRemoteId,
     ButtonDisable,
+    UpdateCallStateUI
 } from "./ui.js";
 
 var configuration = {
@@ -35,36 +36,10 @@ var callState = CallState.Idle;
 
 function SetCallState(state) {
     callState = state;
-    switch(callState) {
-        case CallState.Idle:
-            ButtonDisable(callButton, true);
-            ButtonDisable(answerButton, true);
-            ButtonDisable(hangupButton, true);
-            break;
-
-        case CallState.Calling:
-            ButtonDisable(callButton, true);
-            ButtonDisable(answerButton, true);
-            ButtonDisable(hangupButton, false);
-            break;
-
-        case CallState.Ringing:
-            ButtonDisable(callButton, true);
-            ButtonDisable(answerButton, false);
-            ButtonDisable(hangupButton, false);
-            break;
-
-        case CallState.Connected:
-            ButtonDisable(callButton, true);
-            ButtonDisable(answerButton, true);
-            ButtonDisable(hangupButton, false);
-            true
-    }
+    UpdateCallStateUI(callState);
 }
 
 export function PeerRegisterSession() {
-    console.log("PeerRegisterSession()");
-
     var msg = {
         type: "RegisterSession",
         sessionId: ws.sessionID,
@@ -77,7 +52,7 @@ export function PeerRegisterSession() {
 
 function ResetCallState() {
     peer_remote_id = false;
-    callState = CallState.Idle;
+    UpdateCallStateUI(CallState.Idle);
 }
 
 function SetPeerRemoteId(id) {
@@ -132,11 +107,6 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    if (callState === CallState.Calling) {
-        console.log("call in progress, aborting new call");
-        return;
-    }
-
     SetPeerRemoteId(remote_id_input.value);
     SetCallState(CallState.Calling);
 
@@ -245,7 +215,7 @@ function OnIceCandidateEvent(candidate) {
          targetId: peer_remote_id,
         candidate: candidate,
     };
-    
+
     ws.send(JSON.stringify(msg));
 }
 

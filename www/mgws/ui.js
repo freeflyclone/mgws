@@ -1,4 +1,5 @@
 import { ws } from "./websock.js";
+import { CallState } from "./peer.js";
 
 export var remote_video    = document.getElementById("remote_video");
 export var local_video     = document.getElementById("local_video");
@@ -78,3 +79,30 @@ export function StopRemoteIdBlinking() {
     }
 }
 
+export function UpdateCallStateUI(callState) {
+    switch(callState) {
+        case CallState.Idle:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, true);
+            break;
+
+        case CallState.Calling:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, false);
+            break;
+
+        case CallState.Ringing:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, false);
+            ButtonDisable(hangupButton, false);
+            break;
+
+        case CallState.Connected:
+            ButtonDisable(callButton, true);
+            ButtonDisable(answerButton, true);
+            ButtonDisable(hangupButton, false);
+            true
+    }
+}
