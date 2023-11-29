@@ -96,15 +96,8 @@ class AudioManager {
 export function AudioInit() {
     audioMgr = new AudioManager();
     
-    addEventListener("focus", (event) => {
-        console.log("audio focus");
-        audioMgr.unmute();
-    });
-    
-    addEventListener("blur", (event) => {
-        console.log("audio blur");
-        audioMgr.mute();
-    });
+    addEventListener("focus", () => { audioMgr.unmute(); });
+    addEventListener("blur", () => { audioMgr.mute(); });
 
     // load order is preserved
     audioMgr.load("sounds/remote-ring.m4a");

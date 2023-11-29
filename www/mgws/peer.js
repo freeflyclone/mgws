@@ -31,10 +31,10 @@ export const CallState = {
     Ringing: Symbol("Ringing"),
     Connected: Symbol("Connected"),
 }
-
-var callState = CallState.Idle;
+export var callState = CallState.Idle;
 
 function SetCallState(state) {
+    console.log("callState transition: ", callState, " to ", state);
     callState = state;
     UpdateCallStateUI(callState);
 }
@@ -51,7 +51,6 @@ export function PeerRegisterSession() {
 }
 
 function ResetCallState() {
-    peer_remote_id = false;
     UpdateCallStateUI(CallState.Idle);
 }
 
@@ -70,9 +69,6 @@ function AbortCall() {
         ResetCallState();
     }
 
-    audioMgr.stop(0);
-    audioMgr.stop(1);
-
     SetCallState(CallState.Idle);
 }
 
@@ -80,6 +76,7 @@ export function MakePeerConnection() {
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
     hangupButton.addEventListener('click', Hangup);
+
     ResetCallState();
 
     pc = window.peerConnection = new RTCPeerConnection(configuration);
@@ -143,14 +140,6 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
-        audioMgr.play(0, 1, function() { 
-            if (callState === CallState.Connected || callState === CallState.Idle) {
-                audioMgr.stop(0); 
-                return true;
-            }
-            return false;
-        });
-
     } catch (e) {
         print(`Failed to create offer: ${e}`);
     }
@@ -253,13 +242,6 @@ function OnCallMessage(call) {
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.play(1, 1, function() { 
-        if (callState === CallState.Idle || callState === CallState.Connected) {
-            audioMgr.stop(1); 
-            return true; 
-        }
-        return false;
-    });
 }
 
 function OnAnswerMessage(answer) {
@@ -268,6 +250,5 @@ function OnAnswerMessage(answer) {
 
 function OnHangupMessage(answer) {
     console.log("OnHangupMessage");
-    audioMgr.stop(1);
     AbortCall();
 }

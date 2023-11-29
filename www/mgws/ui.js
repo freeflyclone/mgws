@@ -1,5 +1,6 @@
 import { ws } from "./websock.js";
-import { CallState } from "./peer.js";
+import { CallState, callState } from "./peer.js";
+import { audioMgr }from "./audio.js";
 
 export var remote_video    = document.getElementById("remote_video");
 export var local_video     = document.getElementById("local_video");
@@ -79,30 +80,48 @@ export function StopRemoteIdBlinking() {
     }
 }
 
-export function UpdateCallStateUI(callState) {
-    switch(callState) {
+export function UpdateCallStateUI(state) {
+    switch(state) {
         case CallState.Idle:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, true);
+            audioMgr.stop(0);
+            audioMgr.stop(1);
             break;
 
         case CallState.Calling:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
+            audioMgr.play(0, 1, function() { 
+                if (callState === CallState.Connected || callState === CallState.Idle) {
+                    audioMgr.stop(0); 
+                    return true;
+                }
+                return false;
+            });
             break;
 
         case CallState.Ringing:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, false);
             ButtonDisable(hangupButton, false);
+            audioMgr.play(1, 1, function() { 
+                if (callState === CallState.Idle || callState === CallState.Connected) {
+                    audioMgr.stop(1); 
+                    return true; 
+                }
+                return false;
+            });
             break;
 
         case CallState.Connected:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
+            audioMgr.stop(0);
+            audioMgr.stop(1);
             true
     }
 }
