@@ -44,7 +44,7 @@ body {
     overflow: hidden;
 }
 
-.wrapper {
+.controlsWrapper {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -62,7 +62,7 @@ body {
 .controls {
     width: 180px;
     height: 104px;
-    background: rgba(160, 0, 16, 0.75);
+    background: rgb(160, 0, 16, 0.75);
     color: white;
     text-align: right;
     border-radius: 10px;
@@ -87,9 +87,16 @@ body {
     padding: 6px 2px 0px 2px;
 }
 
+#remotes_table tr.highlightable:hover {
+    background-color: white;
+    color: rgba(16, 16, 127, 1);
+}
+
 #remotes_table {
     margin: 0 auto;
     font: 8pt arial;
+    width: 100%;
+    text-align: center;
 }
 
 .printWindow {
@@ -112,6 +119,14 @@ body {
 .ui_input {
     width: 100px;
     font: 8pt arial;
+}
+
+#user_name_label, #remote_id_label {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% { opacity: 0; }
 }
 
 

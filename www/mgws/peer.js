@@ -1,3 +1,4 @@
+import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
 import { audioMgr }from "./audio.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
@@ -10,7 +11,10 @@ import {
     answerButton,
     hangupButton,
     print,
-    OnSessionsChangedMessage 
+    OnSessionsChangedMessage,
+    UpdateRemoteId,
+    ButtonDisable,
+    UpdateCallStateUI
 } from "./ui.js";
 
 var configuration = {
@@ -19,35 +23,60 @@ var configuration = {
 };
 
 export var pc;
-
 export var peer_remote_id;
-var callInProgress;
-var callCompleted;
+
+export const CallState = {
+    Idle: Symbol("Idle"),
+    Calling: Symbol("Calling"),
+    Ringing: Symbol("Ringing"),
+    Connected: Symbol("Connected"),
+}
+export var callState = CallState.Idle;
+
+function SetCallState(state) {
+    console.log("callState transition: ", callState, " to ", state);
+    callState = state;
+    UpdateCallStateUI(callState);
+}
+
+export function PeerRegisterSession() {
+    var msg = {
+        type: "RegisterSession",
+        sessionId: ws.sessionID,
+        appVersion: appVersion,
+        userName: localStorage.getItem("userName"),
+    };
+  
+    ws.send(JSON.stringify(msg));
+}
 
 function ResetCallState() {
-    peer_remote_id = false;
-    callInProgress = false;
-    callCompleted = false;
-    audioMgr.unmute();
+    UpdateCallStateUI(CallState.Idle);
 }
+
 function SetPeerRemoteId(id) {
     peer_remote_id = id;
 }
 
-function SetCallInProgress(enable) {
-    callInProgress = enable;
-    callButton.enable = !enable;
-}
+function AbortCall() {
+    StopLocalStream();
+    
+    if (pc) {
+        pc.close();
+        pc = null;
+        MakePeerConnection();
+        InitLocalStream();
+        ResetCallState();
+    }
 
-function SetCallCompleted() {
-    callCompleted = true;
-    audioMgr.mute();
+    SetCallState(CallState.Idle);
 }
 
 export function MakePeerConnection() {
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
     hangupButton.addEventListener('click', Hangup);
+
     ResetCallState();
 
     pc = window.peerConnection = new RTCPeerConnection(configuration);
@@ -75,12 +104,8 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    if (callInProgress) {
-        console.log("call in progress, aborting new call");
-        return;
-    }
     SetPeerRemoteId(remote_id_input.value);
-    SetCallInProgress(true);
+    SetCallState(CallState.Calling);
 
     var callingString = 'calling ' + peer_remote_id;
     print(callingString);
@@ -115,8 +140,6 @@ export async function Call() {
         };
     
         ws.send(JSON.stringify(msg));
-        audioMgr.play(0, 1, function() { return callCompleted; });
-
     } catch (e) {
         print(`Failed to create offer: ${e}`);
     }
@@ -130,7 +153,7 @@ export async function Answer() {
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
-    remote_id_input.value = peer_remote_id;
+    UpdateRemoteId(peer_remote_id);
 
     var msg = {
                      type: "Answer",
@@ -141,27 +164,19 @@ export async function Answer() {
                   session: pc.localDescription
     };
     ws.send(JSON.stringify(msg));
+
+    ButtonDisable(answerButton, true);
 }
 
 async function Hangup() {
-    if (!callInProgress) {
-        console.log("Hangup(): no call in progress");
-    }
-
-    StopLocalStream();
-    if (pc) {
-        pc.close();
-        pc = null;
-        MakePeerConnection();
-        InitLocalStream();
-        ResetCallState();
-    }
+    AbortCall();
 
     var msg = {
         type: "Hangup",
         userName: user_name_input.value,
         targetId: remote_id_input.value,
     };
+
     ws.send(JSON.stringify(msg));
 };
   
@@ -170,7 +185,7 @@ function OnConnectionStateChange(cs) {
 
     if (state === "connected") {
         print(state + ' to ' + peer_remote_id);
-        SetCallCompleted();
+        SetCallState(CallState.Connected);
     }
 }
 
@@ -185,6 +200,7 @@ function OnIceCandidateEvent(candidate) {
          targetId: peer_remote_id,
         candidate: candidate,
     };
+
     ws.send(JSON.stringify(msg));
 }
 
@@ -214,14 +230,14 @@ function OnIceCandidateMessage(candidate) {
 
 function OnCallMessage(call) {
     SetPeerRemoteId(call.callingId);
+    SetCallState(CallState.Ringing);
 
-    var incomingString = 'call from ' + peer_remote_id;
+    var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
 
     console.log(incomingString);
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
-    audioMgr.play(1, 1, function() { return callCompleted; });
 }
 
 function OnAnswerMessage(answer) {
@@ -229,5 +245,5 @@ function OnAnswerMessage(answer) {
 }
 
 function OnHangupMessage(answer) {
-    console.log("OnHangupMessage");
+    AbortCall();
 }

@@ -83,7 +83,7 @@ void SessionManager::UpdateSessionsList() {
 
 	g_sessions.Iterate([&](Session* session) {
 		json s = {
-			{"sessionID", session->getId() },
+			{"sessionId", session->getId() },
 			{"userName", session->UserName() },
 			{"localId", session->LocalId() }
 		};

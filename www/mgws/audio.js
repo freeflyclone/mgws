@@ -3,7 +3,7 @@ export var audioMgr = null;
 class AudioManager {
     constructor() {
         this.audioContext = new AudioContext(window.AudioContext || window.webkitAudioContext);
-        this.sounds = {};
+        this.sounds = [];
         this.soundBuffers = [];
         this.soundCount = 0;
 
@@ -79,21 +79,25 @@ class AudioManager {
             }
         };
         src.start();
+        this.sounds[idx] = src;
+    }
+
+    stop(idx) {
+        var buffer = this.sounds[idx];
+
+        if (typeof buffer == 'undefined') {
+            return;
+        }
+
+        buffer.stop();
     }
 }
 
 export function AudioInit() {
     audioMgr = new AudioManager();
     
-    addEventListener("focus", (event) => {
-        console.log("audio focus");
-        audioMgr.unmute();
-    });
-    
-    addEventListener("blur", (event) => {
-        console.log("audio blur");
-        audioMgr.mute();
-    });
+    addEventListener("focus", () => { audioMgr.unmute(); });
+    addEventListener("blur", () => { audioMgr.mute(); });
 
     // load order is preserved
     audioMgr.load("sounds/remote-ring.m4a");

@@ -6,7 +6,7 @@ project(
   mgws
   VERSION 0.1
   DESCRIPTION "A Mongoose HTTP/Websocket server for multiplayer games & WebRTC"
-  LANGUAGES CXX)
+  LANGUAGES C CXX)
 
 # Compiler & Build flags
 if(MSVC)

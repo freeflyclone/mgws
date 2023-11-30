@@ -27,6 +27,7 @@ public:
 private:
 	Session* m_session;
 	PeerMessageDispatch m_pmd;
+	size_t m_user_connection_id;
 };
 
 #endif

@@ -1,15 +1,16 @@
 import { ws } from "./websock.js";
-import { user_name_input, local_id_input } from "./ui.js";
+import { 
+    user_name_input, 
+    local_id_input, 
+    StopUserNameBlinking } from "./ui.js";
 
 export var localStream = null;
 
 export function GetStoredUserName() {
-    console.log("GetStoredUserName()");
-
     var userName = localStorage.getItem("userName");
     user_name_input.value = userName;
 
-    console.log("userName: ", userName);
+    StopUserNameBlinking();
 
     return userName;
 }
@@ -22,7 +23,8 @@ export function UpdateLocalIdPlaceholder(value) {
 export function UpdateLocalId() {
     localStorage.setItem("userName", user_name_input.value);
 
-    local_id_input.value = user_name_input.value + "_" + ws.sessionID;
+    local_id_input.value = user_name_input.value + '(' + ws.sessionID + ')';
+    StopUserNameBlinking();
 
     if (ws.sessionID != null) {
         SendLocalIdEvent();
@@ -45,6 +47,7 @@ export function StopLocalStream() {
         track.stop();
     });
 }
+
 export function InitLocalStream() {
     const constraints = {
         'video': true,

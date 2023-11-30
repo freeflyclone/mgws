@@ -32,8 +32,8 @@ async function main() {
 
     ShowSupportedConstraints();
 
-    AudioInit();
     InitLocalStream();
+    AudioInit();
     GetStoredUserName();
     MakeWebSocket();
     MakePeerConnection();

@@ -4,9 +4,66 @@
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>MGWS</title>
+	<title>E-Man.TV</title>
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	<style>
+		body { visibility: hidden; background-color: black; }
+		h1, h2, p { margin: 0px; padding: 0px; }
+		h1 { font: 16pt arial; }
+		h2 { font: 14pt arial; }
+		p { font: 12pt arial; }
+
+		.tooltip { cursor: pointer;	}
+		.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+		div { 
+			display: flex;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%) scale(100%, 100%);
+			width: max-content;
+			height: max-content;
+		    border-radius: 10px;
+			padding: 10px;
+		}
+		.tooltiptext {
+			visibility: hidden;
+			display: block;
+			z-index: 1;
+			background-color: rgb(127, 0, 16);
+			color: white;
+			position: absolute;
+			border-radius: 10px;
+			padding: 20px;
+			opacity: 0;
+			transition: opacity 0.4s;
+			text-align: center;
+		}
+	</style>
 </head>
 <body>
-    <img src="hq-e-man-tv-qr.png" height="100%">
+	<script type="text/javascript">
+		onload = () => {
+			if (localStorage.getItem('userName')) {
+				window.location.assign("/mgws")
+			}
+			else {
+				document.getElementById("qr").style.visibility = "visible";
+			}
+		}
+	</script>
+	<div class="tooltip" id="qr">
+		<a href="mgws">
+			<img src="hq-e-man-tv-qr.png" height="100%"><br>
+			<div class="tooltiptext">
+				<h1>E-Man.TV</h1>
+				<h2>Sign Up</h2>
+				<hr>
+				<p>Click to register this browser.</p>
+				<p><em>- or -</em></p>
+				<p>Capture QR with phone.</p>
+			</div>
+		</a>
+	</div>
 </body>
