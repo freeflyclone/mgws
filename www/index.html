@@ -12,12 +12,12 @@
 		h1 { font: 16pt arial; }
 		h2 { font: 14pt arial; }
 		p { font: 12pt arial; }
-
-		.tooltip { cursor: pointer;	}
-		.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+		a { color: white; text-decoration: none; }
 
 		div { 
-			display: flex;
+			display: block;
+			background-color: rgb(16, 16, 127);
+			color: white;
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -26,19 +26,8 @@
 			height: max-content;
 		    border-radius: 10px;
 			padding: 10px;
-		}
-		.tooltiptext {
-			visibility: hidden;
-			display: block;
-			z-index: 1;
-			background-color: rgb(127, 0, 16);
-			color: white;
-			position: absolute;
-			border-radius: 10px;
-			padding: 20px;
-			opacity: 0;
-			transition: opacity 0.4s;
 			text-align: center;
+			cursor: pointer;
 		}
 	</style>
 </head>
@@ -53,17 +42,12 @@
 			}
 		}
 	</script>
-	<div class="tooltip" id="qr">
+	<div id="qr">
 		<a href="mgws">
-			<img src="hq-e-man-tv-qr.png" height="100%"><br>
-			<div class="tooltiptext">
-				<h1>E-Man.TV</h1>
-				<h2>Sign Up</h2>
-				<hr>
-				<p>Click to register this browser.</p>
+			<img src="e-man-social-qr.png" height="100%"><br><br>
+				<p>Click this box to enroll this browser</p>
 				<p><em>- or -</em></p>
-				<p>Capture QR with phone.</p>
-			</div>
+				<p>Capture QR with phone</p>
 		</a>
 	</div>
 </body>
