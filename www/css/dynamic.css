@@ -116,6 +116,9 @@ body {
 .ui_span {
     font: 8pt arial;
 }
+.ui_label {
+    font: 12pt arial;
+}
 .ui_input {
     width: 100px;
     font: 8pt arial;
