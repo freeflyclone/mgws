@@ -18,18 +18,15 @@
 	</div>
 	<div class="controlsWrapper">
 		<div class="controls">
-			<span id="user_name_label" class="ui_span">User </span> <input class="ui_input" id="user_name_input" type="text" placeholder="Name is required..."/><br>
-			<span class="ui_span">Local </span> <input class="ui_input" id="local_id_input" type="text" placeholder="Connecting..."/></br>
-			<span id="remote_id_label" class="ui_span">Remote </span> <input class="ui_input" id="remote_id_input" type="text" placeholder="Choose on right..."/><br>
-			<br>
+			<p id="user_name"></p>
+			<div class="remotes">
+				<table id="remotes_table"></table>
+			</div>
 			<div class="controlButtons">
 				<button id="call">Call</button>
 				<button id="answer">Answer</button>	
 				<button id="hangup">Hangup</button>	
 			</div>
-		</div>
-		<div class="remotes">
-			<table id="remotes_table"></table>
 		</div>
 	</div>
 <!--

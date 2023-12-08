@@ -44,11 +44,16 @@ body {
     overflow: hidden;
 }
 
+#user_name {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+}
 .controlsWrapper {
     display: flex;
     flex-direction: row;
     position: absolute;
-    background: rgba(32, 32, 32, 0.5);
+    background: white;
     padding: 0px;
     z-index: 2;
     top: 50%;
@@ -56,35 +61,39 @@ body {
     transform: translate(-50%, -50%) scale(100%, 100%);
     width: max-content;
     height: max-content;
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
 .controls {
     width: 180px;
-    height: 104px;
-    background: rgb(160, 0, 16, 0.75);
+    height: 200px;
+    background: rgba(0, 16, 127, 1);
     color: white;
     text-align: right;
-    border-radius: 10px;
-    margin: 4px 2px 4px 4px;
-    font: 8pt arial;
+    border-radius: 6px;
+    margin: 1px;
+    font: 12pt arial;
     padding: 6px 6px 0px 6px;
 }
 
 .controlButtons {
     width: 100%;
     text-align: center;
+    bottom: 10px;
 }
 
+button:disabled {
+    background: lightslategray;
+    border-radius: 2px;
+}
 .remotes {
-    width: 100px;
-    height: 104px;
-    background: rgba(0, 16, 127, 0.75);
+    width: 100%;
+    height: 130px;
+    background: rgba(0, 12, 95, 1);
     color: white;
     text-align: right;
-    border-radius: 10px;
-    margin: 4px 4px 4px 2px;
-    padding: 6px 2px 0px 2px;
+    border-radius: 6px;
+    margin: 10px 0px 10px 0px;
 }
 
 #remotes_table tr.highlightable:hover {
@@ -94,7 +103,7 @@ body {
 
 #remotes_table {
     margin: 0 auto;
-    font: 8pt arial;
+    font: 10pt arial;
     width: 100%;
     text-align: center;
 }
@@ -114,22 +123,16 @@ body {
 }
 
 .ui_span {
-    font: 8pt arial;
+    font: 10pt arial;
+    width: 100%;
+    text-align: center;
 }
 .ui_label {
-    font: 12pt arial;
+    font: 10pt arial;
 }
 .ui_input {
     width: 100px;
-    font: 8pt arial;
-}
-
-#user_name_label, #remote_id_label {
-    animation: blinker 1s linear infinite;
-}
-
-@keyframes blinker {
-    50% { opacity: 0; }
+    font: 10pt arial;
 }
 
 
