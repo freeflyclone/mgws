@@ -65,21 +65,21 @@ body {
 }
 
 .controls {
-    width: 180px;
-    height: 200px;
+    width: 300px;
+    height: max-content;
     background: rgba(0, 16, 127, 1);
     color: white;
     text-align: right;
     border-radius: 6px;
     margin: 1px;
     font: 12pt arial;
-    padding: 6px 6px 0px 6px;
+    padding: 6px 6px 6px 6px;
 }
 
 .controlButtons {
     width: 100%;
     text-align: center;
-    bottom: 10px;
+    bottom: 20px;
 }
 
 button:disabled {
@@ -88,7 +88,7 @@ button:disabled {
 }
 .remotes {
     width: 100%;
-    height: 130px;
+    height: 200px;
     background: rgba(0, 12, 95, 1);
     color: white;
     text-align: right;
@@ -103,7 +103,7 @@ button:disabled {
 
 #remotes_table {
     margin: 0 auto;
-    font: 10pt arial;
+    font: 12pt arial;
     width: 100%;
     text-align: center;
 }

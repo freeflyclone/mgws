@@ -5,7 +5,8 @@ import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
     user_name_input,
     local_id_input,
-    remote_id_input, 
+    remote_id_input,
+    remote_id, 
     remote_video, 
     callButton,
     answerButton,
@@ -104,7 +105,7 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    SetPeerRemoteId(remote_id_input.value);
+    SetPeerRemoteId(remote_id);
     SetCallState(CallState.Calling);
 
     var callingString = 'calling ' + peer_remote_id;
@@ -173,8 +174,8 @@ async function Hangup() {
 
     var msg = {
         type: "Hangup",
-        userName: user_name_input.value,
-        targetId: remote_id_input.value,
+        userName: user_name,
+        targetId: remote_id,
     };
 
     ws.send(JSON.stringify(msg));
@@ -196,7 +197,7 @@ function OnIceCandidateEvent(candidate) {
 
     var msg = {
              type: "ICECandidate",
-         userName: local_id_input.value,
+         userName: user_name,
          targetId: peer_remote_id,
         candidate: candidate,
     };

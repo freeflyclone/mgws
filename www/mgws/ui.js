@@ -22,6 +22,8 @@ callButton.disabled = true;
 answerButton.disabled = true;
 hangupButton.disabled = true;
 
+export var remote_id;
+
 export function print(what) {
     if (outputTextarea) {
         outputTextarea.value += what + "\r\n";
@@ -57,8 +59,7 @@ export function ButtonDisable(button, disable) {
 }
 
 export function UpdateRemoteId(id) {
-    //remote_id_input.value = id;
-    StopRemoteIdBlinking();
+    remote_id = id;
 
     ButtonDisable(callButton, false);
 }
