@@ -1,11 +1,7 @@
 import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
-import { audioMgr }from "./audio.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
-    user_name_input,
-    local_id_input,
-    remote_id_input,
     remote_id, 
     remote_video, 
     callButton,
@@ -28,6 +24,7 @@ export var peer_remote_id;
 
 export const CallState = {
     Idle: Symbol("Idle"),
+    Identified: Symbol("Indentified"),
     Calling: Symbol("Calling"),
     Ringing: Symbol("Ringing"),
     Connected: Symbol("Connected"),
