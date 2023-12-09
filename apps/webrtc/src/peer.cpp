@@ -42,14 +42,13 @@ void Peer::OnLocalIdEvent(json& j)
 	try {
 		auto sessionId = j["sessionID"];
 		auto userName = j["userName"];
-		auto localId = j["localId"];
 
 		if (sessionId != m_session->getId()) {
 			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_session->getId());
 			return;
 		}
 
-		g_sessions.UpdateSession(m_session->getId(), userName, localId);
+		g_sessions.UpdateSession(m_session->getId(), userName);
 		m_session->Send({ {"type", "LocalIdChanged"} });
 
 		g_sessions.UpdateSessionsList();
@@ -62,8 +61,11 @@ void Peer::OnLocalIdEvent(json& j)
 void Peer::OnForwardMessage(json& j)
 {
 	try {
-		auto session = g_sessions.GetSessionByLocalId(j["targetId"]);
+		auto type = j["type"];
+		auto targetId = j["targetId"];
+		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
+		auto session = g_sessions.GetSessionById(targetId);
 		if (session)
 			session->Send(j);
 

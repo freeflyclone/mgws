@@ -48,6 +48,7 @@ export function PeerRegisterSession() {
         userName: localStorage.getItem("userName"),
     };
   
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -74,6 +75,7 @@ function AbortCall() {
 }
 
 export function MakePeerConnection() {
+
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
     hangupButton.addEventListener('click', Hangup);
@@ -109,7 +111,7 @@ export async function Call() {
     SetCallState(CallState.Calling);
 
     var callingString = 'calling ' + peer_remote_id;
-    print(callingString);
+    console.log(callingString);
 
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
@@ -133,13 +135,13 @@ export async function Call() {
 
         var msg = {
                       type: "Call",
-                  userName: user_name_input.value,
-                  targetId: remote_id_input.value,
-                 callingId: local_id_input.value,
+                  userName: user_name.textContent,
+                  targetId: peer_remote_id.toString(),
                  sessionId: ws.sessionID,
                    session: pc.localDescription
         };
     
+        console.log(msg);
         ws.send(JSON.stringify(msg));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -158,12 +160,12 @@ export async function Answer() {
 
     var msg = {
                      type: "Answer",
-                 userName: user_name_input.value,
-                 targetId: remote_id_input.value,
-              answeringId: local_id_input.value,
+                 userName: user_name.textContent,
+                 targetId: peer_remote_id.toString(),
                 sessionId: ws.sessionID,
                   session: pc.localDescription
     };
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 
     ButtonDisable(answerButton, true);
@@ -178,6 +180,7 @@ async function Hangup() {
         targetId: remote_id,
     };
 
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 };
   
@@ -197,11 +200,12 @@ function OnIceCandidateEvent(candidate) {
 
     var msg = {
              type: "ICECandidate",
-         userName: user_name,
-         targetId: peer_remote_id,
+         userName: user_name.textContent,
+         targetId: peer_remote_id.toString(),
         candidate: candidate,
     };
 
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -230,7 +234,7 @@ function OnIceCandidateMessage(candidate) {
 }
 
 function OnCallMessage(call) {
-    SetPeerRemoteId(call.callingId);
+    SetPeerRemoteId(call.sessionId);
     SetCallState(CallState.Ringing);
 
     var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;

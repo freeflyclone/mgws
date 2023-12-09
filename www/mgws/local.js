@@ -1,17 +1,11 @@
 import { ws } from "./websock.js";
-import { 
-    user_name,
-    user_name_input, 
-    local_id_input, 
-    StopUserNameBlinking } from "./ui.js";
+import { user_name } from "./ui.js";
 
 export var localStream = null;
 
 export function GetStoredUserName() {
     var userName = localStorage.getItem("userName");
     user_name.textContent = userName;
-
-    StopUserNameBlinking();
 
     return userName;
 }
@@ -33,7 +27,6 @@ export function SendLocalIdEvent() {
     var localIdEvent = {
         type: "LocalIdEvent",
         sessionID: ws.sessionID,
-        localId: user_name.textContent + '(' + ws.sessionID + ')',
         userName: user_name.textContent
     };
 

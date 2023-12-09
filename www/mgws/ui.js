@@ -23,6 +23,7 @@ answerButton.disabled = true;
 hangupButton.disabled = true;
 
 export var remote_id;
+export var remotes = [];
 
 export function print(what) {
     if (outputTextarea) {
@@ -31,27 +32,34 @@ export function print(what) {
 }
 
 function OnTableRowOnClickEvent(event) {
-    UpdateRemoteId(event.target.innerHTML);
+    UpdateRemoteId(event.target.id);
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
     // Rebuild table from scratch every time it changes...
     remotes_table.innerHTML = null;
+    remotes = [];
 
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical
-        if (session.sessionId === ws.sessionID)
+        if (session.sessionId === ws.sessionID) {
             return;
+        }
+
+        remotes.push({"userName" : session.userName, "sessionId" : session.sessionId});
 
         var tr = document.createElement('tr');
 
         tr.className = "highlightable";
-        tr.innerHTML = "<td>" + session.userName + '(' + session.sessionId + ")</td>";
+        tr.innerHTML = "<td id='" + session.sessionId + "'>" + session.userName + "</td>";
+        tr.id = session.sessionId;
 
         tr.addEventListener("click", OnTableRowOnClickEvent);
 
         remotes_table.appendChild(tr);
     });
+
+    return;
 }
 
 export function ButtonDisable(button, disable) {
@@ -62,26 +70,6 @@ export function UpdateRemoteId(id) {
     remote_id = id;
 
     ButtonDisable(callButton, false);
-}
-
-export function StopUserNameBlinking() {
-    /*
-    if (user_name_input.value !== '') {
-        user_name_label.style.animation = 'none';
-        user_name_label.offsetHeight;
-        user_name_label.style.animationPlayState = 'paused';
-    }
-    */
-}
-
-export function StopRemoteIdBlinking() {
-    /*
-    if (remote_id_input.value !== '') {
-        remote_id_label.style.animation = 'none';
-        remote_id_label.offsetHeight;
-        remote_id_label.style.animationPlayState = 'paused';
-    }
-    */
 }
 
 export function UpdateCallStateUI(state) {

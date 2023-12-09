@@ -7,7 +7,6 @@ Session::Session(SessionID_t id, Connection& c)
 	: m_id(id),
 	m_connection(c),
 	m_peer(this),
-	m_localId(),
 	m_userName()
 {
 	m_connection.fn_data = this;

@@ -24,11 +24,11 @@ set(HEADER_FILES
 )
 
 set(WWW_FILES
+	${PROJECT_SOURCE_DIR}/www/css/dynamic.css
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/local-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/remote-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/telephone-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/audio.js
-	${PROJECT_SOURCE_DIR}/www/mgws/dynamic.css
 	${PROJECT_SOURCE_DIR}/www/mgws/index.html
 	${PROJECT_SOURCE_DIR}/www/mgws/index.js
 	${PROJECT_SOURCE_DIR}/www/mgws/local.js

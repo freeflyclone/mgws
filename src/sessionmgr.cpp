@@ -36,7 +36,7 @@ void SessionManager::DeleteSession(Session* session) {
 	UpdateSessionsList();
 }
 
-void SessionManager::UpdateSession(const uint32_t id, const std::string& userName, const std::string& localId) {
+void SessionManager::UpdateSession(const uint32_t id, const std::string& userName) {
 	auto sessPair = m_sessions.find(id);
 	if (sessPair == m_sessions.end()) {
 		TRACE("Oops: didn't find g_sessions[" << id << "]");
@@ -47,29 +47,18 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 
 	// used by Peer::OnLocalIdEvent() to update g_sessions[m_id]
 	session->SetUserName(userName);
-	session->SetLocalId(localId);
 }
 
-SessionManager::SessionPtr SessionManager::GetSessionById(const SessionID_t id)
+SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& sessId)
 {
+	const SessionID_t id = static_cast<SessionID_t>(std::stoi(sessId));
+
 	auto sessPair = m_sessions.find(id);
 	if (sessPair == m_sessions.end()) {
 		TRACE("Oops: didn't find g_sessions[" << id << "]");
 		return nullptr;
 	}
 	return sessPair->second;
-}
-
-SessionManager::SessionPtr SessionManager::GetSessionByLocalId(const std::string& localId)
-{
-	for (auto sessMgrPair : m_sessions) {
-		auto session = sessMgrPair.second;
-		if (session->LocalId() == localId) {
-			return session;
-		}
-	}
-
-	return nullptr;
 }
 
 void SessionManager::Iterate(SessionCallback_fn fn) {
@@ -85,7 +74,6 @@ void SessionManager::UpdateSessionsList() {
 		json s = {
 			{"sessionId", session->getId() },
 			{"userName", session->UserName() },
-			{"localId", session->LocalId() }
 		};
 		msg["sessions"].push_back(s);
 	});
