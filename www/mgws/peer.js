@@ -159,11 +159,11 @@ export async function Answer() {
     UpdateRemoteId(peer_remote_id);
 
     var msg = {
-                     type: "Answer",
-                 userName: user_name.textContent,
-                 targetId: peer_remote_id.toString(),
-                sessionId: ws.sessionID,
-                  session: pc.localDescription
+             type: "Answer",
+         userName: user_name.textContent,
+         targetId: peer_remote_id.toString(),
+        sessionId: ws.sessionID,
+          session: pc.localDescription
     };
     console.log(msg);
     ws.send(JSON.stringify(msg));
@@ -177,7 +177,7 @@ async function Hangup() {
     var msg = {
         type: "Hangup",
         userName: user_name,
-        targetId: remote_id,
+        targetId: peer_remote_id.toString(),
     };
 
     console.log(msg);
