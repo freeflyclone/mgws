@@ -28,6 +28,11 @@ async function closing() {
 }
 
 async function main() {
+    // TODO: this doesn't work on iOS Safari, fix that.
+    if (localStorage.getItem('userName') === null) {
+        window.location.assign("/enroll");
+    }
+   
     print("location: " + window.location);
 
     ShowSupportedConstraints();

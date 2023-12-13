@@ -25,6 +25,7 @@ function OnMessage(event) {
 
     switch(msg.type) {
         case "SessionID":
+            console.log(msg);
             ws.sessionID = msg.id;
             PeerRegisterSession();
             UpdateLocalId();

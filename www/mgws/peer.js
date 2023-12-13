@@ -38,11 +38,12 @@ function SetCallState(state) {
 }
 
 export function PeerRegisterSession() {
+    var userName = localStorage.getItem("userName");
     var msg = {
         type: "RegisterSession",
         sessionId: ws.sessionID,
         appVersion: appVersion,
-        userName: localStorage.getItem("userName"),
+        userName: userName,
     };
   
     console.log(msg);
