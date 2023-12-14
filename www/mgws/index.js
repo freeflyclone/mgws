@@ -51,4 +51,7 @@ async function main() {
 
     print("Establishing a peer connection.");
     MakePeerConnection();
+
+    print("\nSuccess!");
+    print("\nClick/Tap a recipient in the panel above to initiate a call.");
 }

@@ -65,7 +65,7 @@ body {
 }
 
 .controls {
-    width: 240px;
+    width: 270px;
     height: max-content;
     background: rgba(0, 16, 127, 1);
     color: white;
@@ -89,7 +89,7 @@ button:disabled {
 
 .panel {
     width: 100%;
-    height: 100px;
+    height: 60px;
     background: hsl(224, 37%, 35%);
     color: white;
     text-align: right;
@@ -111,7 +111,7 @@ button:disabled {
 
 .panel#outputPanel {
     width: 100%;
-    height: 200px;
+    height: 240px;
     background:white;
     color: black;
     text-align: left;

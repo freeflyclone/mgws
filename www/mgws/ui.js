@@ -26,9 +26,8 @@ export var remote_id;
 export var remotes = [];
 
 export function print(what) {
-    console.log(what);
     if (outputTextarea) {
-        outputTextarea.innerText += what + "\r\n";
+        outputTextarea.innerText += what + "\n";
     }
 }
 
