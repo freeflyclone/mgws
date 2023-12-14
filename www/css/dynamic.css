@@ -65,7 +65,7 @@ body {
 }
 
 .controls {
-    width: 300px;
+    width: 240px;
     height: max-content;
     background: rgba(0, 16, 127, 1);
     color: white;
@@ -86,10 +86,11 @@ button:disabled {
     background: lightslategray;
     border-radius: 2px;
 }
-.remotes {
+
+.panel {
     width: 100%;
-    height: 200px;
-    background: rgba(0, 12, 95, 1);
+    height: 100px;
+    background: hsl(224, 37%, 35%);
     color: white;
     text-align: right;
     border-radius: 6px;
@@ -103,21 +104,22 @@ button:disabled {
 
 #remotes_table {
     margin: 0 auto;
-    font: 12pt arial;
+    font: 10pt arial;
     width: 100%;
     text-align: center;
 }
 
-.printWindow {
-    position: absolute;
-    bottom: 10px;
-    left: 0px;
-    width: 640px;
-    height: 100px;
-    z-index: 4;
+.panel#outputPanel {
+    width: 100%;
+    height: 200px;
+    background:white;
+    color: black;
+    text-align: left;
 }
 
 #output {
+    font: 9pt arial;
+    margin: 6px;
     width: 100%;
     height: 100%;
 }

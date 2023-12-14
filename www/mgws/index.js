@@ -33,13 +33,22 @@ async function main() {
         window.location.assign("/enroll");
     }
    
-    print("location: " + window.location);
+    print(window.location);
 
     ShowSupportedConstraints();
 
+    print("Getting local media devices...");
     InitLocalStream();
+
+    print("Initializing sounds...");
     AudioInit();
+
+    print("Looking for stored user name...");
     GetStoredUserName();
+
+    print("Connecting to signaling server...");
     MakeWebSocket();
+
+    print("Establishing a peer connection.");
     MakePeerConnection();
 }
