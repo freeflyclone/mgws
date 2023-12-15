@@ -6,6 +6,7 @@ html {
 body {
     margin: 0px;
     padding: 0px;
+    overflow: hidden;
 }
 
 .smallVideo {
@@ -31,8 +32,8 @@ body {
     z-index: 0;
     top: 0px;
     left: 0px;
-    width: 100vw;
-    height: 100vh;
+    width: 101%;
+    height: 101%;
     color: white;
     overflow: hidden;
 }
@@ -44,11 +45,6 @@ body {
     overflow: hidden;
 }
 
-#user_name {
-    text-align: center;
-    margin: 0px;
-    padding: 0px;
-}
 #controlsWrapper {
     display: flex;
     flex-direction: row;
@@ -65,6 +61,7 @@ body {
 }
 
 .controls {
+    top: 0%;
     width: 270px;
     height: max-content;
     background: rgb(149, 154, 184);

@@ -7,7 +7,6 @@ export var local_video     = document.getElementById("local_video");
 export var remote_id_input = document.getElementById('remote_id_input');
 export var remote_id_label = document.getElementById('remote_id_label');
 export var user_name_input = document.getElementById("user_name_input");
-export var user_name       = document.getElementById("user_name");
 export var user_name_label = document.getElementById("user_name_label");
 export var local_id_input  = document.getElementById("local_id_input");
 export var outputTextarea  = document.getElementById('output');
@@ -16,19 +15,24 @@ export var answerButton    = document.getElementById("answer");
 export var hangupButton    = document.getElementById("hangup");
 export var remotes_table   = document.getElementById("remotes_table");
 
-//remote_id_input.disabled = true;
-
 callButton.disabled = true;
 answerButton.disabled = true;
 hangupButton.disabled = true;
 
+export var user_name;
 export var remote_id;
 export var remotes = [];
 export var controlsVisible = true;
 
 export function print(what) {
     if (outputTextarea) {
-        outputTextarea.innerText += what + "\n";
+        outputTextarea.innerHTML += what + "<br>";
+    }
+}
+
+export function puts(what) {
+    if (outputTextarea) {
+        outputTextarea.innerHTML += what;
     }
 }
 
@@ -69,7 +73,6 @@ export function ButtonDisable(button, disable) {
 
 export function UpdateRemoteId(id) {
     remote_id = id;
-
     ButtonDisable(callButton, false);
 }
 
@@ -82,9 +85,21 @@ export function UpdateCallStateUI(state) {
             ButtonDisable(hangupButton, true);
             audioMgr.stop(0);
             audioMgr.stop(1);
+
+            if (remote_id) {
+                UpdateCallStateUI(CallState.Identified);
+            }
+
             break;
 
-        case CallState.Calling:
+        case CallState.Identified:
+                ControlsVisible(true);
+                ButtonDisable(callButton, false);
+                ButtonDisable(answerButton, true);
+                ButtonDisable(hangupButton, true);
+                break;
+    
+            case CallState.Calling:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
@@ -133,6 +148,20 @@ export function ControlsVisible(visible) {
 
 export function ToggleControlVisibility() {
     ControlsVisible(!controlsVisible);
+}
+
+export function SetLocalUserName(name) {
+    user_name = name;
+}
+
+export function GetUserNameFromId(id) {
+    var obj = remotes.find(o => o.sessionId === id);
+
+    if (typeof obj === 'undefined') {
+        return null;
+    }
+
+    return obj.userName;
 }
 
 document.getElementById("controlsWrapper").addEventListener('click', (event) => {

@@ -1,11 +1,11 @@
 import { ws } from "./websock.js";
-import { user_name } from "./ui.js";
+import { SetLocalUserName, user_name } from "./ui.js";
 
 export var localStream = null;
 
 export function GetStoredUserName() {
     var userName = localStorage.getItem("userName");
-    user_name.textContent = userName;
+    SetLocalUserName(userName);
 
     return userName;
 }
@@ -16,7 +16,7 @@ export function UpdateLocalIdPlaceholder(value) {
 }
 
 export function UpdateLocalId() {
-    localStorage.setItem("userName", user_name.textContent);
+    localStorage.setItem("userName", user_name);
 
     if (ws.sessionID != null) {
         SendLocalIdEvent();
@@ -27,7 +27,7 @@ export function SendLocalIdEvent() {
     var localIdEvent = {
         type: "LocalIdEvent",
         sessionID: ws.sessionID,
-        userName: user_name.textContent
+        userName: user_name
     };
 
     ws.send(JSON.stringify(localIdEvent));

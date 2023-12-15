@@ -2,6 +2,7 @@ import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
+    user_name,
     remote_id, 
     remote_video, 
     callButton,
@@ -11,7 +12,8 @@ import {
     OnSessionsChangedMessage,
     UpdateRemoteId,
     ButtonDisable,
-    UpdateCallStateUI
+    UpdateCallStateUI,
+    GetUserNameFromId
 } from "./ui.js";
 
 var configuration = {
@@ -108,6 +110,8 @@ export async function Call() {
     SetPeerRemoteId(remote_id);
     SetCallState(CallState.Calling);
 
+    UpdateRemoteId(remote_id);
+
     var callingString = 'calling ' + peer_remote_id;
     console.log(callingString);
 
@@ -133,7 +137,7 @@ export async function Call() {
 
         var msg = {
                       type: "Call",
-                  userName: user_name.textContent,
+                  userName: user_name,
                   targetId: peer_remote_id.toString(),
                  sessionId: ws.sessionID,
                    session: pc.localDescription
@@ -158,7 +162,7 @@ export async function Answer() {
 
     var msg = {
              type: "Answer",
-         userName: user_name.textContent,
+         userName: user_name,
          targetId: peer_remote_id.toString(),
         sessionId: ws.sessionID,
           session: pc.localDescription
@@ -186,7 +190,7 @@ function OnConnectionStateChange(cs) {
     var state = cs.target.connectionState;
 
     if (state === "connected") {
-        print(state + ' to ' + peer_remote_id);
+        print(state + ' to ' + GetUserNameFromId(peer_remote_id));
         SetCallState(CallState.Connected);
     }
 }
@@ -198,7 +202,7 @@ function OnIceCandidateEvent(candidate) {
 
     var msg = {
              type: "ICECandidate",
-         userName: user_name.textContent,
+         userName: user_name,
          targetId: peer_remote_id.toString(),
         candidate: candidate,
     };
@@ -235,7 +239,7 @@ function OnCallMessage(call) {
     SetPeerRemoteId(call.sessionId);
     SetCallState(CallState.Ringing);
 
-    var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
+    var incomingString = 'call from ' + call.userName;
 
     console.log(incomingString);
     print(incomingString);

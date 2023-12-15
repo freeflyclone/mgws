@@ -2,7 +2,7 @@ import { MakeWebSocket } from "./websock.js";
 import { MakePeerConnection } from "./peer.js";
 import { InitLocalStream, GetStoredUserName } from "./local.js";
 import { AudioInit } from "./audio.js";
-import { print } from "./ui.js";
+import { print, puts, user_name } from "./ui.js";
 
 export const appVersion = "0.1";
 
@@ -33,25 +33,27 @@ async function main() {
         window.location.assign("/enroll");
     }
    
-    print(window.location);
+    print("<b>Host:</b> " + window.location.host);
 
     ShowSupportedConstraints();
 
-    print("Getting local media devices...");
-    InitLocalStream();
-
-    print("Initializing sounds...");
-    AudioInit();
-
-    print("Looking for stored user name...");
     GetStoredUserName();
+    print("<b>User Name:</b> " + user_name);
+    puts("<hr>");
+    puts(".");
 
-    print("Connecting to signaling server...");
+    InitLocalStream();
+    puts(".");
+
+    AudioInit();
+    puts(".");
+
     MakeWebSocket();
+    puts(".");
 
-    print("Establishing a peer connection.");
     MakePeerConnection();
+    puts(".");
 
-    print("\nSuccess!");
-    print("\nClick/Tap a recipient in the panel above to initiate a call.");
+    print("<br>Initialization succeeded!");
+    print("\nClick/Tap a recipient above to start a call.\n");
 }
