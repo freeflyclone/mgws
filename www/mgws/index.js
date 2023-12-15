@@ -1,8 +1,8 @@
 import { MakeWebSocket } from "./websock.js";
 import { MakePeerConnection } from "./peer.js";
 import { InitLocalStream, GetStoredUserName } from "./local.js";
-import { AudioInit, audioMgr } from "./audio.js";
-import { print } from "./ui.js";
+import { AudioInit } from "./audio.js";
+import { print, ToggleControlVisibility } from "./ui.js";
 
 export const appVersion = "0.1";
 
@@ -28,6 +28,10 @@ async function closing() {
 }
 
 async function main() {
+    document.getElementById("controlsWrapper").addEventListener('click', (event) => {
+        ToggleControlVisibility();
+    });
+
     // TODO: this doesn't work on iOS Safari, fix that.
     if (localStorage.getItem('userName') === null) {
         window.location.assign("/enroll");

@@ -49,7 +49,7 @@ body {
     margin: 0px;
     padding: 0px;
 }
-.controlsWrapper {
+#controlsWrapper {
     display: flex;
     flex-direction: row;
     position: absolute;
@@ -137,4 +137,26 @@ button:disabled {
     font: 10pt arial;
 }
 
+.fade_start {
+    animation-name: fade-in;
+    animation-duration: .25s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
 
+.fade_out {
+    animation-name: fade-out;
+    animation-duration: .25s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-out {
+    0%   { opacity: 100%; }
+    100% { opacity:   0%; }
+}
+
+@keyframes fade-in {
+    0%   { opacity:   0%; }
+    100% { opacity: 100%; }
+}

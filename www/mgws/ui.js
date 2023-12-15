@@ -24,6 +24,7 @@ hangupButton.disabled = true;
 
 export var remote_id;
 export var remotes = [];
+export var controlsVisible = true;
 
 export function print(what) {
     if (outputTextarea) {
@@ -116,4 +117,18 @@ export function UpdateCallStateUI(state) {
             audioMgr.stop(1);
             true
     }
+}
+
+export function ControlsVisible(visible) {
+    controlsVisible = visible;
+    if (visible) {
+        document.getElementById("controlsWrapper").className = "fade_start";
+    }
+    else {
+        document.getElementById("controlsWrapper").className = "fade_out";
+    }
+}
+
+export function ToggleControlVisibility() {
+    ControlsVisible(!controlsVisible);
 }
