@@ -76,6 +76,7 @@ export function UpdateRemoteId(id) {
 export function UpdateCallStateUI(state) {
     switch(state) {
         case CallState.Idle:
+            ControlsVisible(true);
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, true);
@@ -110,6 +111,7 @@ export function UpdateCallStateUI(state) {
             break;
 
         case CallState.Connected:
+            ControlsVisible(false);
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
@@ -132,3 +134,11 @@ export function ControlsVisible(visible) {
 export function ToggleControlVisibility() {
     ControlsVisible(!controlsVisible);
 }
+
+document.getElementById("controlsWrapper").addEventListener('click', (event) => {
+    if (callState === CallState.Connected) {
+        ToggleControlVisibility();
+        console.log("controlsWrapper click event");
+    }
+});
+
