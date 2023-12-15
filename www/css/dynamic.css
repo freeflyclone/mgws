@@ -95,12 +95,17 @@ button:disabled {
     margin: 10px 0px 10px 0px;
 }
 
-#remotes_table tr.highlightable:hover {
+#remotes_table :hover {
     background-color: white;
     color: rgba(16, 16, 127, 1);
 }
 
+.selected {
+    background-color: white;
+    color: rgba(16, 16, 127, 1);
+}
 #remotes_table {
+    color: white;
     margin: 0 auto;
     font: 10pt arial;
     width: 100%;

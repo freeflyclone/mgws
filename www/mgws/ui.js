@@ -36,8 +36,23 @@ export function puts(what) {
     }
 }
 
-function OnTableRowOnClickEvent(event) {
-    UpdateRemoteId(event.target.id);
+function ToggleClass(el, className) {
+    if (el.className === ""){
+        el.className += className;
+    }
+    else {
+        el.classList.remove(className);
+    }
+}
+
+function OnTableRowClickEvent(event) {
+    var tr = event.target.parentNode;
+    console.log("OnTableRowClickEvent(): ", tr);
+
+    ToggleClass(tr, 'selected');
+
+    UpdateRemoteId(tr.id);
+    console.log("OnTableRowClickEvent(): ", tr);
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
@@ -55,11 +70,10 @@ export function OnSessionsChangedMessage(sessionsList) {
 
         var tr = document.createElement('tr');
 
-        tr.className = "highlightable";
-        tr.innerHTML = "<td id='" + session.sessionId + "'>" + session.userName + "</td>";
+        tr.innerHTML = '<td id="' + session.sessionId + '" class="">' + session.userName + "</td>";
         tr.id = session.sessionId;
 
-        tr.addEventListener("click", OnTableRowOnClickEvent);
+        tr.addEventListener("click", OnTableRowClickEvent);
 
         remotes_table.appendChild(tr);
     });
