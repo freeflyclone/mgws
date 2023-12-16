@@ -1,30 +1,26 @@
 html {
-    background: darkslategray;
-    margin: 0px;
-    padding: 0px;
+    background: black ;
 }
 body {
-    margin: 0px;
-    padding: 0px;
     overflow: hidden;
 }
 
 .smallVideo {
-    position: absolute;
+    position: relative;
     overflow: hidden;
     top: 0px;
     z-index: 0;
-    border-radius: 10px;
-    margin: 10px;
+    margin: 6px;
 }
 
 #local_video {
-    background-color: darkblue;
+    background-color: darkslategray;
     width: 110px;
     height: 110px;
     object-fit: cover;
     object-position: 50% 50%;
     overflow: hidden;
+    border-radius: 4px;
 }
 
 .bigVideo {
@@ -113,13 +109,12 @@ button:disabled {
 }
 
 .panel#outputPanel {
-    border-radius: 0px;
     width: 100%;
     height: 240px;
     background:lightgray;
     color: black;
     text-align: left;
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
 }
 
