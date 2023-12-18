@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <memory>
 #include <nlohmann/json.hpp>
-#include "peer.h"
 
 using json = nlohmann::json;
 
@@ -38,7 +37,6 @@ public:
 private:
 	SessionID_t m_id;
 	Connection& m_connection;
-	Peer m_peer;
 
 	std::string m_userName;
 };

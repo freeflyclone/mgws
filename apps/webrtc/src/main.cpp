@@ -18,7 +18,7 @@ namespace {
     std::string key;
 };
 
-// Mongoose event handler function, gets called by the mg_mgr_poll()
+// Mongoose request handler function, gets called by the mg_mgr_poll()
 static void RequestHandler(struct mg_connection* c, int ev, void* ev_data, void* fn_data) {
     struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 

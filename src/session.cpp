@@ -6,7 +6,6 @@
 Session::Session(SessionID_t id, Connection& c)
 	: m_id(id),
 	m_connection(c),
-	m_peer(this),
 	m_userName()
 {
 	m_connection.fn_data = this;
@@ -20,8 +19,13 @@ Session::~Session()
 
 void Session::OnMessage(Message* msg) {
 	try {
-		json j = json::parse(std::string(msg->data.ptr, msg->data.len));
-		m_peer.HandleMessage(j);
+		std::string msgString(msg->data.ptr, msg->data.len);
+
+		TRACE("OnMessage: " << msgString);
+
+		// TODO pass to app somehow
+
+		json j = json::parse(msgString);
 	}
 	catch (std::exception& e) {
 		TRACE("OnMessage exception: " << e.what());
