@@ -60,7 +60,7 @@ function OnTableRowClickEvent(event) {
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
-    // Rebuild table from scratch every time it changes...
+    // Rebuild local table UI from scratch when table changes...
     remotes_table.innerHTML = null;
     remotes = [];
 
