@@ -117,7 +117,7 @@ export function UpdateCallStateUI(state) {
                 ButtonDisable(hangupButton, true);
                 break;
     
-            case CallState.Calling:
+        case CallState.Calling:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
@@ -173,13 +173,16 @@ export function SetLocalUserName(name) {
 }
 
 export function GetUserNameFromId(id) {
-    var obj = remotes.find(o => o.sessionId === id);
-
-    if (typeof obj === 'undefined') {
-        return null;
+    var userName = null;
+    
+    for (const remote of remotes) {
+        if (remote.sessionId == id) {
+            userName = remote.userName;
+            break;
+        }
     }
 
-    return obj.userName;
+    return userName;
 }
 
 document.getElementById("controlsWrapper").addEventListener('click', (event) => {

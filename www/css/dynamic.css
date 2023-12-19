@@ -115,7 +115,7 @@ button:disabled {
     background:lightgray;
     color: black;
     text-align: left;
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 
