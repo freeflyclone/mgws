@@ -49,6 +49,22 @@ function HighlightOff(row) {
     UpdateRemoteId(row.id);
 }
 
+export function HighlightOnById(id) {
+    for(var idx=0, row; row = remotes_table.rows[idx]; idx++) {
+        if (row.id == id) {
+            HighlightOn(row);
+        }
+    }
+}
+
+export function HighlightOffById(id) {
+    for(var idx=0, row; row = remotes_table.rows[idx]; idx++) {
+        if (row.id == id) {
+            HighlightOff(row);
+        }
+    }
+}
+
 function OnTableRowClickEvent(event) {
     var tr = event.target.parentNode;
     if (selectedRow !== null) {

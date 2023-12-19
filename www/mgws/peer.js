@@ -13,7 +13,8 @@ import {
     UpdateRemoteId,
     ButtonDisable,
     UpdateCallStateUI,
-    GetUserNameFromId
+    GetUserNameFromId,
+    HighlightOnById
 } from "./ui.js";
 
 var configuration = {
@@ -159,6 +160,7 @@ export async function Answer() {
     await pc.setLocalDescription(answer);
 
     UpdateRemoteId(peer_remote_id);
+    HighlightOnById(peer_remote_id);
 
     var answeringString = 'answering ' + GetUserNameFromId(peer_remote_id) + "...";
     print(answeringString);
