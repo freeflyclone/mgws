@@ -24,6 +24,9 @@ export var remote_id;
 export var remotes = [];
 export var controlsVisible = true;
 
+var selectedRow = null;
+let highlightCss = 'selected';
+
 export function print(what) {
     if (outputTextarea) {
         outputTextarea.innerHTML += what + "<br>";
@@ -36,23 +39,24 @@ export function puts(what) {
     }
 }
 
-function ToggleClass(el, className) {
-    if (el.className === ""){
-        el.className += className;
-    }
-    else {
-        el.classList.remove(className);
-    }
+function HighlightOn(row) {
+    row.className += highlightCss;
+    UpdateRemoteId(row.id);
+}
+
+function HighlightOff(row) {
+    row.classList.remove(highlightCss);
+    UpdateRemoteId(row.id);
 }
 
 function OnTableRowClickEvent(event) {
     var tr = event.target.parentNode;
-    console.log("OnTableRowClickEvent(): ", tr);
+    if (selectedRow !== null) {
+        HighlightOff(selectedRow);
+    }
 
-    ToggleClass(tr, 'selected');
-
-    UpdateRemoteId(tr.id);
-    console.log("OnTableRowClickEvent(): ", tr);
+    selectedRow = tr;
+    HighlightOn(selectedRow);
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
