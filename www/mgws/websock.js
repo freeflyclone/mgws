@@ -5,6 +5,7 @@ export var ws;
 
 export function MakeWebSocket() {
     var wsUrl = "wss://" + window.location.host + "/websock";
+    //var wsUrl = "wss://ws.e-man.social:8443/websock";
 
     ws = new WebSocket(wsUrl);
 
@@ -25,6 +26,7 @@ function OnMessage(event) {
 
     switch(msg.type) {
         case "SessionID":
+            console.log(msg);
             ws.sessionID = msg.id;
             PeerRegisterSession();
             UpdateLocalId();

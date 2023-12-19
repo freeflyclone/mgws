@@ -1,11 +1,9 @@
 import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
-import { audioMgr }from "./audio.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
 import {
-    user_name_input,
-    local_id_input,
-    remote_id_input, 
+    user_name,
+    remote_id, 
     remote_video, 
     callButton,
     answerButton,
@@ -14,7 +12,8 @@ import {
     OnSessionsChangedMessage,
     UpdateRemoteId,
     ButtonDisable,
-    UpdateCallStateUI
+    UpdateCallStateUI,
+    GetUserNameFromId
 } from "./ui.js";
 
 var configuration = {
@@ -27,6 +26,7 @@ export var peer_remote_id;
 
 export const CallState = {
     Idle: Symbol("Idle"),
+    Identified: Symbol("Indentified"),
     Calling: Symbol("Calling"),
     Ringing: Symbol("Ringing"),
     Connected: Symbol("Connected"),
@@ -40,13 +40,15 @@ function SetCallState(state) {
 }
 
 export function PeerRegisterSession() {
+    var userName = localStorage.getItem("userName");
     var msg = {
         type: "RegisterSession",
         sessionId: ws.sessionID,
         appVersion: appVersion,
-        userName: localStorage.getItem("userName"),
+        userName: userName,
     };
   
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -73,6 +75,7 @@ function AbortCall() {
 }
 
 export function MakePeerConnection() {
+
     callButton.addEventListener('click', Call);
     answerButton.addEventListener('click', Answer);
     hangupButton.addEventListener('click', Hangup);
@@ -104,11 +107,13 @@ export function PeerMessageHandler(msg) {
 }
 
 export async function Call() {
-    SetPeerRemoteId(remote_id_input.value);
+    SetPeerRemoteId(remote_id);
     SetCallState(CallState.Calling);
 
+    UpdateRemoteId(remote_id);
+
     var callingString = 'calling ' + peer_remote_id;
-    print(callingString);
+    console.log(callingString);
 
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
@@ -132,13 +137,13 @@ export async function Call() {
 
         var msg = {
                       type: "Call",
-                  userName: user_name_input.value,
-                  targetId: remote_id_input.value,
-                 callingId: local_id_input.value,
+                  userName: user_name,
+                  targetId: peer_remote_id.toString(),
                  sessionId: ws.sessionID,
                    session: pc.localDescription
         };
     
+        console.log(msg);
         ws.send(JSON.stringify(msg));
     } catch (e) {
         print(`Failed to create offer: ${e}`);
@@ -156,13 +161,13 @@ export async function Answer() {
     UpdateRemoteId(peer_remote_id);
 
     var msg = {
-                     type: "Answer",
-                 userName: user_name_input.value,
-                 targetId: remote_id_input.value,
-              answeringId: local_id_input.value,
-                sessionId: ws.sessionID,
-                  session: pc.localDescription
+             type: "Answer",
+         userName: user_name,
+         targetId: peer_remote_id.toString(),
+        sessionId: ws.sessionID,
+          session: pc.localDescription
     };
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 
     ButtonDisable(answerButton, true);
@@ -173,10 +178,11 @@ async function Hangup() {
 
     var msg = {
         type: "Hangup",
-        userName: user_name_input.value,
-        targetId: remote_id_input.value,
+        userName: user_name,
+        targetId: peer_remote_id.toString(),
     };
 
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 };
   
@@ -184,7 +190,7 @@ function OnConnectionStateChange(cs) {
     var state = cs.target.connectionState;
 
     if (state === "connected") {
-        print(state + ' to ' + peer_remote_id);
+        print(state + ' to ' + GetUserNameFromId(peer_remote_id));
         SetCallState(CallState.Connected);
     }
 }
@@ -196,11 +202,12 @@ function OnIceCandidateEvent(candidate) {
 
     var msg = {
              type: "ICECandidate",
-         userName: local_id_input.value,
-         targetId: peer_remote_id,
+         userName: user_name,
+         targetId: peer_remote_id.toString(),
         candidate: candidate,
     };
 
+    console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -229,10 +236,10 @@ function OnIceCandidateMessage(candidate) {
 }
 
 function OnCallMessage(call) {
-    SetPeerRemoteId(call.callingId);
+    SetPeerRemoteId(call.sessionId);
     SetCallState(CallState.Ringing);
 
-    var incomingString = 'call from ' + peer_remote_id + ', userName: ' + call.userName;
+    var incomingString = 'call from ' + call.userName;
 
     console.log(incomingString);
     print(incomingString);

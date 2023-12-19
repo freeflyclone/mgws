@@ -4,31 +4,20 @@ set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
-	${PROJECT_SOURCE_DIR}/src/mongoose.c
-	${PROJECT_SOURCE_DIR}/src/sqlite3.c
-	${PROJECT_SOURCE_DIR}/src/session.cpp
-	${PROJECT_SOURCE_DIR}/src/sessionmgr.cpp
 	${SRCS}/peer.cpp
 	${SRCS}/main.cpp
 )
 
 set(HEADER_FILES
-	${PROJECT_SOURCE_DIR}/inc/mongoose.h
-	${PROJECT_SOURCE_DIR}/inc/sqlite3.h
-	${PROJECT_SOURCE_DIR}/inc/sqlite3ext.h
-	${PROJECT_SOURCE_DIR}/inc/nlohmann/json.hpp
-	${PROJECT_SOURCE_DIR}/inc/mgws.h
-	${PROJECT_SOURCE_DIR}/inc/session.h
-	${PROJECT_SOURCE_DIR}/inc/sessionmgr.h
 	${INCS}/peer.h
 )
 
 set(WWW_FILES
+	${PROJECT_SOURCE_DIR}/www/css/dynamic.css
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/local-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/remote-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/sounds/telephone-ring.m4a
 	${PROJECT_SOURCE_DIR}/www/mgws/audio.js
-	${PROJECT_SOURCE_DIR}/www/mgws/dynamic.css
 	${PROJECT_SOURCE_DIR}/www/mgws/index.html
 	${PROJECT_SOURCE_DIR}/www/mgws/index.js
 	${PROJECT_SOURCE_DIR}/www/mgws/local.js
@@ -47,9 +36,8 @@ endif()
 
 add_executable(${APP} ${HEADER_FILES} ${SOURCE_FILES} ${WWW_FILES})
 
-target_compile_definitions(${APP} PUBLIC MG_TLS=MG_TLS_OPENSSL)
 target_include_directories(${APP} PUBLIC ${PROJECT_SOURCE_DIR}/inc ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-target_link_libraries(${APP} PUBLIC OpenSSL::SSL)
+target_link_libraries(${APP} PRIVATE mgws)
 
 if(MSVC)
 	set_target_properties(${APP} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/certs)

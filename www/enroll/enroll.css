@@ -1,0 +1,30 @@
+h1 { text-align: center; }
+
+.enrollWrapper {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    background: white;
+    padding: 0px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(100%, 100%);
+    width: max-content;
+    height: max-content;
+    border-radius: 10px;
+}
+
+.enroll {
+    width: 256px;
+    height: 300px;
+    background: rgb(16, 16, 127);
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+    margin: 4px 4px 4px 4px;
+    font: 14pt arial;
+    padding: 10px;
+}
+
+.enroll_input { width: 200px; font: 12pt arial; }

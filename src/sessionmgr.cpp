@@ -7,14 +7,19 @@ namespace {
 
 SessionManager g_sessions;
 
-SessionManager::SessionPtr SessionManager::NewSession(Connection& c) {
-	SessionPtr newSession = std::make_shared<Session>(nextId++, c);
+bool SessionManager::AddSession(SessionPtr p) {
+	try {
+		std::lock_guard<std::mutex> lock(m_idMutex);
 
-	m_sessions.emplace(newSession->getId(), newSession);
-
-	return newSession;
+		p->SetId(nextId++);
+		m_sessions.emplace(p->GetId(), p);
+	}
+	catch (std::exception& e) {
+		TRACE("Exception: " << e.what());
+		return false;
+	}
+	return true;
 }
-
 void SessionManager::DeleteSession(Session* session) {
 	if (!session)
 		return;
@@ -22,12 +27,12 @@ void SessionManager::DeleteSession(Session* session) {
 	if (m_sessions.empty())
 		return;
 
-	auto it = m_sessions.find(session->getId());
+	auto it = m_sessions.find(session->GetId());
 
 	if (it == m_sessions.end())
 		return;
 
-	auto id = it->second->getId();
+	auto id = it->second->GetId();
 
 	TRACE("Deleting id: " << id);
 
@@ -36,7 +41,7 @@ void SessionManager::DeleteSession(Session* session) {
 	UpdateSessionsList();
 }
 
-void SessionManager::UpdateSession(const uint32_t id, const std::string& userName, const std::string& localId) {
+void SessionManager::UpdateSession(const uint32_t id, const std::string& userName) {
 	auto sessPair = m_sessions.find(id);
 	if (sessPair == m_sessions.end()) {
 		TRACE("Oops: didn't find g_sessions[" << id << "]");
@@ -45,31 +50,19 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 
 	auto session = (sessPair->second);
 
-	// used by Peer::OnLocalIdEvent() to update g_sessions[m_id]
 	session->SetUserName(userName);
-	session->SetLocalId(localId);
 }
 
-SessionManager::SessionPtr SessionManager::GetSessionById(const SessionID_t id)
+SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& sessId)
 {
+	const SessionID_t id = static_cast<SessionID_t>(std::stoi(sessId));
+
 	auto sessPair = m_sessions.find(id);
 	if (sessPair == m_sessions.end()) {
 		TRACE("Oops: didn't find g_sessions[" << id << "]");
 		return nullptr;
 	}
 	return sessPair->second;
-}
-
-SessionManager::SessionPtr SessionManager::GetSessionByLocalId(const std::string& localId)
-{
-	for (auto sessMgrPair : m_sessions) {
-		auto session = sessMgrPair.second;
-		if (session->LocalId() == localId) {
-			return session;
-		}
-	}
-
-	return nullptr;
 }
 
 void SessionManager::Iterate(SessionCallback_fn fn) {
@@ -83,9 +76,8 @@ void SessionManager::UpdateSessionsList() {
 
 	g_sessions.Iterate([&](Session* session) {
 		json s = {
-			{"sessionId", session->getId() },
-			{"userName", session->UserName() },
-			{"localId", session->LocalId() }
+			{"sessionId", session->GetId() },
+			{"userName", session->GetUserName() },
 		};
 		msg["sessions"].push_back(s);
 	});

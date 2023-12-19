@@ -1,0 +1,163 @@
+html {
+    background: black ;
+}
+body {
+    overflow: hidden;
+}
+
+.smallVideo {
+    position: relative;
+    overflow: hidden;
+    top: 0px;
+    z-index: 0;
+    margin: 6px;
+}
+
+#local_video {
+    background-color: darkslategray;
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    object-position: 50% 50%;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.bigVideo {
+    position: absolute;
+    z-index: 0;
+    top: 0px;
+    left: 0px;
+    width: 101%;
+    height: 101%;
+    color: white;
+    overflow: hidden;
+}
+#remote_video {
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+#controlsWrapper {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    background: darkgray;
+    padding: 0px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(100%, 100%);
+    width: max-content;
+    height: max-content;
+    border-radius: 4px;
+}
+
+.controls {
+    top: 0%;
+    width: 270px;
+    height: max-content;
+    background: rgb(149, 154, 184);
+    color: white;
+    text-align: right;
+    border-radius: 6px;
+    margin: 1px;
+    font: 12pt arial;
+    padding: 6px 6px 6px 6px;
+}
+
+.controlButtons {
+    width: 100%;
+    text-align: center;
+    bottom: 20px;
+}
+
+button:disabled {
+    background: lightslategray;
+    color: rgb(96,96,96);
+    border-radius: 2px;
+}
+
+.panel {
+    width: 100%;
+    height: 60px;
+    background: hsl(224, 37%, 35%);
+    color: white;
+    text-align: right;
+    border-radius: 4px;
+    margin: 10px 0px 10px 0px;
+}
+
+#remotes_table :hover {
+    background-color: white;
+    color: rgba(16, 16, 127, 1);
+}
+
+.selected {
+    background-color: white;
+    color: rgba(16, 16, 127, 1);
+}
+#remotes_table {
+    color: white;
+    margin: 0 auto;
+    font: 10pt arial;
+    width: 100%;
+    text-align: center;
+}
+
+.panel#outputPanel {
+    width: 100%;
+    height: 240px;
+    background:lightgray;
+    color: black;
+    text-align: left;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+#output {
+    font: 9pt arial;
+    margin: 6px;
+    width: 100%;
+    height: 100%;
+}
+
+.ui_span {
+    font: 10pt arial;
+    width: 100%;
+    text-align: center;
+}
+.ui_label {
+    font: 10pt arial;
+}
+.ui_input {
+    width: 100px;
+    font: 10pt arial;
+}
+
+.fade_start {
+    animation-name: fade-in;
+    animation-duration: .25s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.fade_out {
+    animation-name: fade-out;
+    animation-duration: .25s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-out {
+    0%   { opacity: 100%; }
+    100% { opacity:   0%; }
+}
+
+@keyframes fade-in {
+    0%   { opacity:   0%; }
+    100% { opacity: 100%; }
+}

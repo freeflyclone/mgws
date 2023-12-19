@@ -6,16 +6,28 @@
 #include "session.h"
 #include "sessionmgr.h"
 
-Peer::Peer(Session* sess) :	m_session(sess)
+Peer::Peer(Connection& c)
+	: Session(c)
 {
 	using namespace std::placeholders;
 
+	// The set of WebRTC message "type" JSONs we respond to. 
 	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);
 	m_pmd["LocalIdEvent"]    = std::bind(&Peer::OnLocalIdEvent,    this, _1);
 	m_pmd["ICECandidate"]    = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Call"]            = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Answer"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Hangup"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
+}
+
+void Peer::OnMessage(Message* msg) {
+	try {
+		auto j = json::parse(std::string(msg->data.ptr, msg->data.len));
+		HandleMessage(j);
+	}
+	catch (std::exception& e) {
+		TRACE("OnMessage exception: " << e.what());
+	}
 }
 
 void Peer::HandleMessage(json& j)
@@ -42,15 +54,14 @@ void Peer::OnLocalIdEvent(json& j)
 	try {
 		auto sessionId = j["sessionID"];
 		auto userName = j["userName"];
-		auto localId = j["localId"];
 
-		if (sessionId != m_session->getId()) {
-			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_session->getId());
+		if (sessionId != m_id) {
+			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_id);
 			return;
 		}
 
-		g_sessions.UpdateSession(m_session->getId(), userName, localId);
-		m_session->Send({ {"type", "LocalIdChanged"} });
+		g_sessions.UpdateSession(m_id, userName);
+		Send({ {"type", "LocalIdChanged"} });
 
 		g_sessions.UpdateSessionsList();
 	}
@@ -62,8 +73,11 @@ void Peer::OnLocalIdEvent(json& j)
 void Peer::OnForwardMessage(json& j)
 {
 	try {
-		auto session = g_sessions.GetSessionByLocalId(j["targetId"]);
+		auto type = j["type"];
+		auto targetId = j["targetId"];
+		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
+		auto session = g_sessions.GetSessionById(targetId);
 		if (session)
 			session->Send(j);
 

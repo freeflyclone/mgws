@@ -3,13 +3,18 @@
 /**
 * Session is a Websocket session, created when mg_ws_upgrade() is called
 * in response to a "/websock" URI request is received by Mongoose.
+* 
+* The class provides basic session id, user name, and JSON messages
+* thanks to Niels Lohmann's C++ library.
+* 
+* This is as minimial as possible, to aid in microcontroller deployment
+* in the future.
 */
 
 #include <map>
 #include <algorithm>
 #include <memory>
 #include <nlohmann/json.hpp>
-#include "peer.h"
 
 using json = nlohmann::json;
 
@@ -23,26 +28,22 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(SessionID_t, Connection&);
+	explicit Session(Connection&);
 	~Session();
 
-	SessionID_t getId() { return m_id; };
+	SessionID_t GetId();
+	void SetId(SessionID_t id);
 
-	const std::string& UserName() { return m_userName; }
-	const std::string& LocalId() { return m_localId; }
+	const std::string& GetUserName();
+	void SetUserName(const std::string& name);
 
-	void SetUserName(const std::string& name) { m_userName = name; }
-	void SetLocalId(const std::string& localId) { m_localId = localId; }
+	virtual void Send(const json&);
+	virtual void OnMessage(Message*);
 
-	void Send(const json&);
-	void OnMessage(Message*);
-
-private:
+protected:
 	SessionID_t m_id;
 	Connection& m_connection;
-	Peer m_peer;
 
-	std::string m_localId;
 	std::string m_userName;
 };
 

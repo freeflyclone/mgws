@@ -1,16 +1,11 @@
 import { ws } from "./websock.js";
-import { 
-    user_name_input, 
-    local_id_input, 
-    StopUserNameBlinking } from "./ui.js";
+import { SetLocalUserName, user_name } from "./ui.js";
 
 export var localStream = null;
 
 export function GetStoredUserName() {
     var userName = localStorage.getItem("userName");
-    user_name_input.value = userName;
-
-    StopUserNameBlinking();
+    SetLocalUserName(userName);
 
     return userName;
 }
@@ -21,10 +16,7 @@ export function UpdateLocalIdPlaceholder(value) {
 }
 
 export function UpdateLocalId() {
-    localStorage.setItem("userName", user_name_input.value);
-
-    local_id_input.value = user_name_input.value + '(' + ws.sessionID + ')';
-    StopUserNameBlinking();
+    localStorage.setItem("userName", user_name);
 
     if (ws.sessionID != null) {
         SendLocalIdEvent();
@@ -35,8 +27,7 @@ export function SendLocalIdEvent() {
     var localIdEvent = {
         type: "LocalIdEvent",
         sessionID: ws.sessionID,
-        localId: local_id_input.value,
-        userName: user_name_input.value
+        userName: user_name
     };
 
     ws.send(JSON.stringify(localIdEvent));
@@ -53,8 +44,6 @@ export function InitLocalStream() {
         'video': true,
         'audio': true
     }
-
-    user_name_input.addEventListener('change', UpdateLocalId);
 
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {

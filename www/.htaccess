@@ -1,0 +1,3 @@
+AddDefaultCharset UTF-8   
+AddDefaultCharset ISO-8859-1
+Header set Cache-Control "no-cache, no-store, must-revalidate"
