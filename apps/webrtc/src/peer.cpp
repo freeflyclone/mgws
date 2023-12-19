@@ -21,7 +21,8 @@ Peer::Peer(Connection& c)
 
 void Peer::OnMessage(Message* msg) {
 	try {
-		HandleMessage(json::parse(std::string(msg->data.ptr, msg->data.len)));
+		auto j = json::parse(std::string(msg->data.ptr, msg->data.len));
+		HandleMessage(j);
 	}
 	catch (std::exception& e) {
 		TRACE("OnMessage exception: " << e.what());
