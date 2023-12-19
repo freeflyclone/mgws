@@ -35,7 +35,6 @@ export const CallState = {
 export var callState = CallState.Idle;
 
 export function SetCallState(state) {
-    console.log("callState transition: ", callState, " to ", state);
     callState = state;
     UpdateCallStateUI(callState);
 }
@@ -228,7 +227,7 @@ function OnIceCandidateEvent(candidate) {
         candidate: candidate,
     };
 
-    console.log(msg);
+    //console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -263,8 +262,6 @@ function OnCallMessage(call) {
     peer_remote_user_name = call.userName;
 
     var incomingString = 'call from ' + peer_remote_user_name;
-
-    console.log(incomingString);
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));

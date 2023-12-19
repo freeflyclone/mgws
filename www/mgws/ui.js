@@ -74,6 +74,7 @@ function DetectVanishedSession(sessionsList) {
         if (vanished) {
             var vanishedString = " connection to " + peer_remote_user_name  + " vanished.";
             print(vanishedString);
+            remote_id = null;
             EndCall();
         }
     }
