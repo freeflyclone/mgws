@@ -55,5 +55,5 @@ async function main() {
     puts(".");
 
     print("<br>Initialization succeeded!");
-    print("\nClick/Tap a recipient above to enable calling.\n");
+    print("\nSelect a recipient above to enable calling.\n");
 }

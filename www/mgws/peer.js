@@ -60,9 +60,9 @@ function SetPeerRemoteId(id) {
     peer_remote_id = id;
 }
 
-function AbortCall() {
+function EndCall() {
     StopLocalStream();
-    
+
     if (pc) {
         pc.close();
         pc = null;
@@ -112,8 +112,8 @@ export async function Call() {
 
     UpdateRemoteId(remote_id);
 
-    var callingString = 'calling ' + peer_remote_id;
-    console.log(callingString);
+    var callingString = 'calling ' + GetUserNameFromId(peer_remote_id) + "...";
+    print(callingString);
 
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
@@ -126,7 +126,7 @@ export async function Call() {
         });
     }
     catch (err) {
-        console.log("caught error: " + err);
+        print("caught error: " + err);
     }
     
     const offerOptions = { offerToReceiveAudio: 1, offerToReceiveVideo: 1 };
@@ -160,6 +160,9 @@ export async function Answer() {
 
     UpdateRemoteId(peer_remote_id);
 
+    var answeringString = 'answering ' + GetUserNameFromId(peer_remote_id) + "...";
+    print(answeringString);
+
     var msg = {
              type: "Answer",
          userName: user_name,
@@ -174,7 +177,24 @@ export async function Answer() {
 }
 
 async function Hangup() {
-    AbortCall();
+    switch(callState) {
+        case CallState.Ringing:
+            var ringingString = "declining call from " + GetUserNameFromId(peer_remote_id);
+            print(ringingString);
+            break;
+
+        case CallState.Calling:
+            var callingString = "cancelling call to " + GetUserNameFromId(peer_remote_id);
+            print(callingString);
+            break;
+
+        case CallState.Connected:
+            var connectedString = "ending call to " + GetUserNameFromId(peer_remote_id);
+            print(connectedString);
+            break;
+    }
+
+    EndCall();
 
     var msg = {
         type: "Hangup",
@@ -252,5 +272,22 @@ function OnAnswerMessage(answer) {
 }
 
 function OnHangupMessage(answer) {
-    AbortCall();
+    switch(callState) {
+        case CallState.Ringing:
+            var ringingString = "call cancelled by " + GetUserNameFromId(peer_remote_id);
+            print(ringingString);
+            break;
+
+        case CallState.Calling:
+            var callingString = "call declined by " + GetUserNameFromId(peer_remote_id);
+            print(callingString);
+            break;
+
+        case CallState.Connected:
+            var connectedString = "call ended by " + GetUserNameFromId(peer_remote_id);
+            print(connectedString);
+            break;
+    }
+
+    EndCall();
 }
