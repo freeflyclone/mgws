@@ -3,6 +3,12 @@
 /**
 * Session is a Websocket session, created when mg_ws_upgrade() is called
 * in response to a "/websock" URI request is received by Mongoose.
+* 
+* The class provides basic session id, user name, and JSON messages
+* thanks to Niels Lohmann's C++ library.
+* 
+* This is as minimial as possible, to aid in microcontroller deployment
+* in the future.
 */
 
 #include <map>
@@ -22,9 +28,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(SessionID_t, Connection&);
 	explicit Session(Connection&);
-
 	~Session();
 
 	SessionID_t GetId();

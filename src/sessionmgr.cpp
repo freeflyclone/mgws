@@ -7,15 +7,6 @@ namespace {
 
 SessionManager g_sessions;
 
-SessionManager::SessionPtr SessionManager::NewSession(Connection& c) {
-	std::lock_guard<std::mutex> lock(m_idMutex);
-	SessionPtr newSession = std::make_shared<Session>(nextId++, c);
-
-	m_sessions.emplace(newSession->GetId(), newSession);
-
-	return newSession;
-}
-
 bool SessionManager::AddSession(SessionPtr p) {
 	try {
 		std::lock_guard<std::mutex> lock(m_idMutex);
@@ -59,7 +50,6 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 
 	auto session = (sessPair->second);
 
-	// used by Peer::OnLocalIdEvent() to update g_sessions[m_id]
 	session->SetUserName(userName);
 }
 

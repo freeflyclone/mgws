@@ -1,3 +1,15 @@
+/**
+* Peer is a WebRTC signaling server, with JSON call message
+* packets.
+*
+* It implements a function dispatch table based on JSON "type" field
+* present in received JSON strings.
+* 
+* PeerDispatchMap ("m_pmd") declares the table layout.
+* 
+* This is as minimial as possible, to aid in microcontroller deployment
+* in the future.
+*/
 #ifndef PEER_H
 #define PEER_H
 

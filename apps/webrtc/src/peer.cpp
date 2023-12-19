@@ -11,6 +11,7 @@ Peer::Peer(Connection& c)
 {
 	using namespace std::placeholders;
 
+	// The set of WebRTC message "type" JSONs we respond to. 
 	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);
 	m_pmd["LocalIdEvent"]    = std::bind(&Peer::OnLocalIdEvent,    this, _1);
 	m_pmd["ICECandidate"]    = std::bind(&Peer::OnForwardMessage,  this, _1);
@@ -28,7 +29,6 @@ void Peer::OnMessage(Message* msg) {
 		TRACE("OnMessage exception: " << e.what());
 	}
 }
-
 
 void Peer::HandleMessage(json& j)
 {

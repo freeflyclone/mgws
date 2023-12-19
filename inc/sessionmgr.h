@@ -13,11 +13,7 @@ public:
 	explicit SessionManager() {};
 	~SessionManager() {};
 
-
-	SessionPtr NewSession(Connection&);
-
 	bool AddSession(SessionPtr);
-
 	void DeleteSession(Session*);
 	void UpdateSession(const uint32_t sessionId, const std::string&);
 	SessionPtr GetSessionById(const std::string& );

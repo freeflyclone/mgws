@@ -11,15 +11,6 @@ Session::Session(Connection& c)
 	m_connection.fn_data = this;
 }
 
-Session::Session(SessionID_t id, Connection& c)
-	: Session(c)
-{
-	m_id = id;
-	Send({ {"type", "SessionID"}, {"id", m_id } });
-
-	return;
-}
-
 Session::~Session()
 {
 }
