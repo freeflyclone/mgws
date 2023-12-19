@@ -23,17 +23,18 @@ var configuration = {
 
 export var pc;
 export var peer_remote_id;
+export var peer_remote_user_name;
 
 export const CallState = {
-    Idle: Symbol("Idle"),
-    Identified: Symbol("Indentified"),
-    Calling: Symbol("Calling"),
-    Ringing: Symbol("Ringing"),
-    Connected: Symbol("Connected"),
+    Idle: 0,
+    Identified: 1,
+    Calling: 2,
+    Ringing: 3,
+    Connected: 4,
 }
 export var callState = CallState.Idle;
 
-function SetCallState(state) {
+export function SetCallState(state) {
     console.log("callState transition: ", callState, " to ", state);
     callState = state;
     UpdateCallStateUI(callState);
@@ -60,7 +61,7 @@ function SetPeerRemoteId(id) {
     peer_remote_id = id;
 }
 
-function EndCall() {
+export function EndCall() {
     StopLocalStream();
 
     if (pc) {
@@ -111,8 +112,8 @@ export async function Call() {
     SetCallState(CallState.Calling);
 
     UpdateRemoteId(remote_id);
-
-    var callingString = 'calling ' + GetUserNameFromId(peer_remote_id) + "...";
+    peer_remote_user_name = GetUserNameFromId(peer_remote_id)
+    var callingString = 'calling ' + peer_remote_user_name + "...";
     print(callingString);
 
     if (typeof localStream === null) {
@@ -176,7 +177,7 @@ export async function Answer() {
     ButtonDisable(answerButton, true);
 }
 
-async function Hangup() {
+export function Hangup() {
     switch(callState) {
         case CallState.Ringing:
             var ringingString = "declining call from " + GetUserNameFromId(peer_remote_id);
@@ -259,7 +260,9 @@ function OnCallMessage(call) {
     SetPeerRemoteId(call.sessionId);
     SetCallState(CallState.Ringing);
 
-    var incomingString = 'call from ' + call.userName;
+    peer_remote_user_name = call.userName;
+
+    var incomingString = 'call from ' + peer_remote_user_name;
 
     console.log(incomingString);
     print(incomingString);

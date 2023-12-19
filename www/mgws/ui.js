@@ -1,5 +1,5 @@
 import { ws } from "./websock.js";
-import { CallState, callState } from "./peer.js";
+import { SetCallState, EndCall, CallState, callState, peer_remote_user_name } from "./peer.js";
 import { audioMgr }from "./audio.js";
 
 export var remote_video    = document.getElementById("remote_video");
@@ -57,9 +57,31 @@ function OnTableRowClickEvent(event) {
 
     selectedRow = tr;
     HighlightOn(selectedRow);
+    SetCallState(CallState.Identified);
+}
+
+function DetectVanishedSession(sessionsList) {
+    if (callState >= CallState.Identified) {
+        var vanished = true;
+
+        for (const session of sessionsList.sessions) {
+            if (session.sessionId == remote_id) {
+                vanished = false;
+                break;
+            }
+        }
+
+        if (vanished) {
+            var vanishedString = " connection to " + peer_remote_user_name  + " vanished.";
+            print(vanishedString);
+            EndCall();
+        }
+    }
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
+    DetectVanishedSession(sessionsList);
+
     // Rebuild local table UI from scratch when table changes...
     remotes_table.innerHTML = null;
     remotes = [];
