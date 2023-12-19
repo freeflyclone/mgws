@@ -36,7 +36,7 @@ public:
 	virtual void Send(const json&);
 	virtual void OnMessage(Message*);
 
-private:
+protected:
 	SessionID_t m_id;
 	Connection& m_connection;
 

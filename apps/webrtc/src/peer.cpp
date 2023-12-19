@@ -21,10 +21,7 @@ Peer::Peer(Connection& c)
 
 void Peer::OnMessage(Message* msg) {
 	try {
-		std::string msgString(msg->data.ptr, msg->data.len);
-		TRACE("OnMessage: " << msgString);
-
-		HandleMessage(json::parse(msgString));
+		HandleMessage(json::parse(std::string(msg->data.ptr, msg->data.len)));
 	}
 	catch (std::exception& e) {
 		TRACE("OnMessage exception: " << e.what());
@@ -57,12 +54,12 @@ void Peer::OnLocalIdEvent(json& j)
 		auto sessionId = j["sessionID"];
 		auto userName = j["userName"];
 
-		if (sessionId != GetId()) {
-			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << GetId());
+		if (sessionId != m_id) {
+			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_id);
 			return;
 		}
 
-		g_sessions.UpdateSession(GetId(), userName);
+		g_sessions.UpdateSession(m_id, userName);
 		Send({ {"type", "LocalIdChanged"} });
 
 		g_sessions.UpdateSessionsList();
