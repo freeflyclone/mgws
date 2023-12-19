@@ -1,6 +1,7 @@
 #ifndef SESSIONMGR_H
 #define SESSIONMGR_H
 
+#include <mutex>
 #include "session.h"
 
 class SessionManager {
@@ -12,8 +13,7 @@ public:
 	explicit SessionManager() {};
 	~SessionManager() {};
 
-
-	SessionPtr NewSession(Connection&);
+	bool AddSession(SessionPtr);
 	void DeleteSession(Session*);
 	void UpdateSession(const uint32_t sessionId, const std::string&);
 	SessionPtr GetSessionById(const std::string& );
@@ -23,6 +23,7 @@ public:
 	void UpdateSessionsList();
 
 private:
+	std::mutex m_idMutex;
 	SessionsList m_sessions;
 };
 
