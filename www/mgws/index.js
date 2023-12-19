@@ -7,24 +7,10 @@ import { print, puts, user_name } from "./ui.js";
 export const appVersion = "0.1";
 
 window.onload = main;
-window.onunload = closing;
 
 function ShowSupportedConstraints() {
     var supportedBrowserConstraints = navigator.mediaDevices.getSupportedConstraints();
     console.log(supportedBrowserConstraints);
-}
-
-async function closing() {
-    print("closing");
-    if (localStream !== null) {
-        var tracks = localStream.getVideoTracks();
-        tracks.forEach(track => {
-            console.log("closing: ", track);
-            track.stop();
-        });
-    }
-    ws.close();
-    return null;
 }
 
 async function main() {
@@ -55,5 +41,5 @@ async function main() {
     puts(".");
 
     print("<br>Initialization succeeded!");
-    print("\nClick/Tap a recipient above to enable calling.\n");
+    print("\nSelect a recipient above to enable calling.\n");
 }

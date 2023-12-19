@@ -1,5 +1,5 @@
 import { ws } from "./websock.js";
-import { CallState, callState } from "./peer.js";
+import { SetCallState, EndCall, CallState, callState, peer_remote_user_name } from "./peer.js";
 import { audioMgr }from "./audio.js";
 
 export var remote_video    = document.getElementById("remote_video");
@@ -24,6 +24,9 @@ export var remote_id;
 export var remotes = [];
 export var controlsVisible = true;
 
+var selectedRow = null;
+let highlightCss = 'selected';
+
 export function print(what) {
     if (outputTextarea) {
         outputTextarea.innerHTML += what + "<br>";
@@ -36,27 +39,67 @@ export function puts(what) {
     }
 }
 
-function ToggleClass(el, className) {
-    if (el.className === ""){
-        el.className += className;
+function HighlightOn(row) {
+    row.className += highlightCss;
+    UpdateRemoteId(row.id);
+}
+
+function HighlightOff(row) {
+    row.classList.remove(highlightCss);
+    UpdateRemoteId(row.id);
+}
+
+export function HighlightOnById(id) {
+    for(const row of remotes_table.rows) {
+        if (row.id == id) {
+            HighlightOn(row);
+        }
     }
-    else {
-        el.classList.remove(className);
+}
+
+export function HighlightOffById(id) {
+    for(const row of remotes_table.rows) {
+        if (row.id == id) {
+            HighlightOff(row);
+        }
     }
 }
 
 function OnTableRowClickEvent(event) {
     var tr = event.target.parentNode;
-    console.log("OnTableRowClickEvent(): ", tr);
+    if (selectedRow !== null) {
+        HighlightOff(selectedRow);
+    }
 
-    ToggleClass(tr, 'selected');
+    selectedRow = tr;
+    HighlightOn(selectedRow);
+    SetCallState(CallState.Identified);
+}
 
-    UpdateRemoteId(tr.id);
-    console.log("OnTableRowClickEvent(): ", tr);
+function DetectVanishedSession(sessionsList) {
+    if (callState >= CallState.Identified) {
+        var vanished = true;
+
+        for (const session of sessionsList.sessions) {
+            if (session.sessionId == remote_id) {
+                vanished = false;
+                break;
+            }
+        }
+
+        if (vanished) {
+            var vanishedString = " connection to " + peer_remote_user_name  + " vanished.";
+            print(vanishedString);
+            remote_id = null;
+            EndCall();
+        }
+    }
 }
 
 export function OnSessionsChangedMessage(sessionsList) {
-    // Rebuild table from scratch every time it changes...
+    DetectVanishedSession(sessionsList);
+
+    // Rebuild local table UI from scratch when table changes...
     remotes_table.innerHTML = null;
     remotes = [];
 
@@ -113,7 +156,7 @@ export function UpdateCallStateUI(state) {
                 ButtonDisable(hangupButton, true);
                 break;
     
-            case CallState.Calling:
+        case CallState.Calling:
             ButtonDisable(callButton, true);
             ButtonDisable(answerButton, true);
             ButtonDisable(hangupButton, false);
@@ -169,13 +212,16 @@ export function SetLocalUserName(name) {
 }
 
 export function GetUserNameFromId(id) {
-    var obj = remotes.find(o => o.sessionId === id);
-
-    if (typeof obj === 'undefined') {
-        return null;
+    var userName = null;
+    
+    for (const remote of remotes) {
+        if (remote.sessionId == id) {
+            userName = remote.userName;
+            break;
+        }
     }
 
-    return obj.userName;
+    return userName;
 }
 
 document.getElementById("controlsWrapper").addEventListener('click', (event) => {

@@ -83,12 +83,13 @@ button:disabled {
 
 .panel {
     width: 100%;
-    height: 60px;
+    height: 120px;
     background: hsl(224, 37%, 35%);
     color: white;
     text-align: right;
     border-radius: 4px;
     margin: 10px 0px 10px 0px;
+    overflow-y: auto;
 }
 
 #remotes_table :hover {
@@ -108,13 +109,13 @@ button:disabled {
     text-align: center;
 }
 
-.panel#outputPanel {
+#outputPanel {
     width: 100%;
-    height: 240px;
+    height: 180px;
     background:lightgray;
     color: black;
     text-align: left;
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
 }
 

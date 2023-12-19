@@ -13,7 +13,8 @@ import {
     UpdateRemoteId,
     ButtonDisable,
     UpdateCallStateUI,
-    GetUserNameFromId
+    GetUserNameFromId,
+    HighlightOnById
 } from "./ui.js";
 
 var configuration = {
@@ -23,18 +24,18 @@ var configuration = {
 
 export var pc;
 export var peer_remote_id;
+export var peer_remote_user_name;
 
 export const CallState = {
-    Idle: Symbol("Idle"),
-    Identified: Symbol("Indentified"),
-    Calling: Symbol("Calling"),
-    Ringing: Symbol("Ringing"),
-    Connected: Symbol("Connected"),
+    Idle: 0,
+    Identified: 1,
+    Calling: 2,
+    Ringing: 3,
+    Connected: 4,
 }
 export var callState = CallState.Idle;
 
-function SetCallState(state) {
-    console.log("callState transition: ", callState, " to ", state);
+export function SetCallState(state) {
     callState = state;
     UpdateCallStateUI(callState);
 }
@@ -60,9 +61,9 @@ function SetPeerRemoteId(id) {
     peer_remote_id = id;
 }
 
-function AbortCall() {
+export function EndCall() {
     StopLocalStream();
-    
+
     if (pc) {
         pc.close();
         pc = null;
@@ -111,9 +112,9 @@ export async function Call() {
     SetCallState(CallState.Calling);
 
     UpdateRemoteId(remote_id);
-
-    var callingString = 'calling ' + peer_remote_id;
-    console.log(callingString);
+    peer_remote_user_name = GetUserNameFromId(peer_remote_id)
+    var callingString = 'calling ' + peer_remote_user_name + "...";
+    print(callingString);
 
     if (typeof localStream === null) {
         print("localStream is null.  Fix that.");
@@ -126,7 +127,7 @@ export async function Call() {
         });
     }
     catch (err) {
-        console.log("caught error: " + err);
+        print("caught error: " + err);
     }
     
     const offerOptions = { offerToReceiveAudio: 1, offerToReceiveVideo: 1 };
@@ -159,6 +160,10 @@ export async function Answer() {
     await pc.setLocalDescription(answer);
 
     UpdateRemoteId(peer_remote_id);
+    HighlightOnById(peer_remote_id);
+
+    var answeringString = 'answering ' + GetUserNameFromId(peer_remote_id) + "...";
+    print(answeringString);
 
     var msg = {
              type: "Answer",
@@ -173,8 +178,25 @@ export async function Answer() {
     ButtonDisable(answerButton, true);
 }
 
-async function Hangup() {
-    AbortCall();
+export function Hangup() {
+    switch(callState) {
+        case CallState.Ringing:
+            var ringingString = "declining call from " + GetUserNameFromId(peer_remote_id);
+            print(ringingString);
+            break;
+
+        case CallState.Calling:
+            var callingString = "cancelling call to " + GetUserNameFromId(peer_remote_id);
+            print(callingString);
+            break;
+
+        case CallState.Connected:
+            var connectedString = "ending call to " + GetUserNameFromId(peer_remote_id);
+            print(connectedString);
+            break;
+    }
+
+    EndCall();
 
     var msg = {
         type: "Hangup",
@@ -207,7 +229,7 @@ function OnIceCandidateEvent(candidate) {
         candidate: candidate,
     };
 
-    console.log(msg);
+    //console.log(msg);
     ws.send(JSON.stringify(msg));
 }
 
@@ -239,9 +261,9 @@ function OnCallMessage(call) {
     SetPeerRemoteId(call.sessionId);
     SetCallState(CallState.Ringing);
 
-    var incomingString = 'call from ' + call.userName;
+    peer_remote_user_name = call.userName;
 
-    console.log(incomingString);
+    var incomingString = 'call from ' + peer_remote_user_name;
     print(incomingString);
 
     pc.setRemoteDescription(new RTCSessionDescription(call.session));
@@ -252,5 +274,22 @@ function OnAnswerMessage(answer) {
 }
 
 function OnHangupMessage(answer) {
-    AbortCall();
+    switch(callState) {
+        case CallState.Ringing:
+            var ringingString = "call cancelled by " + GetUserNameFromId(peer_remote_id);
+            print(ringingString);
+            break;
+
+        case CallState.Calling:
+            var callingString = "call declined by " + GetUserNameFromId(peer_remote_id);
+            print(callingString);
+            break;
+
+        case CallState.Connected:
+            var connectedString = "call ended by " + GetUserNameFromId(peer_remote_id);
+            print(connectedString);
+            break;
+    }
+
+    EndCall();
 }
