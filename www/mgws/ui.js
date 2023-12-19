@@ -50,7 +50,7 @@ function HighlightOff(row) {
 }
 
 export function HighlightOnById(id) {
-    for(var idx=0, row; row = remotes_table.rows[idx]; idx++) {
+    for(const row of remotes_table.rows) {
         if (row.id == id) {
             HighlightOn(row);
         }
@@ -58,7 +58,7 @@ export function HighlightOnById(id) {
 }
 
 export function HighlightOffById(id) {
-    for(var idx=0, row; row = remotes_table.rows[idx]; idx++) {
+    for(const row of remotes_table.rows) {
         if (row.id == id) {
             HighlightOff(row);
         }
