@@ -6,7 +6,8 @@
 #include "session.h"
 #include "sessionmgr.h"
 
-Peer::Peer(Session* sess) :	m_session(sess)
+Peer::Peer(Connection& c)
+	: Session(c)
 {
 	using namespace std::placeholders;
 
@@ -17,6 +18,19 @@ Peer::Peer(Session* sess) :	m_session(sess)
 	m_pmd["Answer"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Hangup"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
 }
+
+void Peer::OnMessage(Message* msg) {
+	try {
+		std::string msgString(msg->data.ptr, msg->data.len);
+		TRACE("OnMessage: " << msgString);
+
+		HandleMessage(json::parse(msgString));
+	}
+	catch (std::exception& e) {
+		TRACE("OnMessage exception: " << e.what());
+	}
+}
+
 
 void Peer::HandleMessage(json& j)
 {
@@ -43,13 +57,13 @@ void Peer::OnLocalIdEvent(json& j)
 		auto sessionId = j["sessionID"];
 		auto userName = j["userName"];
 
-		if (sessionId != m_session->getId()) {
-			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_session->getId());
+		if (sessionId != GetId()) {
+			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << GetId());
 			return;
 		}
 
-		g_sessions.UpdateSession(m_session->getId(), userName);
-		m_session->Send({ {"type", "LocalIdChanged"} });
+		g_sessions.UpdateSession(GetId(), userName);
+		Send({ {"type", "LocalIdChanged"} });
 
 		g_sessions.UpdateSessionsList();
 	}

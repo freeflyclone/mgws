@@ -3,29 +3,52 @@
 #include "mgws.h"
 #include "session.h"
 
-Session::Session(SessionID_t id, Connection& c)
-	: m_id(id),
+Session::Session(Connection& c)
+	: m_id((SessionID_t)-1),
 	m_connection(c),
 	m_userName()
 {
 	m_connection.fn_data = this;
-
-	Send({ {"type", "SessionID"}, {"id", m_id } });
 }
 
-Session::~Session() 
+Session::Session(SessionID_t id, Connection& c)
+	: Session(c)
 {
+	m_id = id;
+	Send({ {"type", "SessionID"}, {"id", m_id } });
+
+	return;
+}
+
+Session::~Session()
+{
+}
+
+SessionID_t Session::GetId() {
+	return m_id;
+};
+
+void Session::SetId(SessionID_t id)
+{
+	// only set m_id once!
+	if (m_id == (SessionID_t)-1) {
+		m_id = id;
+		Send({ {"type", "SessionID"}, {"id", m_id } });
+	}
+}
+
+const std::string& Session::GetUserName() {
+	return m_userName;
+}
+
+void Session::SetUserName(const std::string& name) {
+	m_userName = name;
 }
 
 void Session::OnMessage(Message* msg) {
 	try {
 		std::string msgString(msg->data.ptr, msg->data.len);
-
 		TRACE("OnMessage: " << msgString);
-
-		// TODO pass to app somehow
-
-		json j = json::parse(msgString);
 	}
 	catch (std::exception& e) {
 		TRACE("OnMessage exception: " << e.what());

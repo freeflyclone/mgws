@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #include "sessionmgr.h"
+#include "peer.h"
 
 namespace {
     std::string root_dir("../www/mgws/");
@@ -43,7 +44,9 @@ static void RequestHandler(struct mg_connection* c, int ev, void* ev_data, void*
 
                 // upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
                 mg_ws_upgrade(c, hm, NULL);
-                g_sessions.NewSession(*c);
+
+                // creating Session-derived class here, so generic SessionMgr works
+                g_sessions.AddSession(std::make_shared<Peer>(*c));
             }
             else {
                 struct mg_http_serve_opts opts;

@@ -23,16 +23,18 @@ typedef struct mg_ws_message Message;
 class Session {
 public:
 	explicit Session(SessionID_t, Connection&);
+	explicit Session(Connection&);
+
 	~Session();
 
-	SessionID_t getId() { return m_id; };
+	SessionID_t GetId();
+	void SetId(SessionID_t id);
 
-	const std::string& UserName() { return m_userName; }
+	const std::string& GetUserName();
+	void SetUserName(const std::string& name);
 
-	void SetUserName(const std::string& name) { m_userName = name; }
-
-	void Send(const json&);
-	void OnMessage(Message*);
+	virtual void Send(const json&);
+	virtual void OnMessage(Message*);
 
 private:
 	SessionID_t m_id;
