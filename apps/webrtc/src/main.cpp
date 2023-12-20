@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
     }
 
     std::stringstream buffer;
-        
+       
     std::ifstream cert_ifs(cert_pem_file);
     buffer << cert_ifs.rdbuf();
     cert = buffer.str();

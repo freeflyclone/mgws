@@ -17,18 +17,22 @@ public:
 		const std::string& cert_name,
 		const std::string& key_name);
 
-	const char* readPEM(char* name);
+	void readPEM(const std::string&, std::string&);
 
 	void infiniteLoop();
 
-	static void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
+	virtual void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
 
 protected:
 	struct mg_mgr m_mgr;
-	mg_tls_opts m_opts;
+	mg_tls_opts m_tls_opts;
+	mg_http_serve_opts m_http_serve_opts;
 	std::string m_root_dir;
 	std::string m_cert;
 	std::string m_key;
+
+private:
+	static void _fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
 };
 
 #ifdef _WIN32
