@@ -4,6 +4,7 @@ set(SRCS ${PROJECT_SOURCE_DIR}/src)
 set(INCS ${PROJECT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
+	${SRCS}/mgws.cpp
 	${SRCS}/mongoose.c
 	${SRCS}/sqlite3.c
 	${SRCS}/session.cpp
