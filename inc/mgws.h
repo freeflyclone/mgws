@@ -17,6 +17,7 @@ public:
 
 protected:
 	struct mg_mgr m_mgr;
+	mg_tls_opts m_opts;
 };
 
 #ifdef _WIN32

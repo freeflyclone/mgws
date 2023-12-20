@@ -4,10 +4,15 @@
 
 #include "webrtc.h"
 
-extern "C" {
-    #include "mongoose.h"
+#include "mgws.h"
+
+int main(int argc, char* argv[]) {
+    mgws m;
+
+    m.infiniteLoop();
 }
 
+/*
 #include "sessionmgr.h"
 #include "peer.h"
 
@@ -118,3 +123,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+*/
