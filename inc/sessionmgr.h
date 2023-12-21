@@ -8,8 +8,9 @@
 
 class SessionManager : public mgws {
 public:
-	typedef std::function<void(Session*)> SessionCallback_fn;
 	typedef std::shared_ptr<Session> SessionPtr;
+	typedef std::function<SessionPtr(mgws::context*, Connection&)> SessionFactory_t;
+	typedef std::function<void(Session*)> SessionCallback_fn;
 	typedef std::map<SessionID_t, SessionPtr> SessionsList;
 
 	SessionManager(
@@ -18,6 +19,8 @@ public:
 		const std::string& key_name);
 
 	~SessionManager() {};
+
+	void SetFactory(SessionFactory_t);
 
 	bool AddSession(SessionPtr);
 	void DeleteSession(Session*);
@@ -34,6 +37,8 @@ private:
 	std::mutex m_idMutex;
 	SessionsList m_sessions;
 	uint32_t m_nextId;
+
+	SessionFactory_t m_factory;
 };
 
 #endif

@@ -1,13 +1,11 @@
 #include <map>
 #include <string>
 
-#include "mgws.h"
-#include "peer.h"
-#include "session.h"
 #include "sessionmgr.h"
+#include "peer.h"
 
-Peer::Peer(Connection& c)
-	: Session(c)
+Peer::Peer(mgws::context* ctx, Connection& c)
+	: Session(ctx, c)
 {
 	using namespace std::placeholders;
 

@@ -6,8 +6,13 @@ SessionManager::SessionManager(
 	const std::string& cert_name,
 	const std::string& key_name) 
 	: mgws(root, cert_name, key_name),
-	m_nextId(0)
+	m_nextId(0),
+	m_factory(nullptr)
 {
+}
+
+void SessionManager::SetFactory(SessionFactory_t fn) {
+	m_factory = fn;
 }
 
 void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
@@ -24,7 +29,12 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 			// upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
 			mg_ws_upgrade(c, hm, NULL);
 
-			AddSession(std::make_shared<Session>(ctx, *c));
+			if (m_factory) {
+				AddSession(m_factory(ctx, *c));
+			}
+			else {
+				AddSession(std::make_shared<Session>(ctx, *c));
+			}
 		}
 		else {
 			mg_http_serve_dir(c, hm, &m_http_serve_opts);

@@ -6,6 +6,12 @@
 #include "webrtc.h"
 
 #include "sessionmgr.h"
+#include "peer.h"
+
+std::shared_ptr<Session> PeerFactory(mgws::context* ctx, Connection& c)
+{
+    return std::make_shared<Peer>(ctx, c);
+}
 
 int main(int argc, char* argv[]) 
 {
@@ -26,6 +32,8 @@ int main(int argc, char* argv[])
     }
 
     auto sm = std::make_unique<SessionManager>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
+
+    sm->SetFactory(PeerFactory);
 
     sm->infinite_loop();
 }
