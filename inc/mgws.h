@@ -26,6 +26,7 @@ public:
 
 	void infinite_loop();
 
+	virtual void do_callback(struct mg_connection* c, int ev, void* ev_data);
 
 protected:
 	struct mg_mgr m_mgr;

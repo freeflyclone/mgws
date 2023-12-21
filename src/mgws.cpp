@@ -55,6 +55,11 @@ void mgws::read_pem(const std::string& name, std::string& data) {
 	}
 }
 
+void mgws::do_callback(struct mg_connection* c, int ev, void* ev_data)
+{
+	TRACE(__FUNCTION__);
+}
+
 void mgws::_fn(struct mg_connection* c, int ev, void* ev_data, void* ctx)
 {
 	TRACE(__FUNCTION__);
@@ -67,6 +72,11 @@ void mgws::_fn(struct mg_connection* c, int ev, void* ev_data, void* ctx)
 void mgws::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
 	TRACE(__FUNCTION__);
+
+	if (ctx->c == nullptr) {
+		TRACE("mg_connection not set in context.");
+	}
+
 	if (MG_EV_ACCEPT == ev) {
 		mg_tls_init(c, &m_tls_opts);
 		return;
