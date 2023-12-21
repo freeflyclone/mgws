@@ -62,6 +62,7 @@ void mgws::_fn(struct mg_connection* c, int ev, void* ev_data, void* ctx)
 
 void mgws::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
+	(void)ctx;
 	if (MG_EV_HTTP_MSG == ev) {
 		struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 		mg_http_serve_dir(c, hm, &m_http_serve_opts);
