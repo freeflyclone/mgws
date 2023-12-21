@@ -19,7 +19,7 @@
 using json = nlohmann::json;
 
 extern "C" {
-#include "mongoose.h"
+	#include "mgws.h"
 }
 
 typedef uint32_t SessionID_t;
@@ -28,7 +28,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(Connection&);
+	explicit Session(mgws::context*, Connection&);
 	~Session();
 
 	SessionID_t GetId();

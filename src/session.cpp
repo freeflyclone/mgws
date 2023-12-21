@@ -3,12 +3,12 @@
 #include "mgws.h"
 #include "session.h"
 
-Session::Session(Connection& c)
+Session::Session(mgws::context* ctx, Connection& c)
 	: m_id((SessionID_t)-1),
 	m_connection(c),
 	m_userName()
 {
-	m_connection.fn_data = this;
+	ctx->user_data = this;
 }
 
 Session::~Session()

@@ -15,7 +15,7 @@ public:
 	struct context {
 		// MUST be a ptr for polymorphism to work!
 		mgws* _mgws;
-		struct mg_connection* c;
+		void* user_data;
 	} m_context;
 
 	mgws(

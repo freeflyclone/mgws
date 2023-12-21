@@ -8,17 +8,10 @@ SessionManager::SessionManager(
 	: mgws(root, cert_name, key_name),
 	m_nextId(0)
 {
-	TRACE(__FUNCTION__);
 }
 
 void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
-	TRACE(__FUNCTION__);
-
-	if (ctx->c == nullptr) {
-		TRACE("mg_connection not set in context.");
-	}
-
 	if (MG_EV_ACCEPT == ev) {
 		mg_tls_init(c, &m_tls_opts);
 		return;
@@ -31,7 +24,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 			// upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
 			mg_ws_upgrade(c, hm, NULL);
 
-			// TODO: Add a Session here...
+			AddSession(std::make_shared<Session>(ctx, *c));
 		}
 		else {
 			mg_http_serve_dir(c, hm, &m_http_serve_opts);
@@ -40,13 +33,12 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	}
 
 	if (MG_EV_WS_MSG == ev) {
-		TRACE(__FUNCTION__ << "() MG_EV_WS_MSG");
+		((Session*)(ctx->user_data))->OnMessage((Message*)ev_data);
 		return;
 	}
 
 	if (MG_EV_CLOSE == ev) {
-		TRACE(__FUNCTION__ << "() MG_EV_CLOSE");
-		// TODO: delete Session here
+		DeleteSession((Session*)ctx->user_data);
 		return;
 	}
 }
