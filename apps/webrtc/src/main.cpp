@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
     auto m = std::make_unique<mgws>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
 
-    m->infiniteLoop();
+    m->infinite_loop();
 }
 
 /*

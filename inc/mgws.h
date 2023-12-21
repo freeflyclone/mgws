@@ -22,11 +22,10 @@ public:
 		const std::string& cert_name,
 		const std::string& key_name);
 
-	void readPEM(const std::string&, std::string&);
+	void read_pem(const std::string&, std::string&);
 
-	void infiniteLoop();
+	void infinite_loop();
 
-	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
 
 protected:
 	struct mg_mgr m_mgr;
@@ -38,6 +37,7 @@ protected:
 
 private:
 	static void _fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
+	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
 };
 
 #ifdef _WIN32

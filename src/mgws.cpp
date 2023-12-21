@@ -17,8 +17,8 @@ mgws::mgws(
 {
 	TRACE(root << ", " << cert << ", " << key);
 
-	readPEM(cert, m_cert);
-	readPEM(key, m_key);
+	read_pem(cert, m_cert);
+	read_pem(key, m_key);
 
 	m_tls_opts.cert = mg_str(m_cert.c_str());
 	m_tls_opts.key = mg_str(m_key.c_str());
@@ -27,17 +27,23 @@ mgws::mgws(
 
 	mg_mgr_init(&m_mgr);
 
-	// Each new mg_connection initially gets "this" for its fn_data
+	// Each new mg_connection initially gets our "m_context" for its fn_data
+	// Allows for both "this" and "mg_connection".
+	// 
+	// - "this" is for C mongoose callback static void mgws::_fn to establish
+	//   the proper pointer for the per-instance mgws::fn() (note the "_" distinction)
+	//
+	// - "mg_connection" is for per connection use of mg_connection.fn_data to hold "Session" ptr.
 	mg_http_listen(&m_mgr, "http://0.0.0.0:8443", mgws::_fn, &m_context);
 }
 
-void mgws::infiniteLoop()
+void mgws::infinite_loop()
 {
 	while (true)
 		mg_mgr_poll(&m_mgr, 1000);
 }
 
-void mgws::readPEM(const std::string& name, std::string& data) {
+void mgws::read_pem(const std::string& name, std::string& data) {
 	try {
 		std::stringstream buffer;
 		std::ifstream ifs(name);
