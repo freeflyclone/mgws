@@ -5,7 +5,7 @@
 
 #include "webrtc.h"
 
-#include "mgws.h"
+#include "sessionmgr.h"
 
 int main(int argc, char* argv[]) 
 {
@@ -25,9 +25,9 @@ int main(int argc, char* argv[])
         key_pem_file = argv[3];
     }
 
-    auto m = std::make_unique<mgws>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
+    auto sm = std::make_unique<SessionManager>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
 
-    m->infinite_loop();
+    sm->infinite_loop();
 }
 
 /*

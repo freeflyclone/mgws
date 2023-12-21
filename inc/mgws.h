@@ -13,7 +13,8 @@ extern "C" {
 class mgws {
 public:
 	struct context {
-		mgws& _mgws;
+		// MUST be a ptr for polymorphism to work!
+		mgws* _mgws;
 		struct mg_connection* c;
 	} m_context;
 
@@ -26,7 +27,7 @@ public:
 
 	void infinite_loop();
 
-	virtual void do_callback(struct mg_connection* c, int ev, void* ev_data);
+	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
 
 protected:
 	struct mg_mgr m_mgr;
@@ -36,9 +37,7 @@ protected:
 	std::string m_cert;
 	std::string m_key;
 
-private:
 	static void _fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
-	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
 };
 
 #ifdef _WIN32

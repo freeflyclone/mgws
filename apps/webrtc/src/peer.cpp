@@ -60,10 +60,10 @@ void Peer::OnLocalIdEvent(json& j)
 			return;
 		}
 
-		g_sessions.UpdateSession(m_id, userName);
+		//g_sessions.UpdateSession(m_id, userName);
 		Send({ {"type", "LocalIdChanged"} });
 
-		g_sessions.UpdateSessionsList();
+		//g_sessions.UpdateSessionsList();
 	}
 	catch (std::exception& e) {
 		TRACE("Error while handling LocalIdEvent: " << e.what());
@@ -77,9 +77,9 @@ void Peer::OnForwardMessage(json& j)
 		auto targetId = j["targetId"];
 		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
-		auto session = g_sessions.GetSessionById(targetId);
-		if (session)
-			session->Send(j);
+		//auto session = g_sessions.GetSessionById(targetId);
+		//if (session)
+			//session->Send(j);
 
 		// don't log this
 		if (j["type"] == "ICECandidate")

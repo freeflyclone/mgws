@@ -13,7 +13,7 @@ mgws::mgws(
 	m_tls_opts{},
 	m_http_serve_opts{},
 	m_root_dir(root),
-	m_context{*this, nullptr}
+	m_context{this, nullptr}
 {
 	TRACE(root << ", " << cert << ", " << key);
 
@@ -55,56 +55,16 @@ void mgws::read_pem(const std::string& name, std::string& data) {
 	}
 }
 
-void mgws::do_callback(struct mg_connection* c, int ev, void* ev_data)
-{
-	TRACE(__FUNCTION__);
-}
-
 void mgws::_fn(struct mg_connection* c, int ev, void* ev_data, void* ctx)
 {
-	TRACE(__FUNCTION__);
-	auto context = static_cast<mgws::context*>(ctx);
-
-	auto self = context->_mgws;
-	self.fn(c, ev, ev_data, context);
+	((mgws::context*)ctx)->_mgws->fn(c, ev, ev_data, (mgws::context*)ctx);
 }
 
 void mgws::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
-	TRACE(__FUNCTION__);
-
-	if (ctx->c == nullptr) {
-		TRACE("mg_connection not set in context.");
-	}
-
-	if (MG_EV_ACCEPT == ev) {
-		mg_tls_init(c, &m_tls_opts);
-		return;
-	}
-
 	if (MG_EV_HTTP_MSG == ev) {
 		struct mg_http_message* hm = (struct mg_http_message*)ev_data;
-
-		if (mg_http_match_uri(hm, "/websock")) {
-			// upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
-			mg_ws_upgrade(c, hm, NULL);
-
-			// TODO: Add a Session here...
-		}
-		else {
-			mg_http_serve_dir(c, hm, &m_http_serve_opts);
-		}
-		return;
-	}
-
-	if (MG_EV_WS_MSG == ev) {
-		TRACE(__FUNCTION__ << "() MG_EV_WS_MSG");
-		return;
-	}
-
-	if (MG_EV_CLOSE == ev) {
-		TRACE(__FUNCTION__ << "() MG_EV_CLOSE");
-		// TODO: delete Session here
+		mg_http_serve_dir(c, hm, &m_http_serve_opts);
 		return;
 	}
 }
