@@ -38,6 +38,7 @@ public:
 
 private:
 	PeerMessageDispatch m_pmd;
+	SessionManager* m_sessions;
 };
 
 #endif

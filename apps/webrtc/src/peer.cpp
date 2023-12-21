@@ -5,7 +5,8 @@
 #include "peer.h"
 
 Peer::Peer(mgws::context* ctx, Connection& c)
-	: Session(ctx, c)
+	: Session(ctx, c),
+	m_sessions((SessionManager*)ctx->_mgws)
 {
 	using namespace std::placeholders;
 
@@ -58,10 +59,10 @@ void Peer::OnLocalIdEvent(json& j)
 			return;
 		}
 
-		//g_sessions.UpdateSession(m_id, userName);
+		m_sessions->UpdateSession(m_id, userName);
 		Send({ {"type", "LocalIdChanged"} });
 
-		//g_sessions.UpdateSessionsList();
+		m_sessions->UpdateSessionsList();
 	}
 	catch (std::exception& e) {
 		TRACE("Error while handling LocalIdEvent: " << e.what());
@@ -75,9 +76,9 @@ void Peer::OnForwardMessage(json& j)
 		auto targetId = j["targetId"];
 		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
-		//auto session = g_sessions.GetSessionById(targetId);
-		//if (session)
-			//session->Send(j);
+		auto session = m_sessions->GetSessionById(targetId);
+		if (session)
+			session->Send(j);
 
 		// don't log this
 		if (j["type"] == "ICECandidate")
