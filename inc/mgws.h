@@ -12,6 +12,11 @@ extern "C" {
 
 class mgws {
 public:
+	struct context {
+		mgws& _mgws;
+		struct mg_connection* c;
+	} m_context;
+
 	mgws(
 		const std::string& root, 
 		const std::string& cert_name,
@@ -21,7 +26,7 @@ public:
 
 	void infiniteLoop();
 
-	virtual void fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
+	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
 
 protected:
 	struct mg_mgr m_mgr;
