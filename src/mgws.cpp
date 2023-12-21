@@ -9,11 +9,11 @@ mgws::mgws(
 	const std::string& cert,
 	const std::string& key
 )
-	: m_mgr{},
+	: m_context{ this, nullptr },
+	m_mgr{},
 	m_tls_opts{},
 	m_http_serve_opts{},
-	m_root_dir(root),
-	m_context{this, nullptr}
+	m_root_dir(root)	
 {
 	TRACE(root << ", " << cert << ", " << key);
 
