@@ -86,7 +86,7 @@ void Peer::OnForwardMessage(json& j)
 		if (j["type"] == "ICECandidate")
 			return;
 
-		TRACE(__FUNCTION__ << "type: " << j["type"] << ", from: " << j["userName"] << ", to: " << j["targetId"]);
+		TRACE(__FUNCTION__ << "(): type: " << j["type"] << ", from: " << j["userName"] << ", to: " << j["targetId"]);
 	}
 	catch (std::exception& e) {
 		TRACE("Error while handling ForwardMessage: " << e.what());
