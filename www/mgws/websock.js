@@ -1,5 +1,6 @@
 import { UpdateLocalId } from "./local.js";
 import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
+import { BeginHeartbeat } from "./pulse.js";
 
 export var ws;
 
@@ -30,6 +31,7 @@ function OnMessage(event) {
             ws.sessionID = msg.id;
             PeerRegisterSession();
             UpdateLocalId();
+            BeginHeartbeat();
             break;
 
         default:

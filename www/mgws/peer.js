@@ -1,6 +1,7 @@
 import { appVersion } from "./index.js";
 import { ws } from "./websock.js";
 import { InitLocalStream, StopLocalStream, localStream } from "./local.js";
+import { PulseDetected } from "./pulse.js";
 import {
     user_name,
     remote_id, 
@@ -103,6 +104,7 @@ export function PeerMessageHandler(msg) {
         case "Hangup":          OnHangupMessage(msg); break;
         case "LocalIdChanged":  break;
         case "ICECandidate":    OnIceCandidateMessage(msg); break;
+        case "Heartbeat":       OnHeartbeat(msg); break;
         default:                print("msg.type: " + msg.type);
     }
 }
@@ -292,4 +294,7 @@ function OnHangupMessage(answer) {
     }
 
     EndCall();
+}
+function OnHeartbeat(heartbeat) {
+    PulseDetected();
 }
