@@ -35,6 +35,7 @@ public:
 	// Session management API from browser JS code
 	void OnRegisterSession(json&);
 	void OnLocalIdEvent(json&);
+	void OnHeartbeat(json&);
 
 private:
 	PeerMessageDispatch m_pmd;

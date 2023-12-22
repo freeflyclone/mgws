@@ -19,6 +19,7 @@ Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 	m_pmd["Call"]            = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Answer"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
 	m_pmd["Hangup"]          = std::bind(&Peer::OnForwardMessage,  this, _1);
+	m_pmd["Heartbeat"]       = std::bind(&Peer::OnHeartbeat, 	   this, _1);
 }
 
 void Peer::OnMessage(Message* msg) {
@@ -91,4 +92,11 @@ void Peer::OnForwardMessage(json& j)
 	catch (std::exception& e) {
 		TRACE("Error while handling ForwardMessage: " << e.what());
 	}
+}
+
+void Peer::OnHeartbeat(json& j) {
+	if (j["sessionId"] != m_id) {
+		TRACE(__FUNCTION__ << "() Oops, id mismatch, m_id: " << m_id << ", message: " << j.dump());
+	}
+	Send(j);
 }
