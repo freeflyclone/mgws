@@ -4,11 +4,13 @@
 #include "sessionmgr.h"
 #include "peer.h"
 
-Peer::Peer(mgws::context* ctx, Connection& c)
-	: Session(ctx, c),
+Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
+	: Session(ctx, c, newId),
 	m_sessions((SessionManager*)ctx->_mgws)
 {
 	using namespace std::placeholders;
+
+	//TRACE(__FUNCTION__ << "() id: " << m_id);
 
 	// The set of WebRTC message "type" JSONs we respond to. 
 	m_pmd["RegisterSession"] = std::bind(&Peer::OnRegisterSession, this, _1);

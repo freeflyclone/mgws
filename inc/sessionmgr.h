@@ -9,7 +9,7 @@
 class SessionManager : public mgws {
 public:
 	typedef std::shared_ptr<Session> SessionPtr;
-	typedef std::function<SessionPtr(mgws::context*, Connection&)> SessionFactory_t;
+	typedef std::function<SessionPtr(mgws::context*, Connection&, SessionID_t)> SessionFactory_t;
 	typedef std::function<void(Session*)> SessionCallback_fn;
 	typedef std::map<SessionID_t, SessionPtr> SessionsList;
 
@@ -22,7 +22,7 @@ public:
 
 	void SetFactory(SessionFactory_t);
 
-	bool AddSession(SessionPtr);
+	bool AddSession(mgws::context *, Connection*);
 	void DeleteSession(Session*);
 	void UpdateSession(const uint32_t sessionId, const std::string&);
 	SessionPtr GetSessionById(const std::string& );

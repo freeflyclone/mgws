@@ -3,8 +3,8 @@
 #include "mgws.h"
 #include "session.h"
 
-Session::Session(mgws::context* ctx, Connection& c)
-	: m_id((SessionID_t)-1),
+Session::Session(mgws::context* ctx, Connection& c, SessionID_t newId)
+	: m_id(newId),
 	m_connection(c),
 	m_userName(),
 	m_ctx({ctx->_mgws, this})
@@ -24,15 +24,6 @@ Session::~Session()
 SessionID_t Session::GetId() {
 	return m_id;
 };
-
-void Session::SetId(SessionID_t id)
-{
-	// only set m_id once!
-	if (m_id == (SessionID_t)-1) {
-		m_id = id;
-		Send({ {"type", "SessionID"}, {"id", m_id } });
-	}
-}
 
 const std::string& Session::GetUserName() {
 	return m_userName;

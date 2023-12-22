@@ -28,11 +28,10 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(mgws::context*, Connection&);
+	explicit Session(mgws::context*, Connection&, SessionID_t);
 	~Session();
 
 	SessionID_t GetId();
-	void SetId(SessionID_t id);
 
 	const std::string& GetUserName();
 	void SetUserName(const std::string& name);

@@ -8,9 +8,9 @@
 #include "sessionmgr.h"
 #include "peer.h"
 
-std::shared_ptr<Session> PeerFactory(mgws::context* ctx, Connection& c)
+std::shared_ptr<Session> PeerFactory(mgws::context* ctx, Connection& c, SessionID_t id)
 {
-    return std::make_shared<Peer>(ctx, c);
+    return std::make_shared<Peer>(ctx, c, id);
 }
 
 int main(int argc, char* argv[]) 

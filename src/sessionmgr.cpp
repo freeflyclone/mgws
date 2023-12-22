@@ -7,7 +7,7 @@ SessionManager::SessionManager(
 	const std::string& key_name) 
 	: mgws(root, cert_name, key_name),
 	m_nextId(0),
-	m_factory(nullptr)
+	m_factory([](mgws::context* ctx, Connection& c, SessionID_t id) -> SessionPtr { return std::make_shared<Session>(ctx, c, id); })
 {
 }
 
@@ -29,12 +29,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 			// upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
 			mg_ws_upgrade(c, hm, NULL);
 
-			if (m_factory) {
-				AddSession(m_factory(ctx, *c));
-			}
-			else {
-				AddSession(std::make_shared<Session>(ctx, *c));
-			}
+			AddSession(ctx, c);
 		}
 		else {
 			mg_http_serve_dir(c, hm, &m_http_serve_opts);
@@ -66,12 +61,16 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	}
 }
 
-bool SessionManager::AddSession(SessionPtr p) {
+bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	try {
 		std::lock_guard<std::mutex> lock(m_idMutex);
 
-		p->SetId(m_nextId++);
-		m_sessions.emplace(p->GetId(), p);
+
+		SessionPtr session = m_factory(ctx, *c, m_nextId++);
+
+		m_sessions.emplace(session->GetId(), session);
+
+		session->Send({ {"type", "SessionID"}, {"id", session->GetId() } });
 	}
 	catch (std::exception& e) {
 		TRACE("Exception: " << e.what());

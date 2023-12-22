@@ -23,7 +23,7 @@ class Peer : public Session {
 public:
 	typedef std::map<std::string, std::function<void(json& j)>> PeerMessageDispatch;
 
-	explicit Peer(mgws::context*, Connection&);
+	explicit Peer(mgws::context*, Connection&, SessionID_t);
 	~Peer() {};
 
 	void OnMessage(Message*) override;
