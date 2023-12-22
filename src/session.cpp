@@ -6,9 +6,15 @@
 Session::Session(mgws::context* ctx, Connection& c)
 	: m_id((SessionID_t)-1),
 	m_connection(c),
-	m_userName()
+	m_userName(),
+	m_ctx({ctx->_mgws, this})
 {
-	ctx->user_data = this;
+	// MUST set our connection's fn_data with ptr to
+	// this->m_ctx so mongoose event handler knows
+	// which Session it's talking to.
+	m_connection.fn_data = &m_ctx;
+
+	//TRACE(__FUNCTION__ << "(): " << m_id);
 }
 
 Session::~Session()

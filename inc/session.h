@@ -45,6 +45,7 @@ protected:
 	Connection& m_connection;
 
 	std::string m_userName;
+	mgws::context m_ctx;
 };
 
 #endif // SESSION_H
