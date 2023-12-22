@@ -8,11 +8,6 @@
 #include "sessionmgr.h"
 #include "peer.h"
 
-std::shared_ptr<Session> PeerFactory(mgws::context* ctx, Connection& c, SessionID_t id)
-{
-    return std::make_shared<Peer>(ctx, c, id);
-}
-
 int main(int argc, char* argv[]) 
 {
     std::string root("../www/mgws/");
@@ -33,7 +28,9 @@ int main(int argc, char* argv[])
 
     auto sm = std::make_unique<SessionManager>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
 
-    sm->SetFactory(PeerFactory);
+    sm->SetFactory([] (mgws::context* ctx, Connection& c, SessionID_t id) {
+        return std::make_shared<Peer>(ctx, c, id);
+    });
 
     sm->infinite_loop();
 }
