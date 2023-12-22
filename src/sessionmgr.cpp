@@ -43,12 +43,25 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	}
 
 	if (MG_EV_WS_MSG == ev) {
-		((Session*)(ctx->user_data))->OnMessage((Message*)ev_data);
+		auto session = (Session*)(ctx->user_data);
+		if (session == nullptr) {
+			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
+			return;
+		}
+
+		session->OnMessage((Message*)ev_data);
+
 		return;
 	}
 
 	if (MG_EV_CLOSE == ev) {
-		DeleteSession((Session*)ctx->user_data);
+		auto session = (Session*)(ctx->user_data);
+		if (session == nullptr) {
+			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
+			return;
+		}
+
+		DeleteSession(session);
 		return;
 	}
 }
