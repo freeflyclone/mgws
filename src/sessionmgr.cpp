@@ -78,19 +78,19 @@ bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 }
 void SessionManager::DeleteSession(Session* session) {
 	if (!session) {
-		TRACE(__FUNCTION__ "Early return");
+		TRACE(__FUNCTION__ << "Early return");
 		return;
 	}
 
 	if (m_sessions.empty()) {
-		TRACE(__FUNCTION__ "Early return");
+		TRACE(__FUNCTION__ << "Early return");
 		return;
 	}
 
 	auto it = m_sessions.find(session->GetId());
 
 	if (it == m_sessions.end()) {
-		TRACE(__FUNCTION__ "Early return");
+		TRACE(__FUNCTION__ << "Early return");
 		return;
 	}
 
