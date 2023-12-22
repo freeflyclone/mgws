@@ -52,7 +52,6 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	if (MG_EV_CLOSE == ev) {
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {
-			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
 			return;
 		}
 
@@ -64,7 +63,6 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	try {
 		std::lock_guard<std::mutex> lock(m_idMutex);
-
 
 		SessionPtr session = m_factory(ctx, *c, m_nextId++);
 
@@ -79,16 +77,22 @@ bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	return true;
 }
 void SessionManager::DeleteSession(Session* session) {
-	if (!session)
+	if (!session) {
+		TRACE(__FUNCTION__ "Early return");
 		return;
+	}
 
-	if (m_sessions.empty())
+	if (m_sessions.empty()) {
+		TRACE(__FUNCTION__ "Early return");
 		return;
+	}
 
 	auto it = m_sessions.find(session->GetId());
 
-	if (it == m_sessions.end())
+	if (it == m_sessions.end()) {
+		TRACE(__FUNCTION__ "Early return");
 		return;
+	}
 
 	auto id = it->second->GetId();
 
