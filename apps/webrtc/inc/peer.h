@@ -41,6 +41,7 @@ public:
 private:
 	PeerMessageDispatch m_pmd;
 	SessionManager* m_sessions;
+	int64_t m_lastHeartbeat;
 };
 
 #endif

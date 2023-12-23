@@ -6,7 +6,8 @@
 
 Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 	: Session(ctx, c, newId),
-	m_sessions((SessionManager*)ctx->_mgws)
+	m_sessions((SessionManager*)ctx->_mgws),
+	m_lastHeartbeat(mg_millis())
 {
 	using namespace std::placeholders;
 
@@ -23,7 +24,7 @@ Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 }
 
 void Peer::OnTimerEvent(int64_t ms) {
-	TRACE(__FUNCTION__ << "(): id: " << m_id << ", ms: " << ms);
+	TRACE(__FUNCTION__ << "(): id: " << m_id << ", ms: " << ms - m_lastHeartbeat);
 }
 
 void Peer::OnMessage(Message* msg) {
@@ -103,4 +104,5 @@ void Peer::OnHeartbeat(json& j) {
 		TRACE(__FUNCTION__ << "() Oops, id mismatch, m_id: " << m_id << ", message: " << j.dump());
 	}
 	Send(j);
+	m_lastHeartbeat = mg_millis();
 }
