@@ -21,6 +21,7 @@ using json = nlohmann::json;
 
 class Peer : public Session {
 public:
+	static const int64_t m_sessionTimeoutMs = 5000;
 	typedef std::map<std::string, std::function<void(json& j)>> PeerMessageDispatch;
 
 	explicit Peer(mgws::context*, Connection&, SessionID_t);

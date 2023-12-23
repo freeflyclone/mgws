@@ -24,7 +24,8 @@ Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 }
 
 void Peer::OnTimerEvent(int64_t ms) {
-	TRACE(__FUNCTION__ << "(): id: " << m_id << ", ms: " << ms - m_lastHeartbeat);
+	if (ms - m_lastHeartbeat > m_sessionTimeoutMs)
+		TRACE(__FUNCTION__ << "() missing client! id: " << m_id << ", last heard from: " << ms - m_lastHeartbeat);
 }
 
 void Peer::OnMessage(Message* msg) {
