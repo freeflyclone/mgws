@@ -13,7 +13,7 @@ mgws::mgws(
 	m_mgr{},
 	m_tls_opts{},
 	m_http_serve_opts{},
-	m_root_dir(root)	
+	m_root_dir(root)
 {
 	TRACE(root << ", " << cert << ", " << key);
 
@@ -26,6 +26,8 @@ mgws::mgws(
 	m_http_serve_opts.root_dir = m_root_dir.c_str();
 
 	mg_mgr_init(&m_mgr);
+
+	mg_timer_add(&m_mgr, m_poll_interval_ms, MG_TIMER_REPEAT, _timer_event, &m_context);
 
 	// Each new mg_connection initially gets our "m_context" for its fn_data
 	// Allows for both "this" and "mg_connection".
@@ -40,9 +42,22 @@ mgws::mgws(
 void mgws::infinite_loop()
 {
 	while (true)
-		mg_mgr_poll(&m_mgr, 1000);
+		mg_mgr_poll(&m_mgr, m_poll_interval_ms);
 }
 
+void mgws::_timer_event(void* ev_data) {
+	context* ctx = (context*)ev_data;
+	if (ctx)
+		((mgws*)(ctx->_mgws))->timer_event(ctx);
+}
+
+void mgws::timer_event(context* ctx) {
+	TRACE(__FUNCTION__);
+	if (ctx->user_data) {
+		auto t_fn = *((timer_fn*)(ctx->user_data));
+		t_fn(ctx);
+	}
+}
 void mgws::read_pem(const std::string& name, std::string& data) {
 	try {
 		std::stringstream buffer;

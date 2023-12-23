@@ -3,6 +3,8 @@
 
 #include <string>
 #include <iostream>
+#include <functional>
+#include <list>
 
 extern "C" {
 	#include <mongoose.h>
@@ -12,12 +14,13 @@ extern "C" {
 
 class mgws {
 public:
+	static const int m_poll_interval_ms{ 500 };
 	struct context {
 		// MUST be a ptr for polymorphism to work!
 		mgws* _mgws;
 		void* user_data;
 	} m_context;
-
+	typedef std::function<void(context*)> timer_fn;
 	mgws(
 		const std::string& root, 
 		const std::string& cert_name,
@@ -28,6 +31,7 @@ public:
 	void infinite_loop();
 
 	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
+	virtual void timer_event(context*);
 
 protected:
 	struct mg_mgr m_mgr;
@@ -36,8 +40,10 @@ protected:
 	std::string m_root_dir;
 	std::string m_cert;
 	std::string m_key;
+	std::list<timer_fn> m_timers;
 
 	static void _fn(struct mg_connection* c, int ev, void* ev_data, void* fn_data);
+	static void _timer_event(void*);
 };
 
 #ifdef _WIN32
