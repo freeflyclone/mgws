@@ -31,7 +31,7 @@ public:
 	void infinite_loop();
 
 	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*);
-	virtual void timer_event(context*);
+	virtual void timer_event(int64_t);
 
 protected:
 	struct mg_mgr m_mgr;

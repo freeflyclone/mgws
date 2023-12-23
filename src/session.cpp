@@ -21,6 +21,10 @@ Session::~Session()
 {
 }
 
+void Session::OnTimerEvent(int64_t ms) {
+	TRACE(__FUNCTION__ << "(): id: " << m_id << ", ms: " << ms);
+}
+
 SessionID_t Session::GetId() {
 	return m_id;
 };
@@ -52,4 +56,5 @@ void Session::Send(const json& msg) {
 		TRACE("Send() exception:  " << e.what());
 	}
 }
+
 

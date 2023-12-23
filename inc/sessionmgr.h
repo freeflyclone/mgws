@@ -33,6 +33,7 @@ public:
 
 private:
 	virtual void fn(struct mg_connection* c, int ev, void* ev_data, context*) override;
+	virtual void timer_event(int64_t) override;
 
 	std::mutex m_idMutex;
 	SessionsList m_sessions;

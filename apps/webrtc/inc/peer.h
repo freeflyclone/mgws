@@ -26,6 +26,7 @@ public:
 	explicit Peer(mgws::context*, Connection&, SessionID_t);
 	~Peer() {};
 
+	void OnTimerEvent(int64_t) override;
 	void OnMessage(Message*) override;
 	void HandleMessage(json&);
 

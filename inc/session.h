@@ -38,6 +38,7 @@ public:
 
 	virtual void Send(const json&);
 	virtual void OnMessage(Message*);
+	virtual void OnTimerEvent(int64_t);
 
 protected:
 	SessionID_t m_id;

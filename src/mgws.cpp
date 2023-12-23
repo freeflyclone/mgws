@@ -27,7 +27,7 @@ mgws::mgws(
 
 	mg_mgr_init(&m_mgr);
 
-	mg_timer_add(&m_mgr, m_poll_interval_ms, MG_TIMER_REPEAT, _timer_event, &m_context);
+	mg_timer_add(&m_mgr, m_poll_interval_ms, MG_TIMER_REPEAT, _timer_event, this);
 
 	// Each new mg_connection initially gets our "m_context" for its fn_data
 	// Allows for both "this" and "mg_connection".
@@ -46,18 +46,15 @@ void mgws::infinite_loop()
 }
 
 void mgws::_timer_event(void* ev_data) {
-	context* ctx = (context*)ev_data;
-	if (ctx)
-		((mgws*)(ctx->_mgws))->timer_event(ctx);
+	auto m = (mgws*)ev_data;
+	if (m)
+		m->timer_event(mg_millis());
 }
 
-void mgws::timer_event(context* ctx) {
-	TRACE(__FUNCTION__);
-	if (ctx->user_data) {
-		auto t_fn = *((timer_fn*)(ctx->user_data));
-		t_fn(ctx);
-	}
+void mgws::timer_event(int64_t ms) {
+	TRACE(__FUNCTION__ << "t: " << ms);
 }
+
 void mgws::read_pem(const std::string& name, std::string& data) {
 	try {
 		std::stringstream buffer;

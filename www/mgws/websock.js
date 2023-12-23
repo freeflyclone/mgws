@@ -5,8 +5,8 @@ import { BeginHeartbeat } from "./pulse.js";
 export var ws;
 
 export function MakeWebSocket() {
-    //var wsUrl = "wss://" + window.location.host + "websock";
-    var wsUrl = "wss://ws.e-man.social:8443/websock";
+    var wsUrl = "wss://" + window.location.host + "/websock";
+    //var wsUrl = "wss://ws.e-man.social:8443/websock";
 
     ws = new WebSocket(wsUrl);
 

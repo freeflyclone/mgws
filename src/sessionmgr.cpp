@@ -15,6 +15,13 @@ void SessionManager::SetFactory(SessionFactory_t fn) {
 	m_factory = fn;
 }
 
+void SessionManager::timer_event(int64_t ms)
+{
+	Iterate([&](Session* session) {
+		session->OnTimerEvent(ms);
+	});
+}
+
 void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
 	if (MG_EV_ACCEPT == ev) {
