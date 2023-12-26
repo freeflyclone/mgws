@@ -38,6 +38,7 @@ public:
 
 	virtual void Send(const json&);
 	virtual void OnMessage(Message*);
+	virtual void OnControlMessage(Message*);
 	virtual void OnTimerEvent(int64_t);
 
 protected:
@@ -46,6 +47,7 @@ protected:
 
 	std::string m_userName;
 	mgws::context m_ctx;
+	int64_t m_lastPongTime;
 };
 
 #endif // SESSION_H

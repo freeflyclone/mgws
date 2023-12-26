@@ -7,7 +7,8 @@ Session::Session(mgws::context* ctx, Connection& c, SessionID_t newId)
 	: m_id(newId),
 	m_connection(c),
 	m_userName(),
-	m_ctx({ctx->_mgws, this})
+	m_ctx({ctx->_mgws, this}),
+	m_lastPongTime(mg_millis())
 {
 	// MUST set our connection's fn_data with ptr to
 	// this->m_ctx so mongoose event handler knows
@@ -22,7 +23,7 @@ Session::~Session()
 }
 
 void Session::OnTimerEvent(int64_t ms) {
-	TRACE(__FUNCTION__ << "(): id: " << m_id << ", ms: " << ms);
+	mg_ws_send(&m_connection, "HEARTBEAT", 10, WEBSOCKET_OP_PING);
 }
 
 SessionID_t Session::GetId() {
@@ -35,6 +36,27 @@ const std::string& Session::GetUserName() {
 
 void Session::SetUserName(const std::string& name) {
 	m_userName = name;
+}
+
+void Session::OnControlMessage(Message* msg) {
+	try {
+		auto op = msg->flags & 0xF;
+		switch (op) {
+			case WEBSOCKET_OP_PONG:
+				{
+					m_lastPongTime = mg_millis();
+					std::string msgString(msg->data.ptr, msg->data.len);
+					TRACE(__FUNCTION__ << "(): " << msgString);
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+	catch (std::exception& e) {
+		TRACE("OnControlMessage exception: " << e.what());
+	}
 }
 
 void Session::OnMessage(Message* msg) {
