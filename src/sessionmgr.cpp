@@ -145,8 +145,23 @@ SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& ses
 }
 
 void SessionManager::Iterate(SessionCallback_fn fn) {
-	for (auto p : m_sessions) {
-		fn(p.second.get());
+	for (mg_connection* c = m_mgr.conns; c != nullptr; c = c->next) {
+		if (!c->is_websocket)
+			return;
+
+		if (c->fn_data == nullptr) {
+			TRACE(__FUNCTION__ << "c->fn_data is null");
+			return;
+		}
+
+		auto context = (mgws::context*)c->fn_data;
+		if (context->user_data == nullptr) {
+			TRACE(__FUNCTION__ << "user_data is null");
+			return;
+		}
+
+		Session* session = (Session*)context->user_data;
+		fn(session);
 	}
 }
 
