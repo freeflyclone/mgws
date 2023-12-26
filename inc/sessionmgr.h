@@ -8,7 +8,7 @@
 
 class SessionManager : public mgws {
 public:
-	typedef std::shared_ptr<Session> SessionPtr;
+	typedef Session* SessionPtr;
 	typedef std::function<SessionPtr(mgws::context*, Connection&, SessionID_t)> SessionFactory_t;
 	typedef std::function<void(Session*)> SessionCallback_fn;
 	typedef std::map<SessionID_t, SessionPtr> SessionsList;

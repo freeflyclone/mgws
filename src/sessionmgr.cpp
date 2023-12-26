@@ -7,7 +7,7 @@ SessionManager::SessionManager(
 	const std::string& key_name) 
 	: mgws(root, cert_name, key_name),
 	m_nextId(0),
-	m_factory([](mgws::context* ctx, Connection& c, SessionID_t id) -> SessionPtr { return std::make_shared<Session>(ctx, c, id); })
+	m_factory([](mgws::context* ctx, Connection& c, SessionID_t id) -> SessionPtr { return new Session(ctx, c, id); })
 {
 }
 
@@ -135,13 +135,14 @@ void SessionManager::UpdateSession(const uint32_t id, const std::string& userNam
 SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& sessId)
 {
 	const SessionID_t id = static_cast<SessionID_t>(std::stoi(sessId));
+	SessionPtr session{ nullptr };
 
-	auto sessPair = m_sessions.find(id);
-	if (sessPair == m_sessions.end()) {
-		TRACE("Oops: didn't find Session [" << id << "]");
-		return nullptr;
-	}
-	return sessPair->second;
+	Iterate([&](Session* sess) {
+		if (sess->GetId() == id) {
+			session = sess;
+		}
+	});
+	return session;
 }
 
 void SessionManager::Iterate(SessionCallback_fn fn) {

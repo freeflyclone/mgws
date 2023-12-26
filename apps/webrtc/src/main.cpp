@@ -26,10 +26,10 @@ int main(int argc, char* argv[])
         key_pem_file = argv[3];
     }
 
-    auto sm = std::make_unique<SessionManager>(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
+    auto sm = new SessionManager(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
 
     sm->SetFactory([] (mgws::context* ctx, Connection& c, SessionID_t id) {
-        return std::make_shared<Peer>(ctx, c, id);
+        return new Peer(ctx, c, id);
     });
 
     sm->infinite_loop();
