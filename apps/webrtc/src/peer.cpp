@@ -23,11 +23,6 @@ Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 	m_pmd["Heartbeat"]       = std::bind(&Peer::OnHeartbeat, 	   this, _1);
 }
 
-void Peer::OnTimerEvent(int64_t ms) {
-	if (ms - m_lastHeartbeat > m_sessionTimeoutMs)
-		TRACE(__FUNCTION__ << "() missing client! id: " << m_id << ", last heard from: " << ms - m_lastHeartbeat);
-}
-
 void Peer::OnMessage(Message* msg) {
 	try {
 		auto j = json::parse(std::string(msg->data.ptr, msg->data.len));
