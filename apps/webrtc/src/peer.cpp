@@ -23,6 +23,10 @@ Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
 	m_pmd["Heartbeat"]       = std::bind(&Peer::OnHeartbeat, 	   this, _1);
 }
 
+Peer::~Peer() {
+	//TRACE(__FUNCTION__);
+}
+
 void Peer::OnMessage(Message* msg) {
 	try {
 		auto j = json::parse(std::string(msg->data.ptr, msg->data.len));

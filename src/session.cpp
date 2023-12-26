@@ -20,6 +20,7 @@ Session::Session(mgws::context* ctx, Connection& c, SessionID_t newId)
 
 Session::~Session()
 {
+	//TRACE(__FUNCTION__);
 }
 
 void Session::OnTimerEvent(int64_t ms) {
@@ -46,7 +47,6 @@ void Session::OnControlMessage(Message* msg) {
 				{
 					m_lastPongTime = mg_millis();
 					std::string msgString(msg->data.ptr, msg->data.len);
-					TRACE(__FUNCTION__ << "(): " << msgString);
 				}
 				break;
 

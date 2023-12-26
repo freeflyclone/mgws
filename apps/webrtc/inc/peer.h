@@ -25,7 +25,7 @@ public:
 	typedef std::map<std::string, std::function<void(json& j)>> PeerMessageDispatch;
 
 	explicit Peer(mgws::context*, Connection&, SessionID_t);
-	~Peer() {};
+	virtual ~Peer();
 
 	void OnMessage(Message*) override;
 	void HandleMessage(json&);

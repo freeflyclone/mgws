@@ -6,7 +6,6 @@ SessionManager::SessionManager(
 	const std::string& cert_name,
 	const std::string& key_name) 
 	: mgws(root, cert_name, key_name),
-	m_nextId(0),
 	m_factory([](mgws::context* ctx, Connection& c, SessionID_t id) -> SessionPtr { return new Session(ctx, c, id); })
 {
 }
@@ -79,12 +78,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 
 bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	try {
-		std::lock_guard<std::mutex> lock(m_idMutex);
-
-		SessionPtr session = m_factory(ctx, *c, m_nextId++);
-
-		m_sessions.emplace(session->GetId(), session);
-
+		SessionPtr session = m_factory(ctx, *c, c->id);
 		session->Send({ {"type", "SessionID"}, {"id", session->GetId() } });
 	}
 	catch (std::exception& e) {
@@ -98,6 +92,8 @@ void SessionManager::DeleteSession(Session* session) {
 		TRACE(__FUNCTION__ << "Early return");
 		return;
 	}
+
+	delete session;
 
 	UpdateSessionsList();
 }

@@ -28,7 +28,7 @@ typedef struct mg_ws_message Message;
 class Session {
 public:
 	explicit Session(mgws::context*, Connection&, SessionID_t);
-	~Session();
+	virtual ~Session();
 
 	SessionID_t GetId();
 
