@@ -24,7 +24,7 @@ public:
 	bool AddSession(mgws::context *, Connection*);
 	void DeleteSession(Session*);
 
-	void UpdateSession(const uint32_t sessionId, const std::string&);
+	void UpdateSession(const SessionID_t sessionId, const std::string&);
 	void UpdateSessionsList();
 
 	SessionPtr GetSessionById(const SessionID_t);
