@@ -77,7 +77,7 @@ void Peer::OnForwardMessage(json& j)
 {
 	try {
 		auto type = j["type"];
-		auto targetId = j["targetId"];
+		std::string targetId(j["targetId"]);
 		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
 		auto session = m_sessions->GetSessionById(targetId);

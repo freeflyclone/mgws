@@ -99,50 +99,29 @@ void SessionManager::DeleteSession(Session* session) {
 		return;
 	}
 
-	if (m_sessions.empty()) {
-		TRACE(__FUNCTION__ << "Early return");
-		return;
-	}
-
-	auto it = m_sessions.find(session->GetId());
-
-	if (it == m_sessions.end()) {
-		TRACE(__FUNCTION__ << "Early return");
-		return;
-	}
-
-	auto id = it->second->GetId();
-
-	TRACE("Deleting id: " << id);
-
-	m_sessions.erase(id);
-
 	UpdateSessionsList();
 }
 
-void SessionManager::UpdateSession(const uint32_t id, const std::string& userName) {
-	auto sessPair = m_sessions.find(id);
-	if (sessPair == m_sessions.end()) {
-		TRACE("Oops: didn't find Session [" << id << "]");
-		return;
-	}
-
-	auto session = (sessPair->second);
+void SessionManager::UpdateSession(const SessionID_t id, const std::string& userName) {
+	auto session = GetSessionById(std::to_string(id));
 
 	session->SetUserName(userName);
 }
 
-SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& sessId)
-{
-	const SessionID_t id = static_cast<SessionID_t>(std::stoi(sessId));
+SessionManager::SessionPtr SessionManager::GetSessionById(const SessionID_t sessId) {
 	SessionPtr session{ nullptr };
 
 	Iterate([&](Session* sess) {
-		if (sess->GetId() == id) {
+		if (sess->GetId() == sessId) {
 			session = sess;
 		}
 	});
 	return session;
+}
+
+SessionManager::SessionPtr SessionManager::GetSessionById(const std::string& sessId)
+{
+	return GetSessionById(static_cast<SessionID_t>(std::stoi(sessId)));
 }
 
 void SessionManager::Iterate(SessionCallback_fn fn) {
