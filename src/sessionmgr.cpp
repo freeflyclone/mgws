@@ -56,6 +56,16 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 		return;
 	}
 
+	if (MG_EV_WS_CTL == ev) {
+		auto session = (Session*)(ctx->user_data);
+		if (session == nullptr) {
+			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
+			return;
+		}
+		session->OnControlMessage((Message*)ev_data);
+		return;
+	}
+
 	if (MG_EV_CLOSE == ev) {
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {

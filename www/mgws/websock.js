@@ -31,7 +31,7 @@ function OnMessage(event) {
             ws.sessionID = msg.id;
             PeerRegisterSession();
             UpdateLocalId();
-            BeginHeartbeat();
+            //BeginHeartbeat();
             break;
 
         default:
