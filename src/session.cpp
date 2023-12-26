@@ -23,6 +23,7 @@ Session::~Session()
 }
 
 void Session::OnTimerEvent(int64_t ms) {
+	(void)ms;
 	mg_ws_send(&m_connection, "HEARTBEAT", 10, WEBSOCKET_OP_PING);
 }
 
