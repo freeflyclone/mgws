@@ -28,8 +28,8 @@ int main(int argc, char* argv[])
 
     auto sm = new SessionManager(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
 
-    sm->SetFactory([] (mgws::context* ctx, Connection& c, SessionID_t id) {
-        return new Peer(ctx, c, id);
+    sm->SetFactory([] (mgws::context* ctx, Connection& c) {
+        return new Peer(ctx, c);
     });
 
     sm->infinite_loop();

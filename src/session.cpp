@@ -3,9 +3,8 @@
 #include "mgws.h"
 #include "session.h"
 
-Session::Session(mgws::context* ctx, Connection& c, SessionID_t newId)
-	: m_id(newId),
-	m_connection(c),
+Session::Session(mgws::context* ctx, Connection& c)
+	: m_connection(c),
 	m_userName(),
 	m_ctx({ctx->_mgws, this}),
 	m_lastPongTime(mg_millis())
@@ -28,7 +27,7 @@ void Session::OnTimerEvent(int64_t ms) {
 }
 
 SessionID_t Session::GetId() {
-	return m_id;
+	return static_cast<SessionID_t>(m_connection.id & (SessionID_t)-1);
 };
 
 const std::string& Session::GetUserName() {

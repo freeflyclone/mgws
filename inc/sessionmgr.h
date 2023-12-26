@@ -9,7 +9,7 @@
 class SessionManager : public mgws {
 public:
 	typedef Session* SessionPtr;
-	typedef std::function<SessionPtr(mgws::context*, Connection&, SessionID_t)> SessionFactory_t;
+	typedef std::function<SessionPtr(mgws::context*, Connection&)> SessionFactory_t;
 	typedef std::function<void(Session*)> SessionCallback_fn;
 
 	SessionManager(

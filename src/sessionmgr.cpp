@@ -6,7 +6,7 @@ SessionManager::SessionManager(
 	const std::string& cert_name,
 	const std::string& key_name) 
 	: mgws(root, cert_name, key_name),
-	m_factory([](mgws::context* ctx, Connection& c, SessionID_t id) -> SessionPtr { return new Session(ctx, c, id); })
+	m_factory([](mgws::context* ctx, Connection& c) -> SessionPtr { return new Session(ctx, c); })
 {
 }
 
@@ -78,7 +78,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 
 bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	try {
-		SessionPtr session = m_factory(ctx, *c, c->id);
+		SessionPtr session = m_factory(ctx, *c);
 		session->Send({ {"type", "SessionID"}, {"id", session->GetId() } });
 	}
 	catch (std::exception& e) {

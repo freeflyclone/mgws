@@ -4,8 +4,8 @@
 #include "sessionmgr.h"
 #include "peer.h"
 
-Peer::Peer(mgws::context* ctx, Connection& c, SessionID_t newId)
-	: Session(ctx, c, newId),
+Peer::Peer(mgws::context* ctx, Connection& c)
+	: Session(ctx, c),
 	m_sessions((SessionManager*)ctx->_mgws),
 	m_lastHeartbeat(mg_millis())
 {
@@ -62,12 +62,12 @@ void Peer::OnLocalIdEvent(json& j)
 		auto sessionId = j["sessionID"];
 		auto userName = j["userName"];
 
-		if (sessionId != m_id) {
-			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << m_id);
+		if (sessionId != GetId()) {
+			TRACE("Oops: received sessionID doesn't match m_id: " << sessionId << " vs " << GetId());
 			return;
 		}
 
-		m_sessions->UpdateSession(m_id, userName);
+		m_sessions->UpdateSession(GetId(), userName);
 		Send({ {"type", "LocalIdChanged"} });
 
 		m_sessions->UpdateSessionsList();
@@ -82,7 +82,6 @@ void Peer::OnForwardMessage(json& j)
 	try {
 		auto type = j["type"];
 		std::string targetId(j["targetId"]);
-		//TRACE(__FUNCTION__ << "type: " << type << ", targetId: " << targetId);
 
 		auto session = m_sessions->GetSessionById(targetId);
 		if (session)
@@ -100,8 +99,8 @@ void Peer::OnForwardMessage(json& j)
 }
 
 void Peer::OnHeartbeat(json& j) {
-	if (j["sessionId"] != m_id) {
-		TRACE(__FUNCTION__ << "() Oops, id mismatch, m_id: " << m_id << ", message: " << j.dump());
+	if (j["sessionId"] != GetId()) {
+		TRACE(__FUNCTION__ << "() Oops, id mismatch, m_id: " << GetId() << ", message: " << j.dump());
 	}
 	Send(j);
 	m_lastHeartbeat = mg_millis();

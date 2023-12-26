@@ -27,7 +27,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
-	explicit Session(mgws::context*, Connection&, SessionID_t);
+	explicit Session(mgws::context*, Connection&);
 	virtual ~Session();
 
 	SessionID_t GetId();
@@ -41,7 +41,6 @@ public:
 	virtual void OnTimerEvent(int64_t);
 
 protected:
-	SessionID_t m_id;
 	Connection& m_connection;
 
 	std::string m_userName;
