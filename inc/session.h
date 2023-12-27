@@ -27,6 +27,7 @@ typedef struct mg_ws_message Message;
 
 class Session {
 public:
+	const int m_max_heartbeat_skips = mgws::m_poll_interval_ms * 10;
 	explicit Session(mgws::context*, Connection&);
 	virtual ~Session();
 

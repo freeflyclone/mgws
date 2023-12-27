@@ -25,6 +25,11 @@ Session::~Session()
 void Session::OnTimerEvent(int64_t ms) {
 	(void)ms;
 	mg_ws_send(&m_connection, "HEARTBEAT", 10, WEBSOCKET_OP_PING);
+	if (m_max_heartbeat_skips < (ms - m_lastPongTime)) {
+		TRACE(__FUNCTION__ << "heartbeats skipped exceeded max.");
+		//mg_call(&m_connection, MG_EV_CLOSE, nullptr);
+		//mg_close_conn(&m_connection);
+	}
 }
 
 SessionID_t Session::GetId() {
@@ -45,8 +50,10 @@ void Session::OnControlMessage(Message* msg) {
 		switch (op) {
 			case WEBSOCKET_OP_PONG:
 				{
-					m_lastPongTime = mg_millis();
+					// Comment out the following to simulate a disappearing client
+					//m_lastPongTime = mg_millis();
 					std::string msgString(msg->data.ptr, msg->data.len);
+					TRACE(__FUNCTION__ << "(WEBSOCKET_OP_PONG): " << msgString);
 				}
 				break;
 

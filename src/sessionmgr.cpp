@@ -93,6 +93,7 @@ void SessionManager::DeleteSession(Session* session) {
 		return;
 	}
 
+	TRACE(__FUNCTION__ << "(" << session->GetId() << ")");
 	delete session;
 
 	UpdateSessionsList();
