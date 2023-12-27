@@ -1,12 +1,13 @@
 import { UpdateLocalId } from "./local.js";
 import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
 import { BeginHeartbeat } from "./pulse.js";
+import { print } from "./ui.js";
 
 export var ws;
 
 export function MakeWebSocket() {
-    var wsUrl = "wss://" + window.location.host + "/websock";
-    //var wsUrl = "wss://ws.e-man.social:8443/websock";
+    //var wsUrl = "wss://" + window.location.host + "/websock";
+    var wsUrl = "wss://ws.e-man.social:8443/websock";
 
     ws = new WebSocket(wsUrl);
 
@@ -42,6 +43,9 @@ function OnMessage(event) {
 
 function OnClose(event) {
     console.log("OnClose: ", event);
+    if (event.wasClean != true) {
+        print("Unexpected loss of signaling server.");
+    }
 }
 
 function OnError(event)  {
