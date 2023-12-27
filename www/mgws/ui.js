@@ -96,13 +96,17 @@ function DetectVanishedSession(sessionsList) {
     }
 }
 
+export function ClearRemotesTable() {
+    remotes_table.innerHTML = null;
+    remotes = [];
+}
+
 export function OnSessionsChangedMessage(sessionsList) {
     DetectVanishedSession(sessionsList);
 
     // Rebuild local table UI from scratch when table changes...
-    remotes_table.innerHTML = null;
-    remotes = [];
-
+    ClearRemotesTable();
+    
     sessionsList.sessions.forEach(function(session) {
         // Don't show ourselves in remotes table, that is non-sensical
         if (session.sessionId === ws.sessionID) {

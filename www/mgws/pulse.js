@@ -1,4 +1,5 @@
 import { ws } from "./websock.js";
+import { ClearRemotesTable, print } from "./ui.js";
 
 const heartbeatIntervalMs = 500;
 const heartbeatMaxMissing = 5;
@@ -17,15 +18,20 @@ export function PulseDetected() {
 function heartbeat() {
     if (ws.readyState === WebSocket.CLOSED)
     {
-        console.log("websocked closed, heartbeatTimer stopping");
+        var msgStr = "Signaling server connection lost, ID: " + ws.sessionID;
+        console.log(msgStr);
+        print(msgStr);
         clearInterval(heartbeatTimer);
+        ClearRemotesTable();
         return;
     }
 
     heartbeatsMissed++;
     if (heartbeatsMissed >= heartbeatMaxMissing) {
-        console.log("Vanished server detected!");
+        console.log("Signaling server vanished!");
+        print("Signaling server vanished!");
         clearInterval(heartbeatTimer);
+        ClearRemotesTable();
     }
 
     var msg = {
