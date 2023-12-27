@@ -23,13 +23,13 @@ Session::~Session()
 }
 
 void Session::OnTimerEvent(int64_t ms) {
-	(void)ms;
-	mg_ws_send(&m_connection, "HEARTBEAT", 10, WEBSOCKET_OP_PING);
 	if (m_max_heartbeat_skips < (ms - m_lastPongTime)) {
-		TRACE(__FUNCTION__ << "heartbeats skipped exceeded max.");
-		//mg_call(&m_connection, MG_EV_CLOSE, nullptr);
-		//mg_close_conn(&m_connection);
+		TRACE(__FUNCTION__ << "(): session " << GetId() << " vanished.");
+		m_connection.is_closing = true;
+		return;
 	}
+
+	mg_ws_send(&m_connection, "HEARTBEAT", 10, WEBSOCKET_OP_PING);
 }
 
 SessionID_t Session::GetId() {
