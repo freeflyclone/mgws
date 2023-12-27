@@ -51,9 +51,9 @@ void Session::OnControlMessage(Message* msg) {
 			case WEBSOCKET_OP_PONG:
 				{
 					// Comment out the following to simulate a disappearing client
-					//m_lastPongTime = mg_millis();
+					m_lastPongTime = mg_millis();
 					std::string msgString(msg->data.ptr, msg->data.len);
-					TRACE(__FUNCTION__ << "(WEBSOCKET_OP_PONG): " << msgString);
+					//TRACE(__FUNCTION__ << "(WEBSOCKET_OP_PONG): " << msgString);
 				}
 				break;
 
