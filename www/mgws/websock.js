@@ -1,4 +1,4 @@
-import { UpdateLocalId } from "./local.js";
+import { SendLocalIdEvent } from "./local.js";
 import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
 import { BeginHeartbeat } from "./pulse.js";
 import { print } from "./ui.js";
@@ -31,7 +31,7 @@ function OnMessage(event) {
             console.log(msg);
             ws.sessionID = msg.id;
             PeerRegisterSession();
-            UpdateLocalId();
+            SendLocalIdEvent();
             BeginHeartbeat();
             break;
 

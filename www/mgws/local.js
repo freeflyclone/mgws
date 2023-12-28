@@ -10,19 +10,6 @@ export function GetStoredUserName() {
     return userName;
 }
 
-export function UpdateLocalIdPlaceholder(value) {
-    console.log("UpdateLocalIdPlaceholder()");
-    local_id_input.placeholder = value;
-}
-
-export function UpdateLocalId() {
-    localStorage.setItem("userName", user_name);
-
-    if (ws.sessionID != null) {
-        SendLocalIdEvent();
-    }
-}
-
 export function SendLocalIdEvent() {
     var localIdEvent = {
         type: "LocalIdEvent",
