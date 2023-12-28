@@ -128,6 +128,12 @@ export function OnSessionsChangedMessage(sessionsList) {
     return;
 }
 
+export function DisableButtons() {
+    ButtonDisable(callButton, true);
+    ButtonDisable(answerButton, true);
+    ButtonDisable(hangupButton, true);
+}
+
 export function ButtonDisable(button, disable) {
     button.disabled = disable;
 }

@@ -1,5 +1,5 @@
 import { ws } from "./websock.js";
-import { ClearRemotesTable, print } from "./ui.js";
+import { ClearRemotesTable, DisableButtons, print } from "./ui.js";
 
 const heartbeatIntervalMs = 500;
 const heartbeatMaxMissing = 5;
@@ -23,6 +23,7 @@ function heartbeat() {
         print(msgStr);
         clearInterval(heartbeatTimer);
         ClearRemotesTable();
+        DisableButtons();
         return;
     }
 
@@ -32,6 +33,7 @@ function heartbeat() {
         print("Signaling server vanished!");
         clearInterval(heartbeatTimer);
         ClearRemotesTable();
+        DisableButtons();
     }
 
     var msg = {
