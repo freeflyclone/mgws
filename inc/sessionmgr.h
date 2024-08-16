@@ -14,6 +14,7 @@ public:
 
 	SessionManager(
 		const std::string& root,
+		const std::string& addr_port,
 		const std::string& cert_name,
 		const std::string& key_name);
 

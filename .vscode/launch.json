@@ -59,6 +59,31 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "mgws(lumenicious)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/apps/dashboard/dashboard",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerServerAddress": "ws.lumenicious.com:5555",
         }
     ]
 }
