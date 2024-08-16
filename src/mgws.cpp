@@ -6,6 +6,7 @@
 
 mgws::mgws(
 	const std::string& root,
+	const std::string& addr_port,
 	const std::string& cert,
 	const std::string& key
 )
@@ -13,7 +14,8 @@ mgws::mgws(
 	m_mgr{},
 	m_tls_opts{},
 	m_http_serve_opts{},
-	m_root_dir(root)
+	m_root_dir(root),
+	m_addr_port(addr_port)
 {
 	TRACE(root << ", " << cert << ", " << key);
 
@@ -36,7 +38,7 @@ mgws::mgws(
 	//   the proper pointer for the per-instance mgws::fn() (note the "_" distinction)
 	//
 	// - "mg_connection" is for per connection use of mg_connection.fn_data to hold "Session" ptr.
-	mg_http_listen(&m_mgr, "http://0.0.0.0:8443", mgws::_fn, &m_context);
+	mg_http_listen(&m_mgr, m_addr_port.c_str(), mgws::_fn, &m_context);
 }
 
 void mgws::infinite_loop()

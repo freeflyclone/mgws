@@ -22,7 +22,8 @@ public:
 	} m_context;
 	typedef std::function<void(context*)> timer_fn;
 	mgws(
-		const std::string& root, 
+		const std::string& root,
+		const std::string& addr_port, 
 		const std::string& cert_name,
 		const std::string& key_name);
 
@@ -38,6 +39,7 @@ protected:
 	mg_tls_opts m_tls_opts;
 	mg_http_serve_opts m_http_serve_opts;
 	std::string m_root_dir;
+	std::string m_addr_port;
 	std::string m_cert;
 	std::string m_key;
 	std::list<timer_fn> m_timers;

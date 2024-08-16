@@ -11,6 +11,7 @@
 int main(int argc, char* argv[]) 
 {
     std::string root("../www/mgws/");
+    std::string addr_port("http://0.0.0.0:8443");
     std::string cert_pem_file("localhost.crt");
     std::string key_pem_file("localhost.key");
 
@@ -26,7 +27,7 @@ int main(int argc, char* argv[])
         key_pem_file = argv[3];
     }
 
-    auto sm = new SessionManager(root.c_str(), cert_pem_file.c_str(), key_pem_file.c_str());
+    auto sm = new SessionManager(root, addr_port, cert_pem_file, key_pem_file);
 
     sm->SetFactory([] (mgws::context* ctx, Connection& c) {
         return new Peer(ctx, c);

@@ -3,9 +3,10 @@
 
 SessionManager::SessionManager(
 	const std::string& root,
+	const std::string& addr_port,
 	const std::string& cert_name,
 	const std::string& key_name) 
-	: mgws(root, cert_name, key_name),
+	: mgws(root, addr_port, cert_name, key_name),
 	m_factory([](mgws::context* ctx, Connection& c) -> SessionPtr { return new Session(ctx, c); })
 {
 }
