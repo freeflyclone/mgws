@@ -6,6 +6,7 @@ IoT applications often benefit from a Web-based UI for remote access, and [Mongo
 Mongoose supports:
   * [HTTP/HTTPS](https://mongoose.ws/documentation/#http-1) - for Web UI
   * [Websocket](https://mongoose.ws/documentation/#websocket-1) - for real-time updates
+  * [MQTT](https://mongoose.ws/documentation/#mqtt-1) - for lightweight publish/subscribe messaging
   * [SNTP](https://mongoose.ws/documentation/#sntp) - for synchronizing time
   * [SMTP](https://mongoose.ws/documentation/tutorials/smtp/smtp-client/) - for sending emails
 
