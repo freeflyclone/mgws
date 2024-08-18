@@ -22,6 +22,7 @@ using json = nlohmann::json;
 typedef uint32_t SessionID_t;
 typedef struct mg_connection Connection;
 typedef struct mg_ws_message Message;
+typedef struct mg_mg_mqtt_message MqttMessage;
 
 class Session {
 public:

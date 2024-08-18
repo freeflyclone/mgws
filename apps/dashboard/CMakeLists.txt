@@ -6,10 +6,12 @@ set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 set(SOURCE_FILES
 	${SRCS}/dashboard.cpp
 	${SRCS}/main.cpp
+	${SRCS}/mqtt.cpp
 )
 
 set(HEADER_FILES
 	${INCS}/dashboard.h
+	${INCS}/mqtt.h
 )
 
 set(WWW_FILES
