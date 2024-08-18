@@ -4,10 +4,12 @@ set(SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCS ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
 set(SOURCE_FILES
+	${SRCS}/dashboard.cpp
 	${SRCS}/main.cpp
 )
 
 set(HEADER_FILES
+	${INCS}/dashboard.h
 )
 
 set(WWW_FILES

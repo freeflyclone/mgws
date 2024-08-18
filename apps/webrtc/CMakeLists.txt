@@ -13,19 +13,19 @@ set(HEADER_FILES
 )
 
 set(WWW_FILES
-	${PROJECT_SOURCE_DIR}/www/css/dynamic.css
-	${PROJECT_SOURCE_DIR}/www/mgws/sounds/local-ring.m4a
-	${PROJECT_SOURCE_DIR}/www/mgws/sounds/remote-ring.m4a
-	${PROJECT_SOURCE_DIR}/www/mgws/sounds/telephone-ring.m4a
-	${PROJECT_SOURCE_DIR}/www/mgws/audio.js
-	${PROJECT_SOURCE_DIR}/www/mgws/index.html
-	${PROJECT_SOURCE_DIR}/www/mgws/index.js
-	${PROJECT_SOURCE_DIR}/www/mgws/local.js
-	${PROJECT_SOURCE_DIR}/www/mgws/theme.js
-	${PROJECT_SOURCE_DIR}/www/mgws/ui.js
-	${PROJECT_SOURCE_DIR}/www/mgws/websock.js
-	${PROJECT_SOURCE_DIR}/www/mgws/peer.js
-	${PROJECT_SOURCE_DIR}/www/mgws/pulse.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/css/dynamic.css
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/sounds/local-ring.m4a
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/sounds/remote-ring.m4a
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/sounds/telephone-ring.m4a
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/audio.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/index.html
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/index.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/local.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/theme.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/ui.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/websock.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/peer.js
+	${PROJECT_SOURCE_DIR}/www/webrtc/mgws/pulse.js
 )
 
 if(MSVC)
