@@ -7,14 +7,15 @@ Mqtt::Mqtt(mgws::context* ctx, Connection& c)
 	: Session(ctx, c),
 	m_sessions((SessionManager*)ctx->_mgws)
 {
-	MQ_TRACE(__FUNCTION__ << "() id: " << GetId());
+	MQ_TRACE(__FUNCTION__);
 }
 
 Mqtt::~Mqtt() {
-	MQ_TRACE(__FUNCTION__ << "() id: " << GetId());
+	MQ_TRACE(__FUNCTION__);
 }
 
 void Mqtt::OnMessage(MqttMessage* msg) {
+    (void)msg;
 	try {
 		MQ_TRACE(__FUNCTION__);
 	}

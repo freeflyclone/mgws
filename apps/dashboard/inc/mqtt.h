@@ -2,6 +2,7 @@
 #define MQTT_H
 
 #include <nlohmann/json.hpp>
+#include "mgws.h"
 #include "session.h"
 
 using namespace nlohmann::literals;
