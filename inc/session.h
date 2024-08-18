@@ -17,9 +17,7 @@
 
 using json = nlohmann::json;
 
-extern "C" {
-	#include "mgws.h"
-}
+#include "mgws.h"
 
 typedef uint32_t SessionID_t;
 typedef struct mg_connection Connection;
