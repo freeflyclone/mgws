@@ -20,3 +20,6 @@ SQLite features:
   * [Self-contained](https://www.sqlite.org/selfcontained.html)
   * [Reliable](https://www.sqlite.org/hirely.html)
   * [Full-featured SQL](https://www.sqlite.org/fullsql.html)
+
+## Notes:
+  * [TLS/SSL instructions](http://www.steves-internet-guide.com/using-lets-encrypt-certificate-mosquitto/) for mosquitto
