@@ -1,0 +1,52 @@
+import { SendLocalIdEvent } from "./local.js";
+import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
+import { BeginHeartbeat } from "./pulse.js";
+import { print } from "./ui.js";
+
+export var ws;
+
+export function MakeWebSocket() {
+    var wsUrl = "wss://ws.lumenicious.com:443/websock";
+
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = OnOpen; 
+    ws.onmessage = OnMessage;
+    ws.onclose = OnClose;
+    ws.onerror = OnError;
+
+    ws.sessionID = 0;
+}
+
+function OnOpen(event) {
+    console.log("OnOpen: ", ws.url);
+};
+
+function OnMessage(event) {
+    var msg = JSON.parse(event.data);
+
+    switch(msg.type) {
+        case "SessionID":
+            console.log(msg);
+            ws.sessionID = msg.id;
+            PeerRegisterSession();
+            SendLocalIdEvent();
+            BeginHeartbeat();
+            break;
+
+        default:
+            PeerMessageHandler(msg);
+            break;
+    }
+}
+
+function OnClose(event) {
+    console.log("OnClose: ", event);
+    if (event.wasClean != true) {
+        print("Unexpected loss of signaling server.");
+    }
+}
+
+function OnError(event)  {
+    console.log("OnError: ", event);
+}

@@ -19,6 +19,7 @@ public:
 	virtual ~WebSock();
 
 	void OnMessage(Message*);
+	void HandleMessage(json&);
 
 	// Session management API from browser JS code
 	void OnRegisterSession(json&);
