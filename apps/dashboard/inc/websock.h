@@ -12,6 +12,9 @@ class SessionManager;
 
 class WebSock : public Session {
 public:
+	static const int64_t m_sessionTimeoutMs = 5000;
+	typedef std::map<std::string, std::function<void(json& j)>> WebSockMessageDispatch;
+
 	explicit WebSock(mgws::context*, Connection&);
 	virtual ~WebSock();
 
@@ -24,6 +27,8 @@ public:
 
 private:
 	SessionManager* m_sessions;
+	WebSockMessageDispatch m_md;
+	int64_t m_lastHeartbeat;
 };
 
 #endif

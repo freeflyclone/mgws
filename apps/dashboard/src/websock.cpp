@@ -5,7 +5,8 @@
 
 WebSock::WebSock(mgws::context* ctx, Connection& c)
 	: Session(ctx, c),
-	m_sessions((SessionManager*)ctx->_mgws)
+	m_sessions((SessionManager*)ctx->_mgws),
+	m_lastHeartbeat(mg_millis())
 {
 	MQ_TRACE(__FUNCTION__);
 }
