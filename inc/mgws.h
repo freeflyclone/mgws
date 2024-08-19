@@ -14,6 +14,7 @@ extern "C" {
 
 class mgws {
 public:
+	typedef std::vector<std::string> listen_list;
 	static const int m_poll_interval_ms{ 500 };
 	struct context {
 		// MUST be a ptr for polymorphism to work!

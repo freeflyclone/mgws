@@ -14,7 +14,7 @@ public:
 
 	SessionManager(
 		const std::string& root,
-		const std::string& addr_port,
+		mgws::listen_list& listeners,
 		const std::string& cert_name,
 		const std::string& key_name);
 

@@ -10,8 +10,10 @@
 
 int main(int argc, char* argv[]) 
 {
+    mgws::listen_list listeners;
+    listeners.push_back("https://0.0.0.0:8443");
+
     std::string root("../www/mgws/");
-    std::string addr_port("http://0.0.0.0:8443");
     std::string cert_pem_file("localhost.crt");
     std::string key_pem_file("localhost.key");
 
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
         key_pem_file = argv[3];
     }
 
-    auto sm = new SessionManager(root, addr_port, cert_pem_file, key_pem_file);
+    auto sm = new SessionManager(root, listeners, cert_pem_file, key_pem_file);
 
     sm->SetFactory([] (mgws::context* ctx, Connection& c) {
         return new Peer(ctx, c);

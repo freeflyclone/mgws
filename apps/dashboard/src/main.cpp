@@ -23,12 +23,15 @@ int main(int argc, char *argv[]) {
 
     TRACE(__FUNCTION__);
 
+    mgws::listen_list listeners;
+    listeners.push_back("https://0.0.0.0:443");
+    listeners.push_back("https://0.0.0.0:8443");
+
     std::string root(rootDir);
-    std::string addr_port("https://0.0.0.0:443");
     std::string cert_pem_file("/etc/letsencrypt/live/lumenicious.com/fullchain.pem");
     std::string key_pem_file("/etc/letsencrypt/live/lumenicious.com/privkey.pem");
 
-    auto sm = new SessionManager(root, addr_port, cert_pem_file, key_pem_file);
+    auto sm = new SessionManager(root, listeners, cert_pem_file, key_pem_file);
 
     sm->SetFactory([] (mgws::context* ctx, Connection& c) {
         return new WebSock(ctx, c);
