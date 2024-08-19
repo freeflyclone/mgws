@@ -7,11 +7,13 @@ set(SOURCE_FILES
 	${SRCS}/dashboard.cpp
 	${SRCS}/main.cpp
 	${SRCS}/mqtt.cpp
+	${SRCS}/websock.cpp
 )
 
 set(HEADER_FILES
 	${INCS}/dashboard.h
 	${INCS}/mqtt.h
+	${INCS}/websock.h
 )
 
 set(WWW_FILES

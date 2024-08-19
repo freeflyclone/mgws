@@ -5,6 +5,7 @@
 
 #include "sessionmgr.h"
 #include "mqtt.h"
+#include "websock.h"
 
 void usage() {
     puts(
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
     auto sm = new SessionManager(root, addr_port, cert_pem_file, key_pem_file);
 
     sm->SetFactory([] (mgws::context* ctx, Connection& c) {
-        return new Mqtt(ctx, c);
+        return new WebSock(ctx, c);
     });
 
     sm->infinite_loop();
