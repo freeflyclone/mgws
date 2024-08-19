@@ -6,7 +6,7 @@ SessionManager::SessionManager(
 	mgws::listen_list& listeners,
 	const std::string& cert_name,
 	const std::string& key_name) 
-	: mgws(root, listeners[0], cert_name, key_name),
+	: mgws(root, listeners, cert_name, key_name),
 	m_factory([](mgws::context* ctx, Connection& c) -> SessionPtr { return new Session(ctx, c); })
 {
 }
