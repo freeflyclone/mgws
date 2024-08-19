@@ -1,12 +1,9 @@
-import { SendLocalIdEvent } from "./local.js";
-import { PeerMessageHandler, PeerRegisterSession } from "./peer.js";
-import { BeginHeartbeat } from "./pulse.js";
-import { print } from "./ui.js";
-
 export var ws;
 
 export function MakeWebSocket() {
-    var wsUrl = "wss://ws.lumenicious.com:443/websock";
+    var wsUrl = "wss://ws.lumenicious.com:8443/websock";
+
+    console.log("MakeWebSocket()\n");
 
     ws = new WebSocket(wsUrl);
 
@@ -29,13 +26,9 @@ function OnMessage(event) {
         case "SessionID":
             console.log(msg);
             ws.sessionID = msg.id;
-            PeerRegisterSession();
-            SendLocalIdEvent();
-            BeginHeartbeat();
             break;
 
         default:
-            PeerMessageHandler(msg);
             break;
     }
 }
@@ -43,7 +36,7 @@ function OnMessage(event) {
 function OnClose(event) {
     console.log("OnClose: ", event);
     if (event.wasClean != true) {
-        print("Unexpected loss of signaling server.");
+        console.log("Unexpected loss of WebSocket server.");
     }
 }
 
