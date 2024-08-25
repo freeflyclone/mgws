@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>MadStyle.Social</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+    body { background-color: black; color: yellow;}
+    p { font: 20pt arial; }
+    a { color: white; text-decoration: none; }
+    #center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 85vh;
+    }
+    .animate-fade-in {
+        animation: fadeInAnimation ease-in-out 4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode: forwards;
+    }
+    @keyframes fadeInAnimation {
+        0% { opacity: 0; }
+        25% { opacity: 1; }
+        75% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>
+
+</head>
+<body>
+    <script type="text/javascript">
+        onload = () => {
+            if (localStorage.getItem('userName')) {
+                window.location.assign("/mgws")
+            }
+            window.setInterval(tic, 4000);
+        }
+        const lines = [
+            "<p>madstyle.social</p>", 
+            "<p>subscription only, no ads</p>", 
+            "<p>all signal, no noise</p>", 
+        ];
+        var lineIdx=0;
+        function tic() {
+            lineIdx = (lineIdx + 1) % lines.length;
+            console.log("tic: ", lineIdx);
+            document.getElementById("center-screen").innerHTML = lines[lineIdx];
+        }
+    </script>
+
+    <div id="center-screen" class="animate-fade-in">
+        <p>madstyle.social</p>
+    </div>
+
+</body>

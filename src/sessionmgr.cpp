@@ -1,6 +1,8 @@
 #include "mgws.h"
 #include "sessionmgr.h"
 
+#define SM_TRACE TRACE
+
 SessionManager::SessionManager(
 	const std::string& root,
 	mgws::listen_list& listeners,
@@ -9,6 +11,7 @@ SessionManager::SessionManager(
 	: mgws(root, listeners, cert_name, key_name),
 	m_factory([](mgws::context* ctx, Connection& c) -> SessionPtr { return new Session(ctx, c); })
 {
+	SM_TRACE(__FUNCTION__);
 }
 
 void SessionManager::SetFactory(SessionFactory_t fn) {
@@ -25,6 +28,7 @@ void SessionManager::timer_event(int64_t ms)
 void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
 	if (MG_EV_ACCEPT == ev) {
+		SM_TRACE(__FUNCTION__ << "(): MG_EV_ACCEPT");
 		mg_tls_init(c, &m_tls_opts);
 		return;
 	}
@@ -32,7 +36,10 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	if (MG_EV_HTTP_MSG == ev) {
 		struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
+		SM_TRACE(__FUNCTION__ << "(): MG_EV_HTTP_MSG");
+
 		if (mg_http_match_uri(hm, "/websock")) {
+			SM_TRACE(__FUNCTION__ << "(): /websock request");
 			// upgrade to ws:/wss: connection, recv MG_EV_WS_MSG thereafter
 			mg_ws_upgrade(c, hm, NULL);
 
@@ -47,7 +54,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	if (MG_EV_WS_MSG == ev) {
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {
-			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
+			SM_TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
 			return;
 		}
 
@@ -59,7 +66,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	if (MG_EV_WS_CTL == ev) {
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {
-			TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
+			SM_TRACE(__FUNCTION__ << "() Oops, ctx->user_data is null");
 			return;
 		}
 		session->OnControlMessage((Message*)ev_data);
@@ -67,6 +74,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	}
 
 	if (MG_EV_CLOSE == ev) {
+		SM_TRACE(__FUNCTION__ << "(): MG_EV_CLOSE");
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {
 			return;
@@ -79,22 +87,24 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 
 bool SessionManager::AddSession(mgws::context* ctx, Connection* c) {
 	try {
+		SM_TRACE(__FUNCTION__ << "()");
+
 		SessionPtr session = m_factory(ctx, *c);
 		session->Send({ {"type", "SessionID"}, {"id", session->GetId() } });
 	}
 	catch (std::exception& e) {
-		TRACE("Exception: " << e.what());
+		SM_TRACE("Exception: " << e.what());
 		return false;
 	}
 	return true;
 }
 void SessionManager::DeleteSession(Session* session) {
 	if (!session) {
-		TRACE(__FUNCTION__ << "Early return");
+		SM_TRACE(__FUNCTION__ << "Early return");
 		return;
 	}
 
-	TRACE(__FUNCTION__ << "(" << session->GetId() << ")");
+	SM_TRACE(__FUNCTION__ << "(" << session->GetId() << ")");
 	delete session;
 
 	UpdateSessionsList();
@@ -128,13 +138,13 @@ void SessionManager::Iterate(SessionCallback_fn fn) {
 			return;
 
 		if (c->fn_data == nullptr) {
-			TRACE(__FUNCTION__ << "c->fn_data is null");
+			SM_TRACE(__FUNCTION__ << "c->fn_data is null");
 			return;
 		}
 
 		auto context = (mgws::context*)c->fn_data;
 		if (context->user_data == nullptr) {
-			TRACE(__FUNCTION__ << "user_data is null");
+			SM_TRACE(__FUNCTION__ << "user_data is null");
 			return;
 		}
 
