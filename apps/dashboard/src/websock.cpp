@@ -8,12 +8,12 @@ WebSock::WebSock(mgws::context* ctx, Connection& c)
 	m_sessMgr((SessionManager*)ctx->_mgws),
 	m_lastHeartbeat(mg_millis())
 {
-	MQ_TRACE(__FUNCTION__);
+	//MQ_TRACE(__FUNCTION__);
 	m_md["RegisterSession"] = std::bind(&WebSock::OnRegisterSession, this, std::placeholders::_1);
 }
 
 WebSock::~WebSock() {
-	MQ_TRACE(__FUNCTION__);
+	//MQ_TRACE(__FUNCTION__);
 }
 
 void WebSock::OnMessage(Message* msg) {
