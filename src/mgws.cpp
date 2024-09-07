@@ -6,7 +6,7 @@
 
 mgws::mgws(
 	const std::string& root,
-		mgws::listen_list& listeners,
+	mgws::listen_list& listeners,
 	const std::string& cert,
 	const std::string& key
 )

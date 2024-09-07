@@ -1,3 +1,11 @@
+/*
+*	mgws.h
+*
+*	Provides a lightweight C++ wrapper around the Mongoose embedded web server C library.
+*
+*	Manages multiple listener ports, SSL cert file read & parse, event callback function,
+*	root www dir, and timer events.
+*/
 #ifndef MGWS_H
 #define MGWS_H
 
@@ -5,6 +13,7 @@
 #include <iostream>
 #include <functional>
 #include <list>
+#include <vector>
 
 extern "C" {
 	#include <mongoose.h>
