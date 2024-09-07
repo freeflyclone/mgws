@@ -25,8 +25,7 @@ function OnMessage(event) {
 
     switch(msg.type) {
         case "SessionID":
-            console.log(msg);
-            ws.sessionID = msg.id;
+            SessionID(msg);
             break;
 
         default:
@@ -43,4 +42,9 @@ function OnClose(event) {
 
 function OnError(event)  {
     console.log("OnError: ", event);
+}
+
+function SessionID(msg) {
+    console.log(msg);
+    ws.sessionID = msg.id;
 }
