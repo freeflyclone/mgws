@@ -1,7 +1,8 @@
 export var ws;
 
 export function MakeWebSocket() {
-    var wsUrl = "wss://ws.lumenicious.com:8443/websock";
+    // The MGWS WebSocket handler is invoked with "websock" added to the host URL 
+    var wsUrl = "wss://localhost/websock";
 
     console.log("MakeWebSocket()\n");
 
