@@ -27,7 +27,7 @@ public:
 	void OnHeartbeat(json&);
 
 private:
-	SessionManager* m_sessions;
+	SessionManager* m_sessMgr;
 	WebSockMessageDispatch m_md;
 	int64_t m_lastHeartbeat;
 };

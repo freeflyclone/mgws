@@ -7,7 +7,7 @@
 
 Peer::Peer(mgws::context* ctx, Connection& c)
 	: Session(ctx, c),
-	m_sessions((SessionManager*)ctx->_mgws),
+	m_sessMgr((SessionManager*)ctx->_mgws),
 	m_lastHeartbeat(mg_millis())
 {
 	//P_TRACE(__FUNCTION__ << "() id: " << GetId());
@@ -66,10 +66,10 @@ void Peer::OnLocalIdEvent(json& j)
 			return;
 		}
 
-		m_sessions->UpdateSession(GetId(), userName);
+		m_sessMgr->UpdateSession(GetId(), userName);
 		Send({ {"type", "LocalIdChanged"} });
 
-		m_sessions->UpdateSessionsList();
+		m_sessMgr->UpdateSessionsList();
 	}
 	catch (std::exception& e) {
 		P_TRACE("Error while handling LocalIdEvent: " << e.what());
@@ -82,7 +82,7 @@ void Peer::OnForwardMessage(json& j)
 		auto type = j["type"];
 		std::string targetId(j["targetId"]);
 
-		auto session = m_sessions->GetSessionById(targetId);
+		auto session = m_sessMgr->GetSessionById(targetId);
 		if (session)
 			session->Send(j);
 

@@ -23,7 +23,7 @@ public:
 	void OnHeartbeat(json&);
 
 private:
-	SessionManager* m_sessions;
+	SessionManager* m_sessMgr;
 };
 
 #endif

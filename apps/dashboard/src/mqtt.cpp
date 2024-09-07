@@ -5,7 +5,7 @@
 
 Mqtt::Mqtt(mgws::context* ctx, Connection& c)
 	: Session(ctx, c),
-	m_sessions((SessionManager*)ctx->_mgws)
+	m_sessMgr((SessionManager*)ctx->_mgws)
 {
 	MQ_TRACE(__FUNCTION__);
 }

@@ -40,7 +40,7 @@ public:
 
 private:
 	PeerMessageDispatch m_pmd;
-	SessionManager* m_sessions;
+	SessionManager* m_sessMgr;
 	int64_t m_lastHeartbeat;
 };
 
