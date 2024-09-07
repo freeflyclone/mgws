@@ -28,7 +28,7 @@ void SessionManager::timer_event(int64_t ms)
 void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context* ctx)
 {
 	if (MG_EV_ACCEPT == ev) {
-		SM_TRACE(__FUNCTION__ << "(): MG_EV_ACCEPT");
+		//SM_TRACE(__FUNCTION__ << "(): MG_EV_ACCEPT");
 		mg_tls_init(c, &m_tls_opts);
 		return;
 	}
@@ -36,7 +36,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	if (MG_EV_HTTP_MSG == ev) {
 		struct mg_http_message* hm = (struct mg_http_message*)ev_data;
 
-		SM_TRACE(__FUNCTION__ << "(): MG_EV_HTTP_MSG");
+		//SM_TRACE(__FUNCTION__ << "(): MG_EV_HTTP_MSG");
 
 		if (mg_http_match_uri(hm, "/websock")) {
 			SM_TRACE(__FUNCTION__ << "(): /websock request");
@@ -74,7 +74,7 @@ void SessionManager::fn(struct mg_connection* c, int ev, void* ev_data, context*
 	}
 
 	if (MG_EV_CLOSE == ev) {
-		SM_TRACE(__FUNCTION__ << "(): MG_EV_CLOSE");
+		//SM_TRACE(__FUNCTION__ << "(): MG_EV_CLOSE");
 		auto session = (Session*)(ctx->user_data);
 		if (session == nullptr) {
 			return;
