@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEST=~evan/src/beastie/certs
+DEST=~evan/src/mgws/certs
 OWNER=evan
 
 CERT_PEM_EXTENSION=".cert.pem"

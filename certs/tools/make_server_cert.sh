@@ -1,6 +1,6 @@
 #!/bin/bash
 
-URL=${URL:-hq.local}
+URL=${URL:-localhost}
 
 if [ $# -ne 0 ]
 then
