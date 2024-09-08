@@ -1,6 +1,10 @@
+import { RegisterSession, GetActiveSessions } from "/mgws/ui.js";
+
 export var ws;
 
-export function MakeWebSocket() {
+var OnNewSession;
+
+export function MakeWebSocket(ons) {
     // The MGWS WebSocket handler is invoked with "websock" added to the host URL 
     var wsUrl = "wss://localhost/websock";
 
@@ -14,6 +18,8 @@ export function MakeWebSocket() {
     ws.onerror = OnError;
 
     ws.sessionID = 0;
+
+    OnNewSession = ons;
 }
 
 function OnOpen(event) {
@@ -47,4 +53,8 @@ function OnError(event)  {
 function SessionID(msg) {
     console.log(msg);
     ws.sessionID = msg.id;
+
+    if (typeof OnNewSession != 'undefined') {
+        OnNewSession(msg);
+    }
 }
