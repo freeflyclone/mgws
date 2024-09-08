@@ -23,6 +23,7 @@ public:
 
 	// Session management API from browser JS code
 	void OnRegisterSession(json&);
+	void OnGetActiveSessions(json&);
 	void OnLocalIdEvent(json&);
 	void OnHeartbeat(json&);
 

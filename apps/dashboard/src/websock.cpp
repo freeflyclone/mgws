@@ -10,6 +10,7 @@ WebSock::WebSock(mgws::context* ctx, Connection& c)
 {
 	//MQ_TRACE(__FUNCTION__);
 	m_md["RegisterSession"] = std::bind(&WebSock::OnRegisterSession, this, std::placeholders::_1);
+	m_md["GetActiveSessions"] = std::bind(&WebSock::OnGetActiveSessions, this, std::placeholders::_1);
 }
 
 WebSock::~WebSock() {
@@ -38,6 +39,14 @@ void WebSock::HandleMessage(json& j)
 }
 
 void WebSock::OnRegisterSession(json& j){
+	auto sessionId = j["sessionId"];
+	auto appVersion = j["appVersion"];
+	auto userName = j["userName"];
+
+	MQ_TRACE(__FUNCTION__ << "(): id: " << sessionId << ", appVersion: " << appVersion << ", userName: " << userName);
+}
+
+void WebSock::OnGetActiveSessions(json& j){
 	auto sessionId = j["sessionId"];
 	auto appVersion = j["appVersion"];
 	auto userName = j["userName"];
