@@ -32,7 +32,6 @@ int main(int argc, char *argv[]) {
     TRACE(__FUNCTION__);
 
     mgws::listen_list listeners;
-    listeners.push_back("https://0.0.0.0:443");
     listeners.push_back("https://0.0.0.0:8443");
 
     std::string root(rootDir);

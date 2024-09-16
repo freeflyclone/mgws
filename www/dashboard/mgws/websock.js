@@ -6,7 +6,8 @@ var OnNewSession;
 
 export function MakeWebSocket(ons) {
     // The MGWS WebSocket handler is invoked with "websock" added to the host URL 
-    var wsUrl = window.location.href.replace("http", "ws") + "websock";
+    var protocol = window.location.protocol.replace("http", "ws");
+    var wsUrl = protocol + "//" + window.location.hostname + ":8443/websock";
 
     ws = new WebSocket(wsUrl);
 
