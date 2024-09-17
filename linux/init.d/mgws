@@ -1,0 +1,43 @@
+#!/bin/bash
+# Mongoose WebSockets Server (mgws) init.d startup script
+
+SOURCE_DIR=/home/evan/src/mgws
+CERTS_DIR=${SOURCE_DIR}/certs
+
+COMMAND=${SOURCE_DIR}/build/apps/dashboard/dashboard
+WWW_DIR=${SOURCE_DIR}/www/dashboard
+
+CERT_FILE=${CERTS_DIR}/localhost.crt
+KEY_FILE=${CERTS_DIR}/localhost.key
+
+start() {
+  echo $'Execute start' " : ${COMMAND} ${WWW_DIR} ${CERT_FILE} ${KEY_FILE}" >> /var/log/mgws.log
+  ${COMMAND} ${WWW_DIR} ${CERT_FILE} ${KEY_FILE} 2>&1 | logger --tag "mgws" &
+}
+
+stop() {
+  echo  $'Executing stop!' >> /var/log/mgws.log
+  killall ${COMMAND}
+}
+
+restart() {
+  echo $'Executing restart' >> /var/log/mgws.log
+  stop
+  start
+}                                                                                                                                                 
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo $"Use this options $0 {start|stop|restart}"
+    exit 1
+esac
+exit $?

@@ -39,7 +39,7 @@ mgws::mgws(
 	// - "mg_connection" is for per connection use of mg_connection.fn_data to hold "Session" ptr.
 	//mg_http_listen(&m_mgr, listeners[0].c_str(), mgws::_fn, &m_context);
 	for (auto listener : listeners) {
-		TRACE("starting: " << listener);
+		TRACE("listening to host:port @ " << listener);
 		mg_http_listen(&m_mgr, listener.c_str(), mgws::_fn, &m_context);
 	}
 }
