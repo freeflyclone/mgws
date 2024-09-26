@@ -18,7 +18,7 @@ export function RegisterSession() {
         userName: userName,
     };
   
-    console.log(msg);
+    console.log("Sending " + "'" + msg.type + "'");
     ws.send(JSON.stringify(msg));
 }
 
@@ -32,6 +32,6 @@ export function GetActiveSessions() {
         userName: userName,
     };
 
-    console.log(msg);
+    console.log("Sending " + "'" + msg.type + "'");
     ws.send(JSON.stringify(msg));
 }

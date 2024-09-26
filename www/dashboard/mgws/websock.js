@@ -33,6 +33,10 @@ function OnMessage(event) {
             SessionID(msg);
             break;
 
+        case "ActiveSessions":
+            ActiveSessions(msg);
+            break;
+
         default:
             break;
     }
@@ -50,10 +54,14 @@ function OnError(event)  {
 }
 
 function SessionID(msg) {
-    console.log(msg);
+    console.log("Recieved " + "'" + msg.type + "', ", msg);
     ws.sessionID = msg.id;
 
     if (typeof OnNewSession != 'undefined') {
         OnNewSession(msg);
     }
+}
+
+function ActiveSessions(msg) {
+    console.log("Recieved " + "'" + msg.type + "', ", msg);
 }
