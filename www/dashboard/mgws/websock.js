@@ -1,4 +1,4 @@
-import { RegisterSession, GetActiveSessions } from "/mgws/ui.js";
+import { ShowActiveSessions } from "/mgws/ui.js";
 
 export var ws;
 
@@ -30,11 +30,11 @@ function OnMessage(event) {
 
     switch(msg.type) {
         case "SessionID":
-            SessionID(msg);
+            OnSessionID(msg);
             break;
 
         case "ActiveSessions":
-            ActiveSessions(msg);
+            OnActiveSessions(msg);
             break;
 
         default:
@@ -53,7 +53,7 @@ function OnError(event)  {
     console.log("OnError: ", event);
 }
 
-function SessionID(msg) {
+function OnSessionID(msg) {
     console.log("Recieved " + "'" + msg.type + "', ", msg);
     ws.sessionID = msg.id;
 
@@ -62,6 +62,7 @@ function SessionID(msg) {
     }
 }
 
-function ActiveSessions(msg) {
+function OnActiveSessions(msg) {
     console.log("Recieved " + "'" + msg.type + "', ", msg);
+    ShowActiveSessions(msg);
 }

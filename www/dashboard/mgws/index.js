@@ -1,12 +1,12 @@
 import { MakeWebSocket } from "/mgws/websock.js";
-import { RegisterSession, GetActiveSessions } from "/mgws/ui.js";
+import { SendRegisterSession, SendGetActiveSessions } from "/mgws/ui.js";
 
 export const appVersion = "0.1";
 
 function main() {
     MakeWebSocket( (msg) => {
-        RegisterSession();
-        GetActiveSessions();
+        SendRegisterSession();
+        SendGetActiveSessions();
     });
 }
 
