@@ -10,23 +10,32 @@
 # Short-Description:	MGWS WebSocket Server
 ### END INIT INFO
 
+PID_FILE=/tmp/mgws.pid
+
 SOURCE_DIR=/home/evan/src/mgws
+#CERTS_DIR=/etc/letsencrypt/live/ws.madstyle.social
 CERTS_DIR=${SOURCE_DIR}/certs
 
 COMMAND=${SOURCE_DIR}/build/apps/dashboard/dashboard
 WWW_DIR=${SOURCE_DIR}/www/dashboard
 
+
+#CERT_FILE=${CERTS_DIR}/fullchain.pem
+#KEY_FILE=${CERTS_DIR}/privkey.pem
 CERT_FILE=${CERTS_DIR}/localhost.crt
 KEY_FILE=${CERTS_DIR}/localhost.key
 
 start() {
   echo $'Execute start' " : ${COMMAND} ${WWW_DIR} ${CERT_FILE} ${KEY_FILE}" >> /var/log/mgws.log
   ${COMMAND} ${WWW_DIR} ${CERT_FILE} ${KEY_FILE} 2>&1 | logger --tag "mgws" &
+  pidof ${COMMAND} > ${PID_FILE}
 }
 
 stop() {
-  echo  $'Executing stop!' >> /var/log/mgws.log
-  killall ${COMMAND}
+  KILL_PID=`cat ${PID_FILE}`
+  echo  $'Executing stop, PID:' ${KILL_PID} >> /var/log/mgws.log
+  kill ${KILL_PID}
+  rm ${PID_FILE}
 }
 
 restart() {
@@ -46,7 +55,7 @@ case "$1" in
     restart
     ;;
   *)
-    echo $"Use this options $0 {start|stop|restart}"
+    echo $"Use these options $0 {start|stop|restart}"
     exit 1
 esac
 exit $?
