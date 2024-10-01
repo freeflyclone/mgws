@@ -32,8 +32,9 @@ int main(int argc, char *argv[]) {
     TRACE(__FUNCTION__);
 
     // Note: do NOT specify the same port twice!
+    // (even when http: vs https: in URL)
     mgws::listen_list listeners;
-    listeners.push_back("http://0.0.0.0:8443");
+    listeners.push_back("http://0.0.0.0:8000");
     
     std::string root(rootDir);
 
