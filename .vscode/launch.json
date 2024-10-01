@@ -5,72 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "mgws(hq.local)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/apps/webrtc/webrtc",
-            "args": [
-                "${workspaceFolder}/www",
-                "${workspaceFolder}/certs/hq.local.crt",
-                "${workspaceFolder}/certs/hq.local.key",
-            ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/certs",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-        {
-            "name": "mgws(hq.e-man.tv)",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/apps/webrtc/webrtc",
-            "args": [
-                "${workspaceFolder}/www",
-                "${env:NGINX_CERTS_DIR}/fullchain.pem",
-                "${env:NGINX_CERTS_DIR}/privkey.pem",
-            ],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/certs",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-        {
-            "name": "mgws(lumenicious)",
+            "name": "mgws(localhost)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/apps/dashboard/dashboard",
-            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
             "environment": [],
             "externalConsole": true,
+
             "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerServerAddress": "localhost:5555",
+
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -83,7 +30,6 @@
                     "ignoreFailures": true
                 }
             ],
-            "miDebuggerServerAddress": "ws.lumenicious.com:5555",
         }
     ]
 }

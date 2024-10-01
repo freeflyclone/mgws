@@ -31,9 +31,10 @@ int main(int argc, char *argv[]) {
 
     TRACE(__FUNCTION__);
 
+    // Note: do NOT specify the same port twice!
     mgws::listen_list listeners;
-    listeners.push_back("https://0.0.0.0:8443");
-
+    listeners.push_back("http://0.0.0.0:8443");
+    
     std::string root(rootDir);
 
     auto sm = new SessionManager(root, listeners, cert_pem_file, key_pem_file);
